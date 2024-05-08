@@ -2,7 +2,6 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.5'
 	id 'io.spring.dependency-management' version '1.1.4'
-	id "nebula.lint" version "19.0.2"
 }
 
 group = 'ai'
@@ -27,13 +26,6 @@ dependencies {
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
-}
-
-allprojects {
-    apply plugin :"nebula.lint"
-    gradleLint {
-        rules += ['unused-dependency']
-    }
 }
 
 tasks.register("bootRunDev") {
