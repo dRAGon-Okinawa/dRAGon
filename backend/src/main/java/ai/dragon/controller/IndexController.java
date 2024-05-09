@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class IndexController {
-    @GetMapping("/")
+    @GetMapping("/ok")
     public String showUserList(Model model) {
         return "index";
     }

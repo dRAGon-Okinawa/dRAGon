@@ -1,0 +1,25 @@
+plugins {
+  id "com.github.node-gradle.node" version "7.0.2"
+}
+
+apply plugin: 'java'
+
+task npmBuild(type: NpmTask) {
+	inputs.dir("src")
+	outputs.dir("dist")
+	args = ['run', 'build']
+}
+
+task npmClean(type: NpmTask) {
+	args = ['run', 'clean']
+}
+
+jar {
+	into '/static', {
+		from 'dist'
+		include '**'
+	}
+}
+
+jar.dependsOn('npmBuild')
+clean.dependsOn('npmClean')

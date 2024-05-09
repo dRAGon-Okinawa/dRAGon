@@ -39,6 +39,23 @@ tasks.register("bootRunDev") {
     finalizedBy("bootRun")
 }
 
+// 1. Registers a task that copies built web app into the service static content.
+tasks.register('copyWebApp', Copy) {
+	dependsOn(':frontend:jar')
+	from "$rootDir/frontend/dist"
+	into "$buildDir/resources/main/static/."
+}
+
+// 2. Make compilation task dependent on web building, so it will always be performed before.
+tasks.named('compileJava') {
+	dependsOn(':frontend:jar')
+}
+
+// 3. Make resources processing task dependent on copying task, so it will always be performed before.
+tasks.named('processResources') {
+	dependsOn('copyWebApp')
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
 }
