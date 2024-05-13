@@ -12,5 +12,6 @@
 		"ghcr.io/devcontainers/features/node:1": {}
 	},
 	"postStartCommand": ".devcontainer/postStart.sh",
+	"postCreateCommand": ".devcontainer/postCreate.sh",
 	"forwardPorts": [1985]
 }
