@@ -13,5 +13,12 @@
 	},
 	"postStartCommand": ".devcontainer/postStart.sh",
 	"postCreateCommand": ".devcontainer/postCreate.sh",
-	"forwardPorts": [1985]
+	"forwardPorts": [1985],
+	"customizations": {
+        "vscode": {
+            "extensions": [
+                "vscjava.vscode-gradle"
+            ]
+        }
+    },
 }
