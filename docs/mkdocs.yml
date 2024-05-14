@@ -1,7 +1,7 @@
 site_url: https://dragon.okinawa
 site_name: dRAGon
 docs_dir: src
-copyright: dRAGon &copy; 2024<br />Like my work? <a href="https://github.com/sponsors/isontheline">Sponsors</a> and <a href="https://www.buymeacoffee.com/isontheline">Coffees</a> are welcome!
+copyright: dRAGon &copy; 2024
 theme:
   name: material
   custom_dir: overrides
@@ -20,10 +20,6 @@ extra:
   social:
     - icon: fontawesome/brands/github-alt
       link: https://github.com/isontheline/dragon
-    - icon: fontawesome/solid/heart
-      link: https://github.com/sponsors/isontheline
-    - icon: fontawesome/solid/mug-saucer
-      link: https://www.buymeacoffee.com/isontheline
 plugins:
   - search
   - git-revision-date-localized:

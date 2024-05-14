@@ -8,4 +8,4 @@ pip install mkdocs-git-revision-date-localized-plugin
 pip install mkdocs-redirects
 
 echo "Building the project..."
-gradle build
+gradle npmInstall build
