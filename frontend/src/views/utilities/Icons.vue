@@ -32,7 +32,7 @@ onMounted(() => {
         <h2>Icons</h2>
         <p>
             PrimeVue components internally use <a href="https://github.com/primefaces/primeicons" class="font-medium text-primary hover:underline">PrimeIcons</a> library, the official icons suite from
-            <a href="https://www.primetek.com.tr" class="font-medium text-primary hover:underline">PrimeTek</a>.
+            
         </p>
 
         <h4>Download</h4>
