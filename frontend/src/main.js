@@ -1,4 +1,6 @@
 import { createApp } from 'vue';
+import { createI18n } from 'vue-i18n';
+
 import App from './App.vue';
 import router from './router';
 
@@ -111,6 +113,16 @@ import BlockViewer from '@/components/BlockViewer.vue';
 import '@/assets/styles.scss';
 
 const app = createApp(App);
+
+// Import translations
+import en from './locales/en.json';
+import fr from './locales/fr.json';
+const i18n = createI18n({
+    fallbackLocale: 'en',
+    locale: navigator.language.split('-')[0] || 'en',
+    messages: { en, fr }
+});
+app.use(i18n);
 
 app.use(router);
 app.use(PrimeVue, { ripple: true });
