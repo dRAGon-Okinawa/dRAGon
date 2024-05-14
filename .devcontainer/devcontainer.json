@@ -19,7 +19,8 @@
             "extensions": [
 				"redhat.java",
 				"vscjava.vscode-java-pack",
-                "vscjava.vscode-gradle"
+                "vscjava.vscode-gradle",
+				"Vue.volar"
             ]
         }
     },
