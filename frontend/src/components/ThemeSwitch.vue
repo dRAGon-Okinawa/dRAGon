@@ -23,9 +23,5 @@ const switchTitle = computed(() => {
 </script>
 
 <template>
-    <InputSwitch v-model="isDark" @click="toggleTheme" :title="$t(switchTitle)" />
+    <InputSwitch v-model="isDark" @click="toggleTheme" :title="$t(switchTitle)" class="inputswitch-theme" />
 </template>
-
-<style scoped>
-
-</style>
