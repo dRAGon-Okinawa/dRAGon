@@ -1,6 +1,8 @@
 {
     "message": {
         "dashboard": "Dashboard",
-        "home": "Home"
+        "home": "Home",
+        "light_theme": "Light Theme",
+        "dark_theme": "Dark Theme"
     }
 }

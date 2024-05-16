@@ -13,7 +13,6 @@
 	},
 	"postStartCommand": ".devcontainer/postStart.sh",
 	"postCreateCommand": ".devcontainer/postCreate.sh",
-	"forwardPorts": [1985],
 	"customizations": {
         "vscode": {
             "extensions": [

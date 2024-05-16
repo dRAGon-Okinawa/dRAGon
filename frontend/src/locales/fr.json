@@ -1,6 +1,8 @@
 {
     "message": {
         "dashboard": "Tableau de bord",
-        "home": "Accueil"
+        "home": "Accueil",
+        "light_theme": "Thème clair",
+        "dark_theme": "Thème sombre"
     }
 }

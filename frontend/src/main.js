@@ -12,6 +12,9 @@ import Ripple from 'primevue/ripple';
 import StyleClass from 'primevue/styleclass';
 import ToastService from 'primevue/toastservice';
 import Tooltip from 'primevue/tooltip';
+import InputSwitch from 'primevue/inputswitch';
+
+import ThemeSwitch from '@/components/ThemeSwitch.vue';
 
 import '@/assets/styles.scss';
 
@@ -32,6 +35,12 @@ app.use(PrimeVue, { ripple: true });
 app.use(ToastService);
 app.use(DialogService);
 app.use(ConfirmationService);
+
+// PrimeVue components :
+app.component('InputSwitch', InputSwitch);
+
+// Custom components :
+app.component('ThemeSwitch', ThemeSwitch);
 
 app.directive('tooltip', Tooltip);
 app.directive('badge', BadgeDirective);

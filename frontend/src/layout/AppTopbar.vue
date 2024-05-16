@@ -18,7 +18,7 @@ onBeforeUnmount(() => {
 });
 
 const logoUrl = computed(() => {
-    return `/images/${layoutConfig.darkTheme.value ? 'dragon_okinawa_icon' : 'dragon_okinawa_icon'}.png`;
+    return `/images/dragon_okinawa_icon.png`;
 });
 
 const topbarMenuClasses = computed(() => {
@@ -70,6 +70,7 @@ const isOutsideClicked = (event) => {
 
         <div class="layout-topbar-menu" :class="topbarMenuClasses">
             <!-- Buttons Bar here -->
+            <ThemeSwitch />
         </div>
     </div>
 </template>

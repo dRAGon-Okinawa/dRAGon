@@ -7,8 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "buildnwatch": "vite build --watch",
-    "buildnserve": "vite build && vite preview",
-    "serve": "vite preview",
+    "buildnserve": "vite build && vite preview --host",
+    "serve": "vite preview --host",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "dependencies": {
