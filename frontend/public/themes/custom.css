@@ -1,6 +1,5 @@
 .inputswitch-theme .p-inputswitch-slider:before {
     font-family: 'primeicons';
-    padding: 1px;
     content: '\e9c8';
 }
 
