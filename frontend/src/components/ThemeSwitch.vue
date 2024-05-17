@@ -1,20 +1,31 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { computed } from 'vue';
 import { usePrimeVue } from 'primevue/config';
 
+const PrimeVue = usePrimeVue();
 const currentTheme = ref('aura-light-purple');
 
 const isDark = computed(() => {
     return currentTheme.value === 'aura-dark-purple';
 });
 
-const PrimeVue = usePrimeVue();
+onMounted(() => {
+    if (localStorage.getItem('darkMode') == 'true') {
+        applyTheme('aura-dark-purple');
+    } else {
+        applyTheme('aura-light-purple');
+    }
+});
+
+const applyTheme = (theme) => {
+    PrimeVue.changeTheme(currentTheme.value, theme, 'theme-css', () => { });
+    currentTheme.value = theme;
+    localStorage.setItem('darkMode', isDark.value);
+};
 
 const toggleTheme = () => {
-    let newTheme = currentTheme.value === 'aura-light-purple' ? 'aura-dark-purple' : 'aura-light-purple';
-    PrimeVue.changeTheme(currentTheme.value, newTheme, 'theme-css', () => {});
-    currentTheme.value = newTheme;
+    applyTheme(isDark.value ? 'aura-light-purple' : 'aura-dark-purple');
 };
 
 const switchTitle = computed(() => {
