@@ -8,8 +8,19 @@
 			"installGradle": "true",
 			"gradleVersion": "latest"
 		},
-		"ghcr.io/devcontainers/features/python:1": {}
+		"ghcr.io/devcontainers/features/python:1": {},
+		"ghcr.io/devcontainers/features/node:1": {}
 	},
 	"postStartCommand": ".devcontainer/postStart.sh",
-	"forwardPorts": [1985]
+	"postCreateCommand": ".devcontainer/postCreate.sh",
+	"customizations": {
+        "vscode": {
+            "extensions": [
+				"redhat.java",
+				"vscjava.vscode-java-pack",
+                "vscjava.vscode-gradle",
+				"Vue.volar"
+            ]
+        }
+    },
 }
