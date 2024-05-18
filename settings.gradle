@@ -1,3 +1,4 @@
 rootProject.name = 'dRAGon'
 include 'backend'
 include 'frontend'
+include 'docs'
