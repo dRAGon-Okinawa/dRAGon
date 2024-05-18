@@ -12,14 +12,19 @@
 	},
 	"postStartCommand": ".devcontainer/postStart.sh",
 	"postCreateCommand": ".devcontainer/postCreate.sh",
+	"forwardPorts": [
+		1985,
+		3000,
+		4173
+	],
 	"customizations": {
-        "vscode": {
-            "extensions": [
+		"vscode": {
+			"extensions": [
 				"redhat.java",
 				"vscjava.vscode-java-pack",
-                "vscjava.vscode-gradle",
+				"vscjava.vscode-gradle",
 				"Vue.volar"
-            ]
-        }
-    },
+			]
+		}
+	},
 }
