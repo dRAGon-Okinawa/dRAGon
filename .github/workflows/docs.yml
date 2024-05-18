@@ -12,7 +12,7 @@ jobs:
         with:
           node-version: 20
       - name: Build Docusaurus
-        run: cd docs && npm install && npm build
+        run: cd docs && npm install && npm run build
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@releases/v3
         if: github.ref == 'refs/heads/main'
