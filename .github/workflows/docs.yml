@@ -1,7 +1,5 @@
 name: Update dRAGon Documentation
-on:
-  push:
-    branches: [ main ]
+on: push
 jobs:
   deploy_mkdocs_content:
     timeout-minutes: 5
@@ -25,6 +23,7 @@ jobs:
       - run: echo "dragon.okinawa" > docs/site/CNAME
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@releases/v3
+        if: github.ref == 'refs/heads/main'
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages

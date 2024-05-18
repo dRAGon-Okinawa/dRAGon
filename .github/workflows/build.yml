@@ -1,7 +1,5 @@
 name: Build dRAGon Project
-
 on: push
-
 jobs:
   build:
     runs-on: ubuntu-latest
