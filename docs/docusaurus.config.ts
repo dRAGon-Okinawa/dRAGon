@@ -10,6 +10,7 @@ const config: Config = {
   baseUrl: '/',
   organizationName: 'isontheline',
   projectName: 'dRAGon',
+  deploymentBranch: 'gh-pages',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'throw',
   i18n: {

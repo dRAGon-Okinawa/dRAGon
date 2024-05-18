@@ -1,30 +1,22 @@
 name: Update dRAGon Documentation
 on: push
 jobs:
-  deploy_mkdocs_content:
-    timeout-minutes: 5
+  build:
+    name: Build dRAGon Documentation
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
-          # https://github.com/timvink/mkdocs-git-revision-date-localized-plugin/issues/10#issuecomment-585752881
-          # Number of commits to fetch. 0 indicates all history.
-          # Default: 1
           fetch-depth: 0
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-node@v4
         with:
-          python-version: '3.8'
-          architecture: 'x64'
-      - run: pip install mkdocs=="1.4.3"
-      - run: pip install mkdocs-material=="9.0.4" 
-      - run: pip install mkdocs-git-revision-date-localized-plugin
-      - run: pip install mkdocs-redirects
-      - run: cd docs; mkdocs build --clean
-      - run: echo "dragon.okinawa" > docs/site/CNAME
+          node-version: 20
+      - name: Build Docusaurus
+        run: cd docs && npm install && npm build
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@releases/v3
         if: github.ref == 'refs/heads/main'
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
-          FOLDER: docs/site
+          FOLDER: docs/build
