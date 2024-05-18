@@ -4,6 +4,10 @@ plugins {
 
 apply plugin: 'java'
 
+task npmLint(type: NpmTask) {
+	args = ['run', 'lint']
+}
+
 task npmBuild(type: NpmTask) {
 	inputs.dir("src")
 	outputs.dir("dist")

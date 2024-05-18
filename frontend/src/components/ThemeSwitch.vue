@@ -19,7 +19,7 @@ onMounted(() => {
 });
 
 const applyTheme = (theme) => {
-    PrimeVue.changeTheme(currentTheme.value, theme, 'theme-css', () => { });
+    PrimeVue.changeTheme(currentTheme.value, theme, 'theme-css', () => {});
     currentTheme.value = theme;
     localStorage.setItem('darkMode', isDark.value);
 };
