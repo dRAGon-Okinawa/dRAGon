@@ -5,7 +5,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: 'dRAGon',
   tagline: 'Dynamic Retrieval Augmented Generation for Optimized Nimble',
-  favicon: 'img/favicon.ico',
+  favicon: '/favicon.ico',
   url: 'https://dragon.okinawa',
   baseUrl: '/',
   organizationName: 'isontheline',
@@ -37,17 +37,17 @@ const config: Config = {
       title: 'dRAGon',
       logo: {
         alt: 'dRAGon',
-        src: 'img/logo.svg',
+        src: 'img/dragon_okinawa_icon.png',
       },
       items: [
         {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'Tutorial',
+          label: 'Getting Started',
         },
         {
-          href: 'https://github.com/facebook/docusaurus',
+          href: 'https://github.com/isontheline/dRAGon',
           label: 'GitHub',
           position: 'right',
         },
@@ -60,8 +60,8 @@ const config: Config = {
           title: 'Docs',
           items: [
             {
-              label: 'Tutorial',
-              to: '/docs/intro',
+              label: 'Getting Started',
+              to: '/docs/getting-started',
             },
           ],
         },
@@ -69,16 +69,8 @@ const config: Config = {
           title: 'Community',
           items: [
             {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-            },
-            {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
-            },
-            {
-              label: 'Twitter',
-              href: 'https://twitter.com/docusaurus',
+              label: 'Discussions',
+              href: 'https://github.com/isontheLine/dRAGon/discussions',
             },
           ],
         },
@@ -87,7 +79,7 @@ const config: Config = {
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
+              href: 'https://github.com/isontheline/dRAGon',
             },
           ],
         },
