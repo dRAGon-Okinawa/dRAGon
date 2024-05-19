@@ -16,12 +16,10 @@ jobs:
           node-version: 20
       - uses: gradle/actions/setup-gradle@v3
 
-      - run: git tag
-
       - name: Test dRAGon
         run: gradle npmInstall npmLint test
       - name: Create Release
-        run: gradle createRelease
+        run: git fetch --tags && gradle createRelease
       - name: Set Frontend Version
         run: npm version from-git --no-git-tag-version --prefix frontend
       - name: Set Docs Version
