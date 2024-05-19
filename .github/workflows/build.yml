@@ -16,6 +16,8 @@ jobs:
           node-version: 20
       - uses: gradle/actions/setup-gradle@v3
 
+      - run: git tag
+
       - name: Test dRAGon
         run: gradle npmInstall npmLint test
       - name: Create Release
