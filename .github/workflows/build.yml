@@ -5,11 +5,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-java@v4
         with:
           distribution: microsoft
           java-version: 17
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
       - uses: gradle/actions/setup-gradle@v3
+
       - name: Test dRAGon
         run: gradle npmInstall npmLint test
       - name: Create Release
@@ -18,8 +24,21 @@ jobs:
         run: npm version from-git --no-git-tag-version --prefix frontend
       - name: Set Docs Version
         run: npm version from-git --no-git-tag-version --prefix docs
+
+      - name: Build Documentation
+        run: npm install --prefix docs && npm run build --prefix docs
+
       - name: Build dRAGon
         run: gradle build -Pversion=$(gradle cV -q -Prelease.quiet)
+
       - name: Push Release
         if: github.ref == 'refs/heads/main'
         run: gradle pushRelease
+
+      - name: Deploy Documentation
+        uses: JamesIves/github-pages-deploy-action@releases/v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: docs/build
