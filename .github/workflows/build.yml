@@ -17,7 +17,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v3
 
       - name: Create Release
-      if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main'
         run: gradle createRelease
 
       - name: Set Frontend Version
