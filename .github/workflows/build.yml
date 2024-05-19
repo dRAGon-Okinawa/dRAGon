@@ -14,8 +14,12 @@ jobs:
         run: gradle npmInstall npmLint test
       - name: Create Release
         run: gradle createRelease
+      - name: Set Frontend Version
+        run: npm version from-git --no-git-tag-version --prefix frontend
+      - name: Set Docs Version
+        run: npm version from-git --no-git-tag-version --prefix docs
       - name: Build dRAGon
-        run: gradle build
+        run: gradle build -Pversion=$(gradle cV -q -Prelease.quiet)
       - name: Push Release
         if: github.ref == 'refs/heads/main'
         run: gradle pushRelease
