@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'ai'
-version = '0.0.1'
+version = '0.0.0'
 
 java {
 	sourceCompatibility = '17'

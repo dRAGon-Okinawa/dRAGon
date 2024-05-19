@@ -10,5 +10,12 @@ jobs:
           distribution: microsoft
           java-version: 17
       - uses: gradle/actions/setup-gradle@v3
+      - name: Test dRAGon
+        run: gradle npmInstall npmLint test
+      - name: Create Release
+        run: gradle createRelease
       - name: Build dRAGon
-        run: gradle npmInstall npmLint build
+        run: gradle build
+      - name: Push Release
+        if: github.ref == 'refs/heads/main'
+        run: gradle pushRelease
