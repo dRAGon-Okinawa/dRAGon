@@ -16,12 +16,9 @@ public class DevProfileSecurityConfiguration {
     @Order(Ordered.HIGHEST_PRECEDENCE)
     SecurityFilterChain h2ConsoleSecurityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> {
-            auth.requestMatchers(PathRequest.toH2Console()).permitAll();
+            // Permit all requests :
+            auth.anyRequest().permitAll();
         });
-
-        http.securityMatcher(PathRequest.toH2Console());
-        http.csrf((csrf) -> csrf.disable());
-        http.headers((headers) -> headers.frameOptions((frame) -> frame.sameOrigin()));
 
         return http.build();
     }

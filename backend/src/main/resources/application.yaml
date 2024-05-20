@@ -3,12 +3,6 @@ spring:
     active: "prod"
   application:
     name: "dRAGon"
-  datasource:
-    url: "jdbc:h2:~/test;DB_CLOSE_DELAY=-1;MODE=LEGACY"
-    driverClassName: "org.h2.Driver"
-    username: "sa"
-    password: ""
-    database-platform: "org.hibernate.dialect.H2Dialect"
   devtools:
     restart:
       enabled: true
