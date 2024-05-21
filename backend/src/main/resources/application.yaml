@@ -1,10 +1,18 @@
 spring:
   profiles:
-    active: "prod"
+    active: "dev"
   application:
     name: "dRAGon"
+  devtools:
+    restart:
+      enabled: true
 server:
   port: 1985
+logging:
+  level:
+    root: "info"
+    org.springframework.web: "info"
+    ai.dragon: "debug"
 dragon:
   data:
-    path: "/data"
+    path: "/tmp/data"

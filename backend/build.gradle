@@ -30,12 +30,12 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 }
 
-tasks.register("bootRunDev") {
+tasks.register("bootRunProd") {
     group = "application"
-    description = "Runs this project as a Spring Boot application with the dev profile"
+    description = "Runs this project as a Spring Boot application with the PROD profile"
     doFirst {
         tasks.bootRun.configure {
-            systemProperty("spring.profiles.active", "dev")
+            systemProperty("spring.profiles.active", "prod")
         }
     }
     finalizedBy("bootRun")
