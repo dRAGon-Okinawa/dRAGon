@@ -7,6 +7,12 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "dragon.data")
 public class DataProperties {
     private String path;
+    private String db;
+
+    public DataProperties() {
+        path = ":temp:";
+        db = ":memory:";
+    }
 
     public String getPath() {
         return path;
@@ -14,5 +20,13 @@ public class DataProperties {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getDb() {
+        return db;
+    }
+
+    public void setDb(String db) {
+        this.db = db;
     }
 }

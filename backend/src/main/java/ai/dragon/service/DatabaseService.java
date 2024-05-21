@@ -1,8 +1,10 @@
 package ai.dragon.service;
 
 import java.io.File;
+import java.util.Optional;
 
 import org.dizitart.no2.Nitrite;
+import org.dizitart.no2.NitriteBuilder;
 import org.dizitart.no2.mvstore.MVStoreModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,42 +23,28 @@ public class DatabaseService {
     private DataProperties dataProperties;
 
     public void openDatabase() {
-        if(db != null && !db.isClosed()) {
+        if (db != null && !db.isClosed()) {
             logger.debug("Database is already opened");
             return;
         }
 
-        // Create database directory if doesn't exist
-        createDatabaseDirectory();
+        NitriteBuilder dbBuilder = Nitrite.builder();
 
-        File databaseFile = new File(dataProperties.getPath(), "db/dragon.db");
-        logger.debug("Opening database : " + databaseFile);
+        if (!dataProperties.getDb().equals(":memory:")) {
+            String dbName = Optional.ofNullable(dataProperties.getDb()).orElse("dragon.db");
+            File databaseFile = new File(dataProperties.getPath(), "db/" + dbName);
+            logger.debug("Will use database file: " + databaseFile);
 
-        MVStoreModule storeModule = MVStoreModule.withConfig()
-                .filePath(databaseFile)
-                .build();
+            MVStoreModule storeModule = MVStoreModule.withConfig()
+                    .filePath(databaseFile)
+                    .build();
 
-        db = Nitrite.builder()
-                .loadModule(storeModule)
-                .openOrCreate();
-    }
-
-    private void createDatabaseDirectory() {
-        logger.debug("Creating database directory if doesn't exist");
-        File databaseDirectory = new File(dataProperties.getPath(), "db");
-
-        if (!databaseDirectory.exists()) {
-            boolean creationStatus = databaseDirectory.mkdirs();
-
-            if (creationStatus) {
-                logger.debug("Database directory created successfully : " + databaseDirectory);
-            } else {
-                logger.error("Failed to create database directory");
-                throw new RuntimeException("Failed to create database directory : " + databaseDirectory);
-            }
+            dbBuilder.loadModule(storeModule);
 
         } else {
-            logger.debug("Database directory already exists : " + databaseDirectory);
+            logger.debug("Will use in-memory database");
         }
+
+        db = dbBuilder.openOrCreate();
     }
 }
