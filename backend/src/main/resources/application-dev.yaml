@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: "dRAGon"
+  devtools:
+    restart:
+      enabled: true
+server:
+  port: 1985
+logging:
+  level:
+    root: "info"
+    org.springframework.web: "info"
+    ai.dragon: "debug"
+dragon:
+  data:
+    path: "/tmp/data"

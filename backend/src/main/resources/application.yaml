@@ -3,8 +3,8 @@ spring:
     active: "prod"
   application:
     name: "dRAGon"
-  devtools:
-    restart:
-      enabled: true
 server:
   port: 1985
+dragon:
+  data:
+    path: "/data"

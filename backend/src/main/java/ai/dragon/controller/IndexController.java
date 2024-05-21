@@ -1,13 +1,19 @@
 package ai.dragon.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import ai.dragon.service.DatabaseService;
 
 @Controller
 public class IndexController {
-    @GetMapping("/ok")
-    public String showUserList(Model model) {
+    @Autowired
+    private DatabaseService databaseService;
+
+    @GetMapping("/awesome")
+    public String showUserList() {
+        databaseService.openDatabase();
         return "index";
     }
 }
