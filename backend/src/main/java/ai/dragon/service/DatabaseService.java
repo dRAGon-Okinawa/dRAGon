@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.NitriteBuilder;
+import org.dizitart.no2.common.mapper.JacksonMapperModule;
 import org.dizitart.no2.mvstore.MVStoreModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,13 +23,23 @@ public class DatabaseService {
     @Autowired
     private DataProperties dataProperties;
 
+    public Nitrite getDb() {
+        if (db == null || db.isClosed()) {
+            openDatabase();
+        }
+
+        return db;
+    }
+
     public void openDatabase() {
         if (db != null && !db.isClosed()) {
             logger.debug("Database is already opened");
             return;
         }
 
-        NitriteBuilder dbBuilder = Nitrite.builder();
+        NitriteBuilder dbBuilder = Nitrite
+                .builder()
+                .loadModule(new JacksonMapperModule());
 
         if (!dataProperties.getDb().equals(":memory:")) {
             String dbName = Optional.ofNullable(dataProperties.getDb()).orElse("dragon.db");

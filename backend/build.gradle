@@ -26,6 +26,7 @@ dependencies {
 	implementation platform('org.dizitart:nitrite-bom:4.2.1')
 	implementation 'org.dizitart:nitrite'
 	implementation 'org.dizitart:nitrite-mvstore-adapter'
+	implementation 'org.dizitart:nitrite-jackson-mapper'
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
