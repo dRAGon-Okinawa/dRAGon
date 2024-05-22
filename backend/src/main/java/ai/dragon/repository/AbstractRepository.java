@@ -40,6 +40,10 @@ abstract class AbstractRepository<T extends IAbstractModel> {
         return getByUuid(uuid) != null;
     }
 
+    public T getByUuid(String uuid) {
+        return getByUuid(UUID.fromString(uuid));
+    }
+
     public T getByUuid(UUID uuid) {
         Nitrite db = databaseService.getDb();
         ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
