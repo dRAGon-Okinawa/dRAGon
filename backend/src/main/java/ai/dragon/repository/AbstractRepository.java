@@ -4,6 +4,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.UUID;
 
 import org.dizitart.no2.Nitrite;
+import org.dizitart.no2.collection.events.CollectionEventListener;
 import org.dizitart.no2.common.WriteResult;
 import org.dizitart.no2.repository.Cursor;
 import org.dizitart.no2.repository.ObjectRepository;
@@ -65,6 +66,18 @@ abstract class AbstractRepository<T extends IAbstractModel> {
         Nitrite db = databaseService.getDb();
         ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
         return repository.size();
+    }
+
+    public void subscribe(CollectionEventListener listener) {
+        Nitrite db = databaseService.getDb();
+        ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
+        repository.subscribe(listener);
+    }
+
+    public void unsubscribe(CollectionEventListener listener) {
+        Nitrite db = databaseService.getDb();
+        ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
+        repository.unsubscribe(listener);
     }
 
     @SuppressWarnings("unchecked")
