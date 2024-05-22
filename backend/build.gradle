@@ -1,11 +1,12 @@
 plugins {
 	id 'java'
+	id 'application'
 	id 'org.springframework.boot' version '3.2.5'
 	id 'io.spring.dependency-management' version '1.1.4'
+	id "org.springdoc.openapi-gradle-plugin" version "1.8.0"
 }
 
 group = 'ai'
-version = '0.0.0'
 
 java {
 	sourceCompatibility = '17'
@@ -27,6 +28,7 @@ dependencies {
 	implementation 'org.dizitart:nitrite'
 	implementation 'org.dizitart:nitrite-mvstore-adapter'
 	implementation 'org.dizitart:nitrite-jackson-mapper'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -35,7 +37,39 @@ dependencies {
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.32'
 }
 
-tasks.register("bootRunProd") {
+application {
+    applicationDefaultJvmArgs = ["-Dapp.version=${version}"]
+}
+
+openApi {
+    apiDocsUrl.set("http://localhost:1985/api/docs/backend")
+    outputDir.set(file("$buildDir/docs"))
+    outputFileName.set("swagger.json")
+    waitTimeInSeconds.set(10)
+    customBootRun {
+        args.set(["--spring.profiles.active=test"]) 
+    }
+}
+
+bootJar {
+    manifest {
+        attributes(
+            'Implementation-Title': project.name,
+            'Implementation-Version': version
+        )
+    }
+}
+
+jar {
+    manifest {
+        attributes(
+            'Implementation-Title': project.name,
+            'Implementation-Version': version
+        )
+    }
+}
+
+tasks.register("bootProdRun") {
     group = "application"
     description = "Runs this project as a Spring Boot application with the PROD profile"
     doFirst {
@@ -46,19 +80,16 @@ tasks.register("bootRunProd") {
     finalizedBy("bootRun")
 }
 
-// 1. Registers a task that copies built web app into the service static content.
 tasks.register('copyWebApp', Copy) {
 	dependsOn(':frontend:jar')
 	from "$rootDir/frontend/dist"
 	into "$buildDir/resources/main/static/."
 }
 
-// 2. Make compilation task dependent on web building, so it will always be performed before.
 tasks.named('compileJava') {
 	dependsOn(':frontend:jar')
 }
 
-// 3. Make resources processing task dependent on copying task, so it will always be performed before.
 tasks.named('processResources') {
 	dependsOn('copyWebApp')
 }
