@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: "dRAGon"
+server:
+  port: 1985
+dragon:
+  data:
+    path: "/data"
