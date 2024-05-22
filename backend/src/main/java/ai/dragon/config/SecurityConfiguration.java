@@ -12,10 +12,14 @@ public class SecurityConfiguration {
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth -> {
-            // Permit all requests :
-            auth.anyRequest().permitAll();
-        });   
+        http
+                .authorizeHttpRequests(auth -> {
+                    // Permit all requests :
+                    auth.anyRequest().permitAll();
+                })
+                .csrf(csrf -> csrf
+                        // Disable CSRF protection :
+                        .ignoringRequestMatchers("/**"));
 
         return http.build();
     }

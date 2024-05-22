@@ -20,4 +20,4 @@ springdoc:
     path: "/api/docs"
 dragon:
   data:
-    path: "/tmp/data"
+    path: "/tmp/dragon_data"

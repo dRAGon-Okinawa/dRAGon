@@ -36,6 +36,10 @@ abstract class AbstractRepository<T extends IAbstractModel> {
         }
     }
 
+    public boolean exists(String uuid) {
+        return exists(UUID.fromString(uuid));
+    }
+
     public boolean exists(UUID uuid) {
         return getByUuid(uuid) != null;
     }
@@ -64,6 +68,10 @@ abstract class AbstractRepository<T extends IAbstractModel> {
 
     public Cursor<T> findByFieldValue(String fieldName, Object fieldValue) {
         return this.findWithFilter(FluentFilter.where(fieldName).eq(fieldValue));
+    }
+
+    public void delete(String uuid) {
+        delete(UUID.fromString(uuid));
     }
 
     public void delete(UUID uuid) {

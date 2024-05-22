@@ -41,6 +41,9 @@ public class DatabaseService {
                 .builder()
                 .loadModule(new JacksonMapperModule());
 
+        ^^ When DevTools reload => getDb reverts to default value
+        logger.debug(dataProperties.getDb());
+
         if (!dataProperties.getDb().equals(":memory:")) {
             String dbName = Optional.ofNullable(dataProperties.getDb()).orElse("dragon.db");
             File databaseFile = new File(dataProperties.getPath(), "db/" + dbName);
