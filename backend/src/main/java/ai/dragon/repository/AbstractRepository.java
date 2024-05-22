@@ -5,7 +5,8 @@ import java.util.UUID;
 
 import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.collection.events.CollectionEventListener;
-import org.dizitart.no2.common.WriteResult;
+import org.dizitart.no2.filters.Filter;
+import org.dizitart.no2.filters.FluentFilter;
 import org.dizitart.no2.repository.Cursor;
 import org.dizitart.no2.repository.ObjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,12 @@ abstract class AbstractRepository<T extends IAbstractModel> {
 
         Nitrite db = databaseService.getDb();
         ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
-        WriteResult result = exists(entity.getUuid()) ? repository.update(entity) : repository.insert(entity);
+
+        if (exists(entity.getUuid())) {
+            repository.update(entity);
+        } else {
+            repository.insert(entity);
+        }
     }
 
     public boolean exists(UUID uuid) {
@@ -44,6 +50,16 @@ abstract class AbstractRepository<T extends IAbstractModel> {
         Nitrite db = databaseService.getDb();
         ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
         return repository.find();
+    }
+
+    public Cursor<T> findWithFilter(Filter filter) {
+        Nitrite db = databaseService.getDb();
+        ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
+        return repository.find(filter);
+    }
+
+    public Cursor<T> findByFieldValue(String fieldName, Object fieldValue) {
+        return this.findWithFilter(FluentFilter.where(fieldName).eq(fieldValue));
     }
 
     public void delete(UUID uuid) {

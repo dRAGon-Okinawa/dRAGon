@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.UUID;
 
+import org.dizitart.no2.repository.Cursor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,11 +35,11 @@ public class SiloRepositoryTest {
     }
 
     @Test
-    void findSilos() {
+    void findAllSilos() {
         siloRepository.deleteAll();
         int nbSilosToInsert = 3;
 
-        for(int i=0; i<nbSilosToInsert; i++) {
+        for (int i = 0; i < nbSilosToInsert; i++) {
             siloRepository.save(new SiloEntity());
         }
 
@@ -47,5 +48,40 @@ public class SiloRepositoryTest {
         siloRepository.find().forEach(silo -> {
             assertNotNull(silo.getUuid());
         });
+    }
+
+    @Test
+    void findSilosByName() {
+        siloRepository.deleteAll();
+        int nbSilosToInsert = 3;
+
+        for (int i = 0; i < nbSilosToInsert; i++) {
+            SiloEntity silo = new SiloEntity();
+            silo.setName(String.format("Silo %d", i));
+            siloRepository.save(silo);
+        }
+
+        assertEquals(nbSilosToInsert, siloRepository.countAll());
+
+        Cursor<SiloEntity> cursor = siloRepository.findByFieldValue("name", "Silo 1");
+        assertEquals(1, cursor.size());
+    }
+
+    @Test
+    void deleteSilos() {
+        siloRepository.deleteAll();
+        int nbSilosToInsert = 3;
+
+        for (int i = 0; i < nbSilosToInsert; i++) {
+            siloRepository.save(new SiloEntity());
+        }
+
+        assertEquals(nbSilosToInsert, siloRepository.countAll());
+
+        siloRepository.find().forEach(silo -> {
+            siloRepository.delete(silo.getUuid());
+        });
+
+        assertEquals(0, siloRepository.countAll());
     }
 }
