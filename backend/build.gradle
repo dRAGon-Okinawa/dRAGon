@@ -24,6 +24,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:3.2.5'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.hibernate.validator:hibernate-validator'
 	implementation 'dev.langchain4j:langchain4j-open-ai:0.30.0'
 	implementation platform('org.dizitart:nitrite-bom:4.2.1')
 	implementation 'org.dizitart:nitrite'

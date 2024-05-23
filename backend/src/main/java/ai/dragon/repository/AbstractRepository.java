@@ -1,6 +1,8 @@
 package ai.dragon.repository;
 
 import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
+import java.util.Set;
 import java.util.UUID;
 
 import org.dizitart.no2.Nitrite;
@@ -14,6 +16,9 @@ import org.springframework.stereotype.Component;
 
 import ai.dragon.model.IAbstractModel;
 import ai.dragon.service.DatabaseService;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 
 @Component
 abstract class AbstractRepository<T extends IAbstractModel> {
@@ -22,9 +27,16 @@ abstract class AbstractRepository<T extends IAbstractModel> {
 
     @SuppressWarnings("unchecked")
     public void save(T entity) {
+        if (entity == null) {
+            throw new IllegalArgumentException("Entity is required");
+        }
+
         if (entity.getUuid() == null) {
             throw new IllegalArgumentException("UUID is required");
         }
+
+        // Throws an exception if the entity is not valid :
+        this.validate(entity);
 
         Nitrite db = databaseService.getNitriteDB();
         ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
@@ -113,5 +125,28 @@ abstract class AbstractRepository<T extends IAbstractModel> {
         ParameterizedType superclass = (ParameterizedType) getClass().getGenericSuperclass();
 
         return (Class<T>) superclass.getActualTypeArguments()[0];
+    }
+
+    private void validate(T entity) {
+        Validator validator = Validation
+                .buildDefaultValidatorFactory()
+                .getValidator();
+
+        if (entity == null) {
+            throw new IllegalArgumentException("Entity is required");
+        }
+
+        Set<ConstraintViolation<T>> constraintViolations = validator.validate(entity);
+        ArrayList<String> contraintMessages = new ArrayList<>();
+
+        for (ConstraintViolation<T> constraintViolation : constraintViolations) {
+            String constraintMessage = constraintViolation.getPropertyPath() + " -> "
+                    + constraintViolation.getMessage();
+            contraintMessages.add(constraintMessage);
+        }
+
+        if (!constraintViolations.isEmpty()) {
+            throw new IllegalArgumentException(String.join(", ", contraintMessages));
+        }
     }
 }
