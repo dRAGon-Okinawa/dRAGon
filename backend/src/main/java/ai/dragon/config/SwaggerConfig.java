@@ -13,18 +13,18 @@ import io.swagger.v3.oas.models.info.License;
 @Configuration
 public class SwaggerConfig {
     @Bean
-    public GroupedOpenApi openApi() {
+    public GroupedOpenApi publicApi() {
         return GroupedOpenApi.builder()
-                .group("open")
-                .pathsToMatch("/api/open/**")
+                .group("publicapi")
+                .pathsToMatch("/api/publicapi/**")
                 .build();
     }
 
     @Bean
     public GroupedOpenApi backendApi() {
         return GroupedOpenApi.builder()
-                .group("backend")
-                .pathsToMatch("/api/backend/**")
+                .group("backendapi")
+                .pathsToMatch("/api/backendapi/**")
                 .build();
     }
 

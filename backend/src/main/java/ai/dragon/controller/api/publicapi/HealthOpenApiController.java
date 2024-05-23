@@ -1,4 +1,4 @@
-package ai.dragon.controller.api.open;
+package ai.dragon.controller.api.publicapi;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/open/health")
+@RequestMapping("/api/publicapi/health")
 @Tag(name = "Health", description = "Health Check API Endpoints")
 public class HealthOpenApiController {
     @GetMapping("/status")
