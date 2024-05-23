@@ -6,7 +6,6 @@ import org.dizitart.no2.repository.annotations.Entity;
 import org.dizitart.no2.repository.annotations.Id;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
