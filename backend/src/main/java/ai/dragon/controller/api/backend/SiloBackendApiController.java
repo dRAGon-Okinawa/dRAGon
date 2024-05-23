@@ -18,7 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import ai.dragon.model.SiloEntity;
+import ai.dragon.entity.SiloEntity;
 import ai.dragon.repository.SiloRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

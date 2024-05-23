@@ -19,8 +19,8 @@ import org.springframework.web.server.ResponseStatusException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import ai.dragon.entity.ProviderEntity;
 import ai.dragon.enumeration.ProviderType;
-import ai.dragon.model.ProviderEntity;
 import ai.dragon.repository.ProviderRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

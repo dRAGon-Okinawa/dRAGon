@@ -1,4 +1,4 @@
-package ai.dragon.model;
+package ai.dragon.entity;
 
 import java.util.UUID;
 
@@ -16,7 +16,7 @@ import lombok.Setter;
 @Schema(name = "Provider", description = "Provider Entity")
 @Getter
 @Setter
-public class ProviderEntity implements IAbstractModel {
+public class ProviderEntity implements IAbstractEntity {
     @Id
     @NotNull
     @Schema(description = "Identifier of the Provider")

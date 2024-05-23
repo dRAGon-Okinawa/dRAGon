@@ -1,4 +1,4 @@
-package ai.dragon.model;
+package ai.dragon.entity;
 
 import java.util.UUID;
 
@@ -14,7 +14,7 @@ import lombok.Setter;
 @Schema(name = "Silo", description = "Silo Entity")
 @Getter
 @Setter
-public class SiloEntity implements IAbstractModel {
+public class SiloEntity implements IAbstractEntity {
     @Id
     @NotNull
     @Schema(description = "Identifier of the Silo")

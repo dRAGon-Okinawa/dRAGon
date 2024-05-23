@@ -14,14 +14,14 @@ import org.dizitart.no2.repository.ObjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import ai.dragon.model.IAbstractModel;
+import ai.dragon.entity.IAbstractEntity;
 import ai.dragon.service.DatabaseService;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 
 @Component
-abstract class AbstractRepository<T extends IAbstractModel> {
+abstract class AbstractRepository<T extends IAbstractEntity> {
     @Autowired
     private DatabaseService databaseService;
 
