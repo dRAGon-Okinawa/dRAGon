@@ -12,7 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ai.dragon.config.DataProperties;
+import ai.dragon.component.StartupComponent;
+import ai.dragon.properties.DataProperties;
 
 @Service
 public class DatabaseService {
@@ -23,7 +24,10 @@ public class DatabaseService {
     @Autowired
     private DataProperties dataProperties;
 
-    public Nitrite getDb() {
+    @Autowired
+    private StartupComponent startupComponent;
+
+    public Nitrite getNitriteDB() {
         if (db == null || db.isClosed()) {
             openDatabase();
         }
@@ -41,12 +45,8 @@ public class DatabaseService {
                 .builder()
                 .loadModule(new JacksonMapperModule());
 
-        ^^ When DevTools reload => getDb reverts to default value
-        logger.debug(dataProperties.getDb());
-
-        if (!dataProperties.getDb().equals(":memory:")) {
-            String dbName = Optional.ofNullable(dataProperties.getDb()).orElse("dragon.db");
-            File databaseFile = new File(dataProperties.getPath(), "db/" + dbName);
+        if (!isDatabaseInMemory()) {
+            File databaseFile = new File(startupComponent.getDataDirectory(), "db/" + getDatabaseFilename());
             logger.debug("Will use database file: " + databaseFile);
 
             MVStoreModule storeModule = MVStoreModule.withConfig()
@@ -60,5 +60,13 @@ public class DatabaseService {
         }
 
         db = dbBuilder.openOrCreate();
+    }
+
+    private String getDatabaseFilename() {
+        return Optional.ofNullable(dataProperties.getDb()).orElse("dragon.db");
+    }
+
+    private boolean isDatabaseInMemory() {
+        return ":memory:".equals(getDatabaseFilename());
     }
 }

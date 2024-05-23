@@ -26,7 +26,7 @@ abstract class AbstractRepository<T extends IAbstractModel> {
             throw new IllegalArgumentException("UUID is required");
         }
 
-        Nitrite db = databaseService.getDb();
+        Nitrite db = databaseService.getNitriteDB();
         ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
 
         if (exists(entity.getUuid())) {
@@ -49,19 +49,19 @@ abstract class AbstractRepository<T extends IAbstractModel> {
     }
 
     public T getByUuid(UUID uuid) {
-        Nitrite db = databaseService.getDb();
+        Nitrite db = databaseService.getNitriteDB();
         ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
         return repository.getById(uuid);
     }
 
     public Cursor<T> find() {
-        Nitrite db = databaseService.getDb();
+        Nitrite db = databaseService.getNitriteDB();
         ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
         return repository.find();
     }
 
     public Cursor<T> findWithFilter(Filter filter) {
-        Nitrite db = databaseService.getDb();
+        Nitrite db = databaseService.getNitriteDB();
         ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
         return repository.find(filter);
     }
@@ -79,31 +79,31 @@ abstract class AbstractRepository<T extends IAbstractModel> {
     }
 
     public void delete(T entity) {
-        Nitrite db = databaseService.getDb();
+        Nitrite db = databaseService.getNitriteDB();
         ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
         repository.remove(entity);
     }
 
     public void deleteAll() {
-        Nitrite db = databaseService.getDb();
+        Nitrite db = databaseService.getNitriteDB();
         ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
         repository.clear();
     }
 
     public long countAll() {
-        Nitrite db = databaseService.getDb();
+        Nitrite db = databaseService.getNitriteDB();
         ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
         return repository.size();
     }
 
     public void subscribe(CollectionEventListener listener) {
-        Nitrite db = databaseService.getDb();
+        Nitrite db = databaseService.getNitriteDB();
         ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
         repository.subscribe(listener);
     }
 
     public void unsubscribe(CollectionEventListener listener) {
-        Nitrite db = databaseService.getDb();
+        Nitrite db = databaseService.getNitriteDB();
         ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
         repository.unsubscribe(listener);
     }

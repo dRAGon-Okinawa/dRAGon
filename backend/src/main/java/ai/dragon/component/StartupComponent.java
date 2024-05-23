@@ -9,7 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import ai.dragon.config.DataProperties;
+import ai.dragon.properties.DataProperties;
+import lombok.Getter;
 
 @Component
 public class StartupComponent implements CommandLineRunner {
@@ -17,14 +18,17 @@ public class StartupComponent implements CommandLineRunner {
 
     private DataProperties dataProperties;
 
+    @Getter
+    private File dataDirectory;
+
     public StartupComponent(DataProperties dataProperties) {
         this.dataProperties = dataProperties;
     }
 
     @Override
     public void run(String... args) throws Exception {
-        File dataDirectory = createDataDirectories();
-        createDatabaseDirectory(dataDirectory);
+        dataDirectory = createDataDirectories();
+        createDatabaseDirectory();
     }
 
     private File createDataDirectories() throws Exception {
@@ -49,7 +53,7 @@ public class StartupComponent implements CommandLineRunner {
         return dataDirectory;
     }
 
-    private void createDatabaseDirectory(File dataDirectory) {
+    private void createDatabaseDirectory() {
         logger.debug("Creating database directory if doesn't exist");
         File databaseDirectory = new File(dataDirectory, "db");
 
