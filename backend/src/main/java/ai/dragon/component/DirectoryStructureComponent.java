@@ -13,7 +13,7 @@ import ai.dragon.properties.DataProperties;
 import lombok.Getter;
 
 @Component
-public class StartupComponent implements CommandLineRunner {
+public class DirectoryStructureComponent implements CommandLineRunner {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private DataProperties dataProperties;
@@ -21,7 +21,7 @@ public class StartupComponent implements CommandLineRunner {
     @Getter
     private File dataDirectory;
 
-    public StartupComponent(DataProperties dataProperties) {
+    public DirectoryStructureComponent(DataProperties dataProperties) {
         this.dataProperties = dataProperties;
     }
 

@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ai.dragon.component.StartupComponent;
+import ai.dragon.component.DirectoryStructureComponent;
 import ai.dragon.properties.DataProperties;
 
 @Service
@@ -25,7 +25,7 @@ public class DatabaseService {
     private DataProperties dataProperties;
 
     @Autowired
-    private StartupComponent startupComponent;
+    private DirectoryStructureComponent directoryStructureComponent;
 
     public Nitrite getNitriteDB() {
         if (db == null || db.isClosed()) {
@@ -46,7 +46,7 @@ public class DatabaseService {
                 .loadModule(new JacksonMapperModule());
 
         if (!isDatabaseInMemory()) {
-            File databaseFile = new File(startupComponent.getDataDirectory(), "db/" + getDatabaseFilename());
+            File databaseFile = new File(directoryStructureComponent.getDataDirectory(), "db/" + getDatabaseFilename());
             logger.debug("Will use database file: " + databaseFile);
 
             MVStoreModule storeModule = MVStoreModule.withConfig()

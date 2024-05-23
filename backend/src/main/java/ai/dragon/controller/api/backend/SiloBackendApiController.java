@@ -66,9 +66,9 @@ public class SiloBackendApiController {
     @ApiResponse(responseCode = "200", description = "Silo has been successfully created.")
     @ApiResponse(responseCode = "404", description = "Silo not found.", content = @Content)
     @Operation(summary = "Update a Silo", description = "Updates one Silo entity in the database.")
-    public SiloEntity update(@PathVariable("uuid") @Parameter(description = "Identifier of the Silo") String uuid,
+    public SiloEntity update(@PathVariable("uuid") @Parameter(description = "Identifier of the Silo", required = true) String uuid,
             SiloEntity silo) throws JsonMappingException {
-        if (!siloRepository.exists(uuid)) {
+        if (!siloRepository.exists(uuid) || silo == null || !uuid.equals(silo.getUuid().toString())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Silo not found");
         }
 
