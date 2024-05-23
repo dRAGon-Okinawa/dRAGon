@@ -1,5 +1,6 @@
 package ai.dragon.entity;
 
+import java.util.Map;
 import java.util.UUID;
 
 import org.dizitart.no2.repository.annotations.Entity;
@@ -30,6 +31,9 @@ public class ProviderEntity implements IAbstractEntity {
     @NotNull
     @Schema(description = "Type of the Provider")
     private ProviderType type;
+
+    @Schema(description = "Headers to be sent to the Provider (if applicable) in the form of key-value pairs. Could be used for authentication with API keys, tokens, etc.")
+    private Map<String, String> httpHeaders;
 
     public ProviderEntity() {
         this.uuid = UUID.randomUUID();
