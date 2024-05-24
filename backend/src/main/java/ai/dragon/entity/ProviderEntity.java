@@ -32,7 +32,9 @@ public class ProviderEntity implements IAbstractEntity {
     @Schema(description = "Type of the Provider")
     private ProviderType type;
 
-    @Schema(description = "Headers to be sent to the Provider (if applicable) in the form of key-value pairs. Could be used for authentication with API keys, tokens, etc.")
+    @Schema(description = """
+            Headers to be sent to the Provider (if applicable) in the form of key-value pairs.
+            Could be used for authentication with API keys, tokens, etc.""")
     private Map<String, String> httpHeaders;
 
     public ProviderEntity() {
