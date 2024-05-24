@@ -11,3 +11,9 @@ task npmBuild(type: NpmTask) {
 task npmServe(type: NpmTask) {
 	args = ['run', 'serve']
 }
+
+task test(type: NpmTask) {
+	inputs.dir("src")
+	outputs.dir("dist")
+	args = ['run', 'build']
+}
