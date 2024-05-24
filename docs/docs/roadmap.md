@@ -1,0 +1,18 @@
+# Roadmap
+- [ ] Conversational RAG
+- [ ] SQL RAG
+- [ ] Web Search Engine RAG
+- [ ] Multi-Modal Input Sources
+  - [ ] Local Files
+  - [ ] Web URLs / Web Search
+  - [ ] NFS Mount
+  - [ ] S3 Bucket
+  - [ ] CIFS Mount
+  - [ ] SQL Database
+  - [ ] Git
+- [ ] Documents Types
+  - [ ] Text : Plain / PDF / Word
+  - [ ] Sheets : CSV / Excel
+  - [ ] Images : PNG / JPEG / GIF
+  - [ ] Audio : MP3 / WAV
+  - [ ] Video : MP4 / AVI
