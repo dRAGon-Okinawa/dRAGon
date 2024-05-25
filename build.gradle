@@ -3,3 +3,12 @@ plugins {
 }
 
 version = scmVersion.version
+
+task issueReportInfo {
+    doLast {
+        exec {
+            workingDir '.'
+            commandLine 'sh', '-c', 'gradle -v && echo "NPM: $(npm -v)" && echo "Node: $(node -v)"'
+        }
+    }
+}
