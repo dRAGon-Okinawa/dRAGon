@@ -6,7 +6,7 @@
 			"version": "17",
 			"jdkDistro": "ms",
 			"installGradle": "true",
-			"gradleVersion": "latest"
+			"gradleVersion": "8.7"
 		},
 		"ghcr.io/devcontainers/features/node:1": {}
 	},

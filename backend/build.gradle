@@ -1,9 +1,11 @@
 plugins {
 	id 'java'
+	id 'java-library'
+	id 'checkstyle' 
 	id 'application'
 	id 'org.springframework.boot' version '3.2.5'
 	id 'io.spring.dependency-management' version '1.1.4'
-	id "org.springdoc.openapi-gradle-plugin" version "1.8.0"
+	id 'org.springdoc.openapi-gradle-plugin' version '1.8.0'
 }
 
 group = 'ai'
@@ -52,6 +54,13 @@ openApi {
     customBootRun {
         args.set(["--spring.profiles.active=test"]) 
     }
+}
+
+checkstyle {
+	toolVersion '10.16.0'
+    config = rootProject.resources.text.fromFile('backend/checkstyle.xml')
+    ignoreFailures = false
+    maxWarnings = 0
 }
 
 bootJar {

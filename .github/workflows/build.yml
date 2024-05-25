@@ -15,6 +15,14 @@ jobs:
         with:
           node-version: 20
       - uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.7
+
+      - name: Display Tools Versions
+        run: |
+          gradle -v
+          echo "Node $(node -v)"
+          echo "NPM $(npm -v)"
 
       - name: Create Release
         if: github.ref == 'refs/heads/main'
@@ -26,7 +34,7 @@ jobs:
         run: npm version from-git --no-git-tag-version --prefix docs
 
       - name: Test dRAGon
-        run: gradle npmInstall npmLint test
+        run: gradle npmInstall npmLint checkstyleMain checkstyleTest test
 
       - name: Build Documentation
         run: npm install --prefix docs && npm run build --prefix docs
