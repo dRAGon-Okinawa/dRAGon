@@ -19,10 +19,7 @@ jobs:
           gradle-version: 8.7
 
       - name: Display Tools Versions
-        run: |
-          gradle -v
-          echo "Node $(node -v)"
-          echo "NPM $(npm -v)"
+        run: gradle issueReportInfo
 
       - name: Create Release
         if: github.ref == 'refs/heads/main'
