@@ -7,6 +7,8 @@ import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.NitriteBuilder;
 import org.dizitart.no2.common.mapper.JacksonMapperModule;
 import org.dizitart.no2.mvstore.MVStoreModule;
+import org.dizitart.no2.support.exchange.ExportOptions;
+import org.dizitart.no2.support.exchange.Exporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +62,14 @@ public class DatabaseService {
         }
 
         db = dbBuilder.openOrCreate();
+    }
+
+    public void exportDatabase(String fileOutput) {
+        ExportOptions exportOptions = new ExportOptions();
+        exportOptions.setNitriteFactory(() -> getNitriteDB());
+
+        Exporter exporter = Exporter.withOptions(exportOptions);
+        exporter.exportTo(fileOutput);
     }
 
     private String getDatabaseFilename() {
