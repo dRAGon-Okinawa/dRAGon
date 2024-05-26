@@ -7,12 +7,14 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import ai.dragon.properties.DataProperties;
 import lombok.Getter;
 
 @Component
+@Order(1)
 public class DirectoryStructureComponent implements CommandLineRunner {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

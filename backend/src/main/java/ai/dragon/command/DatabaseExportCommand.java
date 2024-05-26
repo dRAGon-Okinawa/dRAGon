@@ -27,7 +27,7 @@ public class DatabaseExportCommand implements ApplicationRunner {
             }
 
             databaseService.exportDatabase(args.getOptionValues("output").get(0));
-            logger.info("Database export completed");
+            logger.info("Database export completed to : " + args.getOptionValues("output").get(0));
 
             System.exit(0);
         }
