@@ -24,6 +24,8 @@ public class SiloEntity implements IAbstractEntity {
     @Schema(description = "Name of the Silo")
     private String name;
 
+    private String embeddingStoreClass;
+
     public SiloEntity() {
         this.uuid = UUID.randomUUID();
         this.name = String.format("Silo %s", this.uuid.toString());
