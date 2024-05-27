@@ -8,7 +8,9 @@
     <module name="UnusedImports"/>
     <module name="RedundantImport"/>
     <module name="AvoidStarImport"/>
-    <module name="AvoidStaticImport"/>
+    <module name="AvoidStaticImport">
+      <property name="excludes" value="org.junit.jupiter.api.Assertions.*"/>
+    </module>
     <module name="IllegalImport"/>
     <module name="CommentsIndentation"/>
     <module name="PackageDeclaration"/>
