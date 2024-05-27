@@ -11,13 +11,22 @@ This command should only be used when the backend server is offline. Running thi
 :::
 
 ### Using Gradle
+```bash
 gradle bootRun --args="--command --database-export --output=/path/to/dump.json"
+```
 
 ### Using Java
+```bash
 java -jar backend.jar --command --database-export --output=/path/to/dump.json
+```
 
 ### Using Docker
+```bash
 docker run -v /path/to/output:/output dragon --command --database-export --output=/output/dump.json
+```
 
 ## Online Export
-<WIPS />
+To export the database while the backend server is running, use the following API endpoint:
+```bash
+curl -X 'POST' 'http://localhost:1985/api/backendapi/command/database/database/export'
+```
