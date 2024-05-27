@@ -1,4 +1,4 @@
-package ai.dragon.controller.api.backendapi;
+package ai.dragon.controller.api.backendapi.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,8 +29,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/backendapi/provider")
-@Tag(name = "Provider", description = "Provider Management API Endpoints")
+@RequestMapping("/api/backendapi/repository/provider")
+@Tag(name = "Provider Repository", description = "Provider Repository Management API Endpoints")
 public class ProviderBackendApiController {
     @Autowired
     private ProviderRepository providerRepository;

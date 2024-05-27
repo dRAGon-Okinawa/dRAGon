@@ -1,0 +1,32 @@
+import WIPS from '../../src/components/Admonitions/_wip_section.mdx';
+
+# Database Export
+This command is used to export the database to a JSON file. It can be used to backup the database or to move the database to another instance.
+
+## Offline Export
+:::info
+
+This command should only be used when the backend server is offline. Running this command while the backend server is running may not work as the database could be locked. To export the database while the backend server is running, use the API endpoint below.
+
+:::
+
+### Using Gradle
+```bash
+gradle bootRun --args="--command=database-export --output=/path/to/dump.json"
+```
+
+### Using Java
+```bash
+java -jar backend.jar --command=database-export --output=/path/to/dump.json
+```
+
+### Using Docker
+```bash
+docker run -v /path/to/output:/output dragon --command=database-export --output=/output/dump.json
+```
+
+## Online Export
+To export the database while the backend server is running, use the following API endpoint:
+```bash
+curl -X 'POST' 'http://localhost:1985/api/backendapi/command/database/database/export'
+```

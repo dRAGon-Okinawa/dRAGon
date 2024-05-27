@@ -1,4 +1,4 @@
-package ai.dragon.controller.api.backendapi;
+package ai.dragon.controller.api.backendapi.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,8 +27,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/backendapi/ingestor")
-@Tag(name = "Ingestor", description = "Ingestor Management API Endpoints")
+@RequestMapping("/api/backendapi/repository/ingestor")
+@Tag(name = "Ingestor Repository", description = "Ingestor Repository Management API Endpoints")
 public class IngestorBackendApiController {
     @Autowired
     private IngestorRepository ingestorRepository;

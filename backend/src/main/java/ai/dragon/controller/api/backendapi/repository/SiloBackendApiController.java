@@ -1,4 +1,4 @@
-package ai.dragon.controller.api.backendapi;
+package ai.dragon.controller.api.backendapi.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,8 +27,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/backendapi/silo")
-@Tag(name = "Silo", description = "Silo Management API Endpoints")
+@RequestMapping("/api/backendapi/repository/silo")
+@Tag(name = "Silo Repository", description = "Silo Repository Management API Endpoints")
 public class SiloBackendApiController {
     @Autowired
     private SiloRepository siloRepository;

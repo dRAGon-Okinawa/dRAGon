@@ -31,9 +31,11 @@ dependencies {
 	implementation 'dev.langchain4j:langchain4j-open-ai:0.30.0'
 	implementation platform('org.dizitart:nitrite-bom:4.2.1')
 	implementation 'org.dizitart:nitrite'
+	implementation 'org.dizitart:nitrite-support'
 	implementation 'org.dizitart:nitrite-mvstore-adapter'
 	implementation 'org.dizitart:nitrite-jackson-mapper'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+	implementation 'net.sourceforge.argparse4j:argparse4j:0.9.0'
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
