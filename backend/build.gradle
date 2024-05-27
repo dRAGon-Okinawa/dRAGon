@@ -35,6 +35,7 @@ dependencies {
 	implementation 'org.dizitart:nitrite-mvstore-adapter'
 	implementation 'org.dizitart:nitrite-jackson-mapper'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+	implementation 'net.sourceforge.argparse4j:argparse4j:0.9.0'
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

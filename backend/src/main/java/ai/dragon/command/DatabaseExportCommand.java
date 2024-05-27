@@ -3,33 +3,33 @@ package ai.dragon.command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import ai.dragon.enumeration.CommandLineExecutionResultType;
 import ai.dragon.service.DatabaseService;
+import ai.dragon.util.CommandLineRunnerWithArgumentsParser;
+import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sourceforge.argparse4j.inf.Namespace;
 
 @Component
-public class DatabaseExportCommand implements ApplicationRunner {
+public class DatabaseExportCommand extends CommandLineRunnerWithArgumentsParser {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private DatabaseService databaseService;
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
-        if (args.containsOption("command") && args.containsOption("database-export")) {
-            logger.info("Database export command received");
-            
-            if(!args.containsOption("output")) {
-                logger.error("Database export path not provided : --output=/tmp/dump.json");
-                System.exit(1);
-            }
+    public CommandLineExecutionResultType runCommand(String... args) throws Exception {
+        ArgumentParser parser = this.parserFor("database-export", "Dump the database to a file.");
+        parser.addArgument("--output")
+                .type(String.class)
+                .required(true)
+                .help("The output file path to export the database to.");
 
-            databaseService.exportDatabase(args.getOptionValues("output").get(0));
-            logger.info("Database export completed to : " + args.getOptionValues("output").get(0));
+        Namespace ns = parser.parseArgs(args);
+        databaseService.exportDatabase(ns.getString("output"));
+        logger.info("Database export completed to : " + ns.getString("output"));
 
-            System.exit(0);
-        }
+        return CommandLineExecutionResultType.EXECUTED;
     }
 }

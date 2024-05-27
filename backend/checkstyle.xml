@@ -5,6 +5,11 @@
 <module name="Checker">
   <property name="charset" value="UTF-8"/>
   <module name="TreeWalker">
+    <module name="UnusedImports"/>
+    <module name="RedundantImport"/>
+    <module name="AvoidStarImport"/>
+    <module name="AvoidStaticImport"/>
+    <module name="IllegalImport"/>
     <module name="CommentsIndentation"/>
     <module name="PackageDeclaration"/>
     <module name="AvoidStarImport"/>
