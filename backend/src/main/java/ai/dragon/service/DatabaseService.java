@@ -1,6 +1,7 @@
 package ai.dragon.service;
 
 import java.io.File;
+import java.io.OutputStream;
 import java.util.Optional;
 
 import org.dizitart.no2.Nitrite;
@@ -70,6 +71,14 @@ public class DatabaseService {
 
         Exporter exporter = Exporter.withOptions(exportOptions);
         exporter.exportTo(fileOutput);
+    }
+
+    public void exportDatabase(OutputStream outputStream) throws Exception {
+        ExportOptions exportOptions = new ExportOptions();
+        exportOptions.setNitriteFactory(() -> getNitriteDB());
+
+        Exporter exporter = Exporter.withOptions(exportOptions);
+        exporter.exportTo(outputStream);
     }
 
     private String getDatabaseFilename() {
