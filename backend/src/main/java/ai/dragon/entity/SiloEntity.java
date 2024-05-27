@@ -27,11 +27,11 @@ public class SiloEntity implements IAbstractEntity {
     private String name;
 
     @NotNull
-    @Schema(description = "Java Class to be used for the Vector Store")
+    @Schema(description = "Java Class to be used for the Vector Store", example = "dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore")
     private String vectorStoreClass;
 
     @NotNull
-    @Schema(description = "Java Class to be used for the Embedding Model")
+    @Schema(description = "Java Class to be used for the Embedding Model", example = "dev.langchain4j.model.embedding.bge.small.en.v15.BgeSmallEnV15QuantizedEmbeddingModel")
     private String embeddingModelClass;
 
     public SiloEntity() {
