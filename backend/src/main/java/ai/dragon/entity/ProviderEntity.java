@@ -36,10 +36,8 @@ public class ProviderEntity implements IAbstractEntity {
     @Schema(description = "Type of the Provider. Must be unique.")
     private ProviderType type;
 
-    @Schema(description = """
-            Headers to be sent to the Provider (if applicable) in the form of key-value pairs.
-            Could be used for authentication with API keys, tokens, etc.""")
-    private Map<String, String> httpHeaders;
+    @Schema(description = "Settings to be linked to the Provider (if applicable) in the form of key-value pairs.")
+    private Map<String, String> settings;
 
     public ProviderEntity() {
         this.uuid = UUID.randomUUID();
