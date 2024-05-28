@@ -1,5 +1,7 @@
 package ai.dragon.enumeration;
 
+import java.util.List;
+
 import dev.langchain4j.model.openai.OpenAiEmbeddingModelName;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,25 +36,33 @@ public enum EmbeddingModelType {
                         .embeddingModelClassName(
                                 "dev.langchain4j.model.embedding.bge.small.en.v15.BgeSmallEnV15QuantizedEmbeddingModel")
                         .embeddingModelName("BgeSmallEnV15QuantizedEmbeddingModel")
-                        .providerType(ProviderType.ONNX);
+                        .providerType(ProviderType.ONNX)
+                        .dimensions(384)
+                        .maxTokens(512);
             case OpenAiEmbeddingAda002Model:
                 return EmbeddingModelDefinition
                         .newInstance()
                         .embeddingModelClassName("dev.langchain4j.model.openai.OpenAiEmbeddingModel")
                         .embeddingModelName(OpenAiEmbeddingModelName.TEXT_EMBEDDING_ADA_002.toString())
-                        .providerType(ProviderType.OpenAI);
+                        .providerType(ProviderType.OpenAI)
+                        .dimensions(1536)
+                        .maxTokens(8191);
             case OpenAiEmbedding3SmallModel:
                 return EmbeddingModelDefinition
                         .newInstance()
                         .embeddingModelClassName("dev.langchain4j.model.openai.OpenAiEmbeddingModel")
                         .embeddingModelName(OpenAiEmbeddingModelName.TEXT_EMBEDDING_3_SMALL.toString())
-                        .providerType(ProviderType.OpenAI);
+                        .providerType(ProviderType.OpenAI)
+                        .dimensions(1536)
+                        .maxTokens(8191);
             case OpenAiEmbedding3LargeModel:
                 return EmbeddingModelDefinition
                         .newInstance()
                         .embeddingModelClassName("dev.langchain4j.model.openai.OpenAiEmbeddingModel")
                         .embeddingModelName(OpenAiEmbeddingModelName.TEXT_EMBEDDING_3_LARGE.toString())
-                        .providerType(ProviderType.OpenAI);
+                        .providerType(ProviderType.OpenAI)
+                        .dimensions(3072)
+                        .maxTokens(8191);
             default:
                 throw new ClassNotFoundException("Model not found");
         }
@@ -70,9 +80,13 @@ public enum EmbeddingModelType {
 class EmbeddingModelDefinition {
     private String embeddingModelClassName;
     private String embeddingModelName;
+    private List<String> languages;
     private ProviderType providerType;
+    private int dimensions;
+    private int maxTokens;
 
     private EmbeddingModelDefinition() {
+        this.languages = List.of("en");
     }
 
     public static EmbeddingModelDefinition newInstance() {

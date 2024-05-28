@@ -1,5 +1,6 @@
 package ai.dragon.enumeration;
 
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,12 @@ public class EmbeddingModelTypeTest {
             assertNotNull(Class.forName(embeddingModelDefinition.embeddingModelClassName()));
             assertNotNull(embeddingModelDefinition.embeddingModelClassName());
             assertNotNull(embeddingModelDefinition.providerType());
+            assertNotNull(embeddingModelDefinition.dimensions());
+            assertNotEquals(0, embeddingModelDefinition.dimensions());
+            assertNotNull(embeddingModelDefinition.maxTokens());
+            assertNotEquals(0, embeddingModelDefinition.maxTokens());
+            assertNotNull(embeddingModelDefinition.languages());
+            assertNotEquals(0, embeddingModelDefinition.languages().size());
         }
     }
 }
