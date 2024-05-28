@@ -32,7 +32,7 @@ public class SiloEntity implements IAbstractEntity {
 
     @NotNull
     @Schema(description = "Java Class to be used for the Vector Store", example = "InMemoryEmbeddingStore")
-    private String vectorStoreClass;
+    private String vectorStoreType;
 
     @NotNull
     @Schema(description = "Type to be used for the Embedding Model", example = "BgeSmallEnV15QuantizedEmbeddingModel")
@@ -41,7 +41,7 @@ public class SiloEntity implements IAbstractEntity {
     public SiloEntity() {
         this.uuid = UUID.randomUUID();
         this.name = String.format("Silo %s", this.uuid.toString());
-        this.vectorStoreClass = InMemoryEmbeddingStore.class.getCanonicalName();
+        this.vectorStoreType = InMemoryEmbeddingStore.class.getCanonicalName();
         this.embeddingModelType = EmbeddingModelType.BgeSmallEnV15QuantizedEmbeddingModel;
     }
 }
