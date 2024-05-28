@@ -15,9 +15,7 @@ import lombok.Setter;
 
 @Entity(value = "ingestor")
 @Schema(name = "Ingestor", description = "Ingestor Entity")
-@Indices({
-        @Index(fields = "name", type = IndexType.UNIQUE)
-})
+@Indices({ @Index(fields = "name", type = IndexType.UNIQUE) })
 @Getter
 @Setter
 public class IngestorEntity implements IAbstractEntity {

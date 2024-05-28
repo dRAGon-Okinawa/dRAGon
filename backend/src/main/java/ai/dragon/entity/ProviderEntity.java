@@ -18,10 +18,7 @@ import lombok.Setter;
 
 @Entity(value = "provider")
 @Schema(name = "Provider", description = "Provider Entity")
-@Indices({
-        @Index(fields = "name", type = IndexType.UNIQUE),
-        @Index(fields = "type", type = IndexType.UNIQUE)
-})
+@Indices({ @Index(fields = "name", type = IndexType.UNIQUE), @Index(fields = "type", type = IndexType.UNIQUE) })
 @Getter
 @Setter
 public class ProviderEntity implements IAbstractEntity {

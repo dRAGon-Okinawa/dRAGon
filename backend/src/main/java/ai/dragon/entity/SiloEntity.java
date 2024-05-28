@@ -17,9 +17,7 @@ import lombok.Setter;
 
 @Entity(value = "silo")
 @Schema(name = "Silo", description = "Silo Entity")
-@Indices({
-        @Index(fields = "name", type = IndexType.UNIQUE)
-})
+@Indices({ @Index(fields = "name", type = IndexType.UNIQUE) })
 @Getter
 @Setter
 public class SiloEntity implements IAbstractEntity {
