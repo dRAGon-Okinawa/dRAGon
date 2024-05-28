@@ -41,6 +41,7 @@ public class ProviderBackendApiController extends AbstractCrudBackendApiControll
 
     @PostMapping("/")
     @ApiResponse(responseCode = "200", description = "Provider has been successfully created.")
+    @ApiResponse(responseCode = "409", description = "Constraint violation.", content = @Content)
     @Operation(summary = "Create a new Provider", description = "Creates one Provider entity in the database.")
     public ProviderEntity create(
             @RequestParam(name = "type", required = true) @Parameter(description = "Type of the provider") String providerType)

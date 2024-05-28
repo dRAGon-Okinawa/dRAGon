@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.dizitart.no2.exceptions.UniqueConstraintException;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.server.ResponseStatusException;
@@ -54,7 +55,11 @@ abstract class AbstractCrudBackendApiController<T extends IAbstractEntity> {
         if (beforeSaveCallback != null) {
             entity = beforeSaveCallback.apply(entity);
         }
-        repository.save(entity);
+        try {
+            repository.save(entity);
+        } catch (UniqueConstraintException ex) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Unique key constraint violation", ex);
+        }
         return entity;
     }
 

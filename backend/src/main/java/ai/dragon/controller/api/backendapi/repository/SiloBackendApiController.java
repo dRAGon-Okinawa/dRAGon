@@ -39,6 +39,7 @@ public class SiloBackendApiController extends AbstractCrudBackendApiController<S
 
     @PostMapping("/")
     @ApiResponse(responseCode = "200", description = "Silo has been successfully created.")
+    @ApiResponse(responseCode = "409", description = "Constraint violation.", content = @Content)
     @Operation(summary = "Create a new Silo", description = "Creates one Silo entity in the database.")
     public SiloEntity create() throws Exception {
         return super.create(siloRepository);

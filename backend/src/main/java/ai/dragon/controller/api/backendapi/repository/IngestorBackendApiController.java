@@ -39,6 +39,7 @@ public class IngestorBackendApiController extends AbstractCrudBackendApiControll
 
     @PostMapping("/")
     @ApiResponse(responseCode = "200", description = "Ingestor has been successfully created.")
+    @ApiResponse(responseCode = "409", description = "Constraint violation.", content = @Content)
     @Operation(summary = "Create a new Ingestor", description = "Creates one Ingestor entity in the database.")
     public IngestorEntity create() throws Exception {
         return super.create(ingestorRepository);
