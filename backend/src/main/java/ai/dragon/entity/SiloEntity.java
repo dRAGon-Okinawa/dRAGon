@@ -10,7 +10,6 @@ import org.dizitart.no2.repository.annotations.Indices;
 
 import ai.dragon.enumeration.EmbeddingModelType;
 import ai.dragon.enumeration.VectorStoreType;
-import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
