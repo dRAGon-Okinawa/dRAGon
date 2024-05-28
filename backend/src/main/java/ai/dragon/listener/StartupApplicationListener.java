@@ -8,14 +8,24 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
+import ai.dragon.service.JobService;
+
 @Component
 @Profile("!test")
 public class StartupApplicationListener implements ApplicationListener<ContextRefreshedEvent> {
     @Autowired
     private ServletWebServerApplicationContext webServerAppCtxt;
 
+    @Autowired
+    private JobService jobService;
+
     @Override
     public void onApplicationEvent(@NonNull ContextRefreshedEvent event) {
+        showAppURLs();
+        configureJobs();
+    }
+
+    private void showAppURLs() {
         String scheme = "http";
         String host = "localhost";
         int port = webServerAppCtxt.getWebServer().getPort();
@@ -25,5 +35,9 @@ public class StartupApplicationListener implements ApplicationListener<ContextRe
         System.out.println(String.format("Swagger UI\t : %s://%s:%d/api/swagger-ui.html", scheme, host, port));
         System.out.println(String.format("JobRunr\t\t : %s://%s:%d/", scheme, host, 1984));
         System.out.println("================================================");
+    }
+
+    private void configureJobs() {
+        jobService.onApplicationStartup();
     }
 }
