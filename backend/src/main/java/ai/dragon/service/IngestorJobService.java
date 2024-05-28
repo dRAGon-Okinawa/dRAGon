@@ -7,12 +7,17 @@ import org.jobrunr.jobs.annotations.Job;
 import org.jobrunr.jobs.annotations.Recurring;
 import org.jobrunr.jobs.context.JobContext;
 import org.jobrunr.jobs.context.JobRunrDashboardLogger;
+import org.jobrunr.scheduling.JobScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ai.dragon.entity.IAbstractEntity;
+import ai.dragon.entity.IngestorEntity;
 import ai.dragon.repository.IngestorRepository;
+
+import static org.jobrunr.scheduling.RecurringJobBuilder.aRecurringJob;
 
 @Service
 public class IngestorJobService {
@@ -23,12 +28,17 @@ public class IngestorJobService {
     @Autowired
     private IngestorRepository ingestorRepository;
 
+    @Autowired
+    private JobScheduler jobScheduler;
+
     public void onApplicationStartup() {
         ingestorRepository.subscribe(new CollectionEventListener() {
             @Override
-            public void onEvent(CollectionEventInfo<?> collectionEventInfo) {
-                if(EventType.Insert.equals(collectionEventInfo.getEventType())) {
-                    
+            public void onEvent(CollectionEventInfo<IngestorEntity> collectionEventInfo) {
+                collectionEventInfo.getItem();
+                if (EventType.Insert.equals(collectionEventInfo.getEventType())) {
+                    UUID uuid = collectionEventInfo.getItem().getUuid();
+                    jobScheduler.createRecurrently(aRecurringJob().withId);
                 }
             }
         });

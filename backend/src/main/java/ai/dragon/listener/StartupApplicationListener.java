@@ -8,6 +8,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
+import ai.dragon.service.IngestorJobService;
 import ai.dragon.service.JobService;
 
 @Component
@@ -18,6 +19,9 @@ public class StartupApplicationListener implements ApplicationListener<ContextRe
 
     @Autowired
     private JobService jobService;
+
+    @Autowired
+    private IngestorJobService ingestorJobService;
 
     @Override
     public void onApplicationEvent(@NonNull ContextRefreshedEvent event) {
@@ -39,5 +43,6 @@ public class StartupApplicationListener implements ApplicationListener<ContextRe
 
     private void configureJobs() {
         jobService.onApplicationStartup();
+        ingestorJobService.onApplicationStartup();
     }
 }

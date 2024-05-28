@@ -15,11 +15,7 @@ public class JobService {
     @Autowired
     private StorageProvider storageProvider;
 
-    @Autowired
-    private IngestorJobService ingestorJobService;
-
     public void onApplicationStartup() {
-        ingestorJobService.onApplicationStartup();
     }
 
     public void triggerRecurringJob(String id) {
