@@ -9,6 +9,7 @@ import org.dizitart.no2.repository.annotations.Index;
 import org.dizitart.no2.repository.annotations.Indices;
 
 import ai.dragon.enumeration.EmbeddingModelType;
+import ai.dragon.enumeration.VectorStoreType;
 import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
@@ -32,7 +33,7 @@ public class SiloEntity implements IAbstractEntity {
 
     @NotNull
     @Schema(description = "Java Class to be used for the Vector Store", example = "InMemoryEmbeddingStore")
-    private String vectorStoreType;
+    private VectorStoreType vectorStoreType;
 
     @NotNull
     @Schema(description = "Type to be used for the Embedding Model", example = "BgeSmallEnV15QuantizedEmbeddingModel")
@@ -41,7 +42,7 @@ public class SiloEntity implements IAbstractEntity {
     public SiloEntity() {
         this.uuid = UUID.randomUUID();
         this.name = String.format("Silo %s", this.uuid.toString());
-        this.vectorStoreType = InMemoryEmbeddingStore.class.getCanonicalName();
+        this.vectorStoreType = VectorStoreType.InMemoryEmbeddingStore;
         this.embeddingModelType = EmbeddingModelType.BgeSmallEnV15QuantizedEmbeddingModel;
     }
 }
