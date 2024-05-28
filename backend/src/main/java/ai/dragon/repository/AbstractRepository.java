@@ -6,7 +6,9 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.dizitart.no2.Nitrite;
+import org.dizitart.no2.collection.events.CollectionEventInfo;
 import org.dizitart.no2.collection.events.CollectionEventListener;
+import org.dizitart.no2.collection.events.EventType;
 import org.dizitart.no2.filters.Filter;
 import org.dizitart.no2.filters.FluentFilter;
 import org.dizitart.no2.repository.Cursor;
@@ -112,6 +114,18 @@ public abstract class AbstractRepository<T extends IAbstractEntity> {
         Nitrite db = databaseService.getNitriteDB();
         ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
         repository.subscribe(listener);
+    }
+
+    public void subscribe(EventType eventType, CollectionEventListener listener) {
+        CollectionEventListener filterListener = new CollectionEventListener() {
+            @Override
+            public void onEvent(CollectionEventInfo<?> collectionEventInfo) {
+                if (collectionEventInfo.getEventType() == eventType) {
+                    listener.onEvent(collectionEventInfo);
+                }
+            }
+        };
+        subscribe(filterListener);
     }
 
     public void unsubscribe(CollectionEventListener listener) {

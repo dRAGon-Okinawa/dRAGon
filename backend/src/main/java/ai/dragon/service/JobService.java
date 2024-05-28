@@ -15,8 +15,11 @@ public class JobService {
     @Autowired
     private StorageProvider storageProvider;
 
+    @Autowired
+    private IngestorJobService ingestorJobService;
+
     public void onApplicationStartup() {
-        this.triggerRecurringJob(IngestorService.INGESTOR_RECURRING_JOB_ID);
+        ingestorJobService.onApplicationStartup();
     }
 
     public void triggerRecurringJob(String id) {
@@ -28,6 +31,17 @@ public class JobService {
 
         final Job job = recurringJob.toEnqueuedJob();
         storageProvider.save(job);
+    }
+
+    public void stopRecurringJob(String id) {
+        storageProvider.deleteRecurringJob(id);
+    }
+
+    public void stopAllRecurringJobs() {
+        recurringJobResults()
+                .stream()
+                .map(RecurringJob::getId)
+                .forEach(storageProvider::deleteRecurringJob);
     }
 
     private RecurringJobsResult recurringJobResults() {
