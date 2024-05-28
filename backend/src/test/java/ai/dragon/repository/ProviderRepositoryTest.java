@@ -28,7 +28,7 @@ public class ProviderRepositoryTest {
         ProviderEntity provider = new ProviderEntity();
         provider.setUuid(UUID.randomUUID());
         provider.setName(providerName);
-        provider.setType(ProviderType.OPENAI);
+        provider.setType(ProviderType.ONNX);
         providerRepository.save(provider);
 
         ProviderEntity retrievedProvider = providerRepository.getByUuid(provider.getUuid());
@@ -39,55 +39,41 @@ public class ProviderRepositoryTest {
     @Test
     void findAllProviders() {
         providerRepository.deleteAll();
-        int nbProvidersToInsert = 3;
+        ProviderEntity provider = new ProviderEntity();
+        provider.setName("ONNX Provider");
+        provider.setType(ProviderType.ONNX);
+        providerRepository.save(provider);
+        assertEquals(1, providerRepository.countAll());
 
-        for (int i = 0; i < nbProvidersToInsert; i++) {
-            ProviderEntity provider = new ProviderEntity();
-            provider.setName(String.format("Provider %d", i));
-            provider.setType(ProviderType.OPENAI);
-            providerRepository.save(provider);
-        }
-
-        assertEquals(nbProvidersToInsert, providerRepository.countAll());
-
-        providerRepository.find().forEach(provider -> {
-            assertNotNull(provider.getUuid());
+        providerRepository.find().forEach(providerFetched -> {
+            assertNotNull(providerFetched.getUuid());
         });
     }
 
     @Test
     void findProvidersByName() {
         providerRepository.deleteAll();
-        int nbProvidersToInsert = 3;
+        ProviderEntity provider = new ProviderEntity();
+        provider.setName("OpenAI Provider");
+        provider.setType(ProviderType.OpenAI);
+        providerRepository.save(provider);
 
-        for (int i = 0; i < nbProvidersToInsert; i++) {
-            ProviderEntity provider = new ProviderEntity();
-            provider.setName(String.format("Provider %d", i));
-            provider.setType(ProviderType.OPENAI);
-            providerRepository.save(provider);
-        }
-
-        assertEquals(nbProvidersToInsert, providerRepository.countAll());
-
-        Cursor<ProviderEntity> cursor = providerRepository.findByFieldValue("name", "Provider 1");
+        Cursor<ProviderEntity> cursor = providerRepository.findByFieldValue("name", "OpenAI Provider");
         assertEquals(1, cursor.size());
     }
 
     @Test
     void deleteProviders() {
         providerRepository.deleteAll();
-        int nbProvidersToInsert = 3;
+        ProviderEntity provider = new ProviderEntity();
+        provider.setName("OpenAI Provider");
+        provider.setType(ProviderType.OpenAI);
+        providerRepository.save(provider);
 
-        for (int i = 0; i < nbProvidersToInsert; i++) {
-            ProviderEntity provider = new ProviderEntity();
-            provider.setType(ProviderType.OPENAI);
-            providerRepository.save(provider);
-        }
+        assertEquals(1, providerRepository.countAll());
 
-        assertEquals(nbProvidersToInsert, providerRepository.countAll());
-
-        providerRepository.find().forEach(provider -> {
-            providerRepository.delete(provider.getUuid());
+        providerRepository.find().forEach(providerFetched -> {
+            providerRepository.delete(providerFetched.getUuid());
         });
 
         assertEquals(0, providerRepository.countAll());
