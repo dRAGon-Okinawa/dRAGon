@@ -30,7 +30,6 @@ public class IngestorEntity implements IAbstractEntity {
     @Schema(description = "Name of the Ingestor. Must be unique.")
     private String name;
 
-    @NotNull
     @Schema(description = "Type of the Ingestor")
     private IngestorType type;
 
