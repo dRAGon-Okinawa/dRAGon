@@ -1,5 +1,7 @@
 package ai.dragon.entity;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.dizitart.no2.index.IndexType;
@@ -38,10 +40,16 @@ public class SiloEntity implements IAbstractEntity {
     @Schema(description = "Type to be used for the Embedding Model", example = "BgeSmallEnV15QuantizedEmbeddingModel")
     private EmbeddingModelType embeddingModelType;
 
+    @Schema(description = """
+            List of Ingestor UUIDs to be linked to the Silo. When linked to a Silo,
+            Ingestors will be run in order to add documents into the Silo.""")
+    private List<UUID> ingestors;
+
     public SiloEntity() {
         this.uuid = UUID.randomUUID();
         this.name = String.format("Silo %s", this.uuid.toString());
         this.vectorStoreType = VectorStoreType.InMemoryEmbeddingStore;
         this.embeddingModelType = EmbeddingModelType.BgeSmallEnV15QuantizedEmbeddingModel;
+        this.ingestors = new ArrayList<UUID>();
     }
 }
