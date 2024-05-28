@@ -21,7 +21,7 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 
 @Component
-abstract class AbstractRepository<T extends IAbstractEntity> {
+public abstract class AbstractRepository<T extends IAbstractEntity> {
     @Autowired
     private DatabaseService databaseService;
 
@@ -121,7 +121,7 @@ abstract class AbstractRepository<T extends IAbstractEntity> {
     }
 
     @SuppressWarnings("unchecked")
-    private Class<T> getGenericSuperclass() {
+    public Class<T> getGenericSuperclass() {
         ParameterizedType superclass = (ParameterizedType) getClass().getGenericSuperclass();
 
         return (Class<T>) superclass.getActualTypeArguments()[0];

@@ -8,6 +8,14 @@ springdoc:
     path: "/api/swagger-ui.html"
   api-docs:
     path: "/api/docs"
+org:
+  jobrunr:
+    background-job-server:
+      enabled: false
+    job-scheduler:
+      enabled: false
+    dashboard:
+      enabled: false
 dragon:
   data:
     path: ":temp:"

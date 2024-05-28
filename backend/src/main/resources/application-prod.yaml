@@ -8,6 +8,28 @@ springdoc:
     path: "/api/swagger-ui.html"
   api-docs:
     path: "/api/docs"
+org:
+  jobrunr:
+    background-job-server:
+      enabled: true
+      #worker-count: 4 # Number of CPU cores
+      poll-interval-in-seconds: 5 # Check for new work every 5 seconds
+      delete-succeeded-jobs-after: 1 # Succeeded jobs will go to the deleted state after 1 hour
+      permanently-delete-deleted-jobs-after: 24 # Deleted jobs will be deleted permanently after 24 hours
+      metrics:
+        enabled: false
+    job-scheduler:
+      enabled: true
+    dashboard:
+      enabled: true
+      port: 1984
+    jobs:
+      default-number-of-retries: 10 # Number of retries for a failing job
+      retry-back-off-time-seed: 3 # Time seed for the exponential back-off policy
+      metrics:
+        enabled: false
+    miscellaneous:
+      allow-anonymous-data-usage: false
 dragon:
   data:
     path: "/data"

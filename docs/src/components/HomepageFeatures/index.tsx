@@ -21,7 +21,7 @@ const FeatureList: FeatureItem[] = [
     title: 'Focus on What Matters',
     description: (
       <>
-        dRAGon lets you focus on your docs, and we&apos;ll do the chores. Go
+        dRAGon lets you focus on your RAG pipeline, and we&apos;ll do the chores. Go
         ahead and import your docs into the pipeline and let dRAGon do the rest.
       </>
     ),

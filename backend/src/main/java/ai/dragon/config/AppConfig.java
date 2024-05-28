@@ -8,5 +8,4 @@ import ai.dragon.properties.DataProperties;
 @Configuration
 @EnableConfigurationProperties(DataProperties.class)
 public class AppConfig {
-
 }
