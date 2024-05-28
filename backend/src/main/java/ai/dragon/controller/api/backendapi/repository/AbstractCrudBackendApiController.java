@@ -1,7 +1,6 @@
 package ai.dragon.controller.api.backendapi.repository;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -9,11 +8,12 @@ import java.util.function.Function;
 
 import org.dizitart.no2.exceptions.UniqueConstraintException;
 import org.springframework.http.HttpStatus;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+
 import ai.dragon.entity.IAbstractEntity;
-import ai.dragon.entity.SiloEntity;
 import ai.dragon.repository.AbstractRepository;
 
 abstract class AbstractCrudBackendApiController<T extends IAbstractEntity> {
@@ -22,21 +22,18 @@ abstract class AbstractCrudBackendApiController<T extends IAbstractEntity> {
         if (entityToUpdate == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Entity not found");
         }
-
-        fields.forEach((k, v) -> {
-            Field field = ReflectionUtils.findField(SiloEntity.class, k);
-            if (field != null) {
-                field.setAccessible(true);
-                ReflectionUtils.setField(field, entityToUpdate, v);
-            }
-        });
-
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String fieldsAsJson = objectMapper.writeValueAsString(fields);
+            ObjectReader objectReader = objectMapper.readerForUpdating(entityToUpdate);
+            entityToUpdate = objectReader.readValue(fieldsAsJson);
+        } catch (Exception ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error parsing fields as JSON", ex);
+        }
         if (!uuid.equals(entityToUpdate.getUuid().toString())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "UUID must not be changed.");
         }
-
         repository.save(entityToUpdate);
-
         return entityToUpdate;
     }
 
