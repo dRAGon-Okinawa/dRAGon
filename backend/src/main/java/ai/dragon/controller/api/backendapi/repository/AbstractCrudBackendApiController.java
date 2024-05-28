@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ReflectionUtils;
@@ -43,9 +44,16 @@ abstract class AbstractCrudBackendApiController<T extends IAbstractEntity> {
     }
 
     public T create(AbstractRepository<T> repository) throws Exception {
+        return create(repository, null);
+    }
+
+    public T create(AbstractRepository<T> repository, Function<T, T> beforeSaveCallback) throws Exception {
         Class<T> clazz = repository.getGenericSuperclass();
         Constructor<T> cons = clazz.getConstructor();
         T entity = cons.newInstance();
+        if (beforeSaveCallback != null) {
+            entity = beforeSaveCallback.apply(entity);
+        }
         repository.save(entity);
         return entity;
     }

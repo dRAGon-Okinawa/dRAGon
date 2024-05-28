@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import ai.dragon.entity.ProviderEntity;
+import ai.dragon.enumeration.ProviderType;
 import ai.dragon.repository.ProviderRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -44,7 +45,10 @@ public class ProviderBackendApiController extends AbstractCrudBackendApiControll
     public ProviderEntity create(
             @RequestParam(name = "type", required = true) @Parameter(description = "Type of the provider") String providerType)
             throws Exception {
-        return super.create(providerRepository);
+        return super.create(providerRepository, provider -> {
+            provider.setType(ProviderType.fromString(providerType));
+            return provider;
+        });
     }
 
     @GetMapping("/{uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}")
