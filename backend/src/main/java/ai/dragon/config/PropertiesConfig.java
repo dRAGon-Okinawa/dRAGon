@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import ai.dragon.properties.DataProperties;
+import ai.dragon.config.properties.DataProperties;
 
 @Configuration
 public class PropertiesConfig {

@@ -1,4 +1,4 @@
-package ai.dragon.properties;
+package ai.dragon.config.properties;
 
 import lombok.Getter;
 import lombok.Setter;

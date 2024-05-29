@@ -11,7 +11,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import ai.dragon.properties.DataProperties;
+import ai.dragon.config.properties.DataProperties;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 
