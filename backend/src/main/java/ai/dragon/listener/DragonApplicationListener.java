@@ -8,7 +8,6 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
-import ai.dragon.service.DatabaseService;
 import jakarta.annotation.PreDestroy;
 
 @Component
@@ -16,9 +15,6 @@ import jakarta.annotation.PreDestroy;
 public class DragonApplicationListener implements ApplicationListener<ContextRefreshedEvent> {
     @Autowired
     private ServletWebServerApplicationContext webServerAppCtxt;
-
-    @Autowired
-    private DatabaseService databaseService;
 
     @Override
     public void onApplicationEvent(@NonNull ContextRefreshedEvent event) {
