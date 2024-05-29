@@ -1,7 +1,8 @@
 package ai.dragon.service;
 
+import java.util.UUID;
+
 import org.dizitart.no2.collection.events.CollectionEventInfo;
-import org.dizitart.no2.collection.events.CollectionEventListener;
 import org.dizitart.no2.collection.events.EventType;
 import org.jobrunr.jobs.annotations.Job;
 import org.jobrunr.jobs.annotations.Recurring;
@@ -13,11 +14,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ai.dragon.entity.IAbstractEntity;
 import ai.dragon.entity.IngestorEntity;
+import ai.dragon.listener.EntityChangeListener;
 import ai.dragon.repository.IngestorRepository;
-
-import static org.jobrunr.scheduling.RecurringJobBuilder.aRecurringJob;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 
 @Service
 public class IngestorJobService {
@@ -31,17 +32,25 @@ public class IngestorJobService {
     @Autowired
     private JobScheduler jobScheduler;
 
-    public void onApplicationStartup() {
-        ingestorRepository.subscribe(new CollectionEventListener() {
+    private EntityChangeListener<IngestorEntity> entityChangeListener;
+
+    @PostConstruct
+    private void init() {
+        logger.error("IngestorJobService PostConstruct");
+
+        entityChangeListener = ingestorRepository.subscribe(new EntityChangeListener<IngestorEntity>() {
             @Override
-            public void onEvent(CollectionEventInfo<IngestorEntity> collectionEventInfo) {
-                collectionEventInfo.getItem();
-                if (EventType.Insert.equals(collectionEventInfo.getEventType())) {
-                    UUID uuid = collectionEventInfo.getItem().getUuid();
-                    jobScheduler.createRecurrently(aRecurringJob().withId);
+            public void onChangeEvent(CollectionEventInfo<?> collectionEventInfo, UUID uuid) {
+                if (collectionEventInfo.getEventType() == EventType.Insert) {
+                    logger.info(uuid.toString());
                 }
             }
         });
+    }
+
+    @PreDestroy
+    private void destroy() {
+        ingestorRepository.unsubscribe(entityChangeListener);
     }
 
     @Recurring(id = INGESTOR_RECURRING_JOB_ID, cron = "* * * * *")
