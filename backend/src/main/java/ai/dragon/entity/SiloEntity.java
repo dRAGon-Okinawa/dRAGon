@@ -22,7 +22,7 @@ import lombok.Setter;
 @Indices({ @Index(fields = "name", type = IndexType.UNIQUE) })
 @Getter
 @Setter
-public class SiloEntity implements IAbstractEntity {
+public class SiloEntity implements AbstractEntity {
     @Id
     @NotNull
     @Schema(description = "Identifier of the Silo")

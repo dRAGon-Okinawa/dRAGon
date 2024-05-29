@@ -20,7 +20,7 @@ import lombok.Setter;
 @Indices({ @Index(fields = "name", type = IndexType.UNIQUE) })
 @Getter
 @Setter
-public class IngestorEntity implements IAbstractEntity {
+public class IngestorEntity implements AbstractEntity {
     @Id
     @NotNull
     @Schema(description = "Identifier of the Ingestor")

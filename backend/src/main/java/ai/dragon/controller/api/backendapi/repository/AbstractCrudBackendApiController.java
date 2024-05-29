@@ -13,10 +13,10 @@ import org.springframework.web.server.ResponseStatusException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 
-import ai.dragon.entity.IAbstractEntity;
+import ai.dragon.entity.AbstractEntity;
 import ai.dragon.repository.AbstractRepository;
 
-abstract class AbstractCrudBackendApiController<T extends IAbstractEntity> {
+abstract class AbstractCrudBackendApiController<T extends AbstractEntity> {
     public T update(String uuid, Map<String, Object> fields, AbstractRepository<T> repository) {
         T entityToUpdate = repository.getByUuid(uuid);
         if (entityToUpdate == null) {

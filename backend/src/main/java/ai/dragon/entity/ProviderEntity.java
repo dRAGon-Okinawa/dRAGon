@@ -21,7 +21,7 @@ import lombok.Setter;
 @Indices({ @Index(fields = "name", type = IndexType.UNIQUE), @Index(fields = "type", type = IndexType.UNIQUE) })
 @Getter
 @Setter
-public class ProviderEntity implements IAbstractEntity {
+public class ProviderEntity implements AbstractEntity {
     @Id
     @NotNull
     @Schema(description = "Identifier of the Provider")
