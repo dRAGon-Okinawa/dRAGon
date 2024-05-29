@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.collection.events.CollectionEventInfo;
-import org.dizitart.no2.collection.events.CollectionEventListener;
 import org.dizitart.no2.collection.events.EventType;
 import org.dizitart.no2.filters.Filter;
 import org.dizitart.no2.filters.FluentFilter;
@@ -16,14 +15,15 @@ import org.dizitart.no2.repository.ObjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import ai.dragon.entity.IAbstractEntity;
+import ai.dragon.entity.AbstractEntity;
+import ai.dragon.listener.EntityChangeListener;
 import ai.dragon.service.DatabaseService;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 
 @Component
-public abstract class AbstractRepository<T extends IAbstractEntity> {
+public abstract class AbstractRepository<T extends AbstractEntity> {
     @Autowired
     private DatabaseService databaseService;
 
@@ -110,14 +110,15 @@ public abstract class AbstractRepository<T extends IAbstractEntity> {
         return repository.size();
     }
 
-    public void subscribe(CollectionEventListener listener) {
+    public EntityChangeListener<T> subscribe(EntityChangeListener<T> listener) {
         Nitrite db = databaseService.getNitriteDB();
         ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
         repository.subscribe(listener);
+        return listener;
     }
 
-    public void subscribe(EventType eventType, CollectionEventListener listener) {
-        CollectionEventListener filterListener = new CollectionEventListener() {
+    public EntityChangeListener<T> subscribe(EventType eventType, EntityChangeListener<T> listener) {
+        EntityChangeListener<T> filterListener = new EntityChangeListener<T>() {
             @Override
             public void onEvent(CollectionEventInfo<?> collectionEventInfo) {
                 if (collectionEventInfo.getEventType() == eventType) {
@@ -125,10 +126,10 @@ public abstract class AbstractRepository<T extends IAbstractEntity> {
                 }
             }
         };
-        subscribe(filterListener);
+        return subscribe(filterListener);
     }
 
-    public void unsubscribe(CollectionEventListener listener) {
+    public void unsubscribe(EntityChangeListener<T> listener) {
         Nitrite db = databaseService.getNitriteDB();
         ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
         repository.unsubscribe(listener);
