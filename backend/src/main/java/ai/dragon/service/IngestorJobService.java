@@ -8,7 +8,6 @@ import org.jobrunr.jobs.annotations.Job;
 import org.jobrunr.jobs.annotations.Recurring;
 import org.jobrunr.jobs.context.JobContext;
 import org.jobrunr.jobs.context.JobRunrDashboardLogger;
-import org.jobrunr.scheduling.JobScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +27,6 @@ public class IngestorJobService {
 
     @Autowired
     private IngestorRepository ingestorRepository;
-
-    @Autowired
-    private JobScheduler jobScheduler;
 
     private EntityChangeListener<IngestorEntity> entityChangeListener;
 
