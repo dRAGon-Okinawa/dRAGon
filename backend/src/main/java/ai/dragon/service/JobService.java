@@ -15,9 +15,6 @@ public class JobService {
     @Autowired
     private StorageProvider storageProvider;
 
-    public void onApplicationStartup() {
-    }
-
     public void triggerRecurringJob(String id) {
         final RecurringJob recurringJob = recurringJobResults()
                 .stream()
