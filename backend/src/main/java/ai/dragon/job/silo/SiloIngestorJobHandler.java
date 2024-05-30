@@ -16,13 +16,15 @@ import ai.dragon.repository.SiloRepository;
 
 @Component
 public class SiloIngestorJobHandler implements JobRequestHandler<SiloIngestorJobRequest> {
+    public static final String JOB_NAME = "Silo Ingestor Job";
+    
     private final Logger logger = new JobRunrDashboardLogger(LoggerFactory.getLogger(this.getClass()));
 
     @Autowired
     private SiloRepository siloRepository;
 
     @Override
-    @Job(name = "Silo Ingestor Job", retries = 10, labels = { "silo", "ingestor" })
+    @Job(name = JOB_NAME, retries = 10, labels = { "silo", "ingestor" })
     public void run(SiloIngestorJobRequest jobRequest) {
         JobDashboardProgressBar progressBar = jobContext().progressBar(100);
         jobContext().logger().info(String.format("Running Job for Silo : %s", jobRequest.uuid()));
