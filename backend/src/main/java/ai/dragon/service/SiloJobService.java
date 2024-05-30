@@ -1,13 +1,14 @@
 package ai.dragon.service;
 
+import java.util.Optional;
+
 import org.dizitart.no2.collection.events.CollectionEventInfo;
+import org.jobrunr.jobs.RecurringJob;
 import org.jobrunr.scheduling.JobRequestScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 import ai.dragon.entity.SiloEntity;
 import ai.dragon.job.silo.SiloIngestorJobHandler;
@@ -82,15 +83,16 @@ public class SiloJobService {
         logger.info(String.format("Creating Silo Ingestor Job : %s -> %s", siloEntity.getUuid(), siloEntity.getName()));
         try {
             SiloIngestorJobRequest jobRequest = SiloIngestorJobRequest
-                    .create()
-                    .uuid(siloEntity.getUuid());
+                    .builder()
+                    .uuid(siloEntity.getUuid())
+                    .build();
             jobRequestScheduler.scheduleRecurrently(
                     siloEntity.getUuid().toString(),
                     Optional.ofNullable(siloEntity.getIngestorSchedule()).orElse(SiloEntity.DEFAULT_CRON_EXPRESSION),
                     java.time.ZoneId.of("UTC"), // TODO Move to configuration
                     jobRequest);
-            jobService.getRecurringJob(siloEntity.getUuid().toString())
-                    .setJobName(String.format("%s : %s", SiloIngestorJobHandler.JOB_NAME, siloEntity.getName()));
+            RecurringJob job = jobService.getRecurringJob(siloEntity.getUuid().toString());
+            job.setJobName(String.format("%s : %s", SiloIngestorJobHandler.JOB_NAME, siloEntity.getName()));
         } catch (Exception ex) {
             logger.error("Error creating Silo Ingestor Job", ex);
         }
