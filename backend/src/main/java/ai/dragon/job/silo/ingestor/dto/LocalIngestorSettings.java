@@ -8,7 +8,7 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LocalIngestorSettings {
     private String localPath;
-    private String matches;
+    private String pathMatcher;
     private boolean recursive;
 
     public LocalIngestorSettings() {

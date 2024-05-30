@@ -2,9 +2,9 @@ package ai.dragon.job.silo.ingestor;
 
 import java.util.List;
 
-import ai.dragon.job.silo.ingestor.dto.IngestorDocument;
+import dev.langchain4j.data.document.Document;
 
 public interface AbstractSiloIngestor {
     public void checkIngestorSettings() throws Exception;
-    public List<IngestorDocument> listDocuments() throws Exception;
+    public List<Document> listDocuments() throws Exception;
 }
