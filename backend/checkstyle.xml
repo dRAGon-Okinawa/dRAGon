@@ -12,6 +12,7 @@
     <module name="SimplifyBooleanExpression"/>
     <module name="SimplifyBooleanReturn"/>
     <module name="UnnecessaryParentheses"/>
+    <module name="UnnecessarySemicolonAfterOuterTypeDeclaration"/>
     <module name="RedundantImport"/>
     <module name="AvoidStarImport"/>
     <module name="AvoidStaticImport">
