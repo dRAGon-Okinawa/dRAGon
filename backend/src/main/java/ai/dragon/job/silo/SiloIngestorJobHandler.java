@@ -26,7 +26,7 @@ public class SiloIngestorJobHandler implements JobRequestHandler<SiloIngestorJob
     @Job(name = JOB_NAME, retries = 10, labels = { "silo", "ingestor" })
     public void run(SiloIngestorJobRequest jobRequest) throws Exception {
         JobDashboardProgressBar progressBar = jobContext().progressBar(100);
-        jobContext().logger().info(String.format("Running Job for Silo : %s", jobRequest.getUuid()));
+        jobContext().logger().info(String.format("Silo Ingestor Job : %s", jobRequest.getUuid()));
         SiloEntity siloEntity = siloRepository.getByUuid(jobRequest.getUuid())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found"));
         ingestDataToSilo(siloEntity, progressBar);
@@ -35,19 +35,19 @@ public class SiloIngestorJobHandler implements JobRequestHandler<SiloIngestorJob
     private void ingestDataToSilo(SiloEntity siloEntity, JobDashboardProgressBar progressBar) throws Exception {
         // TODO LocalSiloIngestor => From enum
         LocalSiloIngestor ingestor = new LocalSiloIngestor(siloEntity);
+        jobContext().logger().info("Listing documents...");
         List<IngestorDocument> documents = ingestor.listDocuments();
-        jobContext().logger().info(String.format("Ingesting %d documents to Silo %s", documents.size(), siloEntity.getUuid()));
-
+        jobContext().logger().info(String.format("Ingesting %d documents to Silo...", documents.size()));
         for (int i = 0; i < documents.size(); i++) {
             if (Thread.currentThread().isInterrupted()) {
                 throw new InterruptedException();
             }
             int progress = (i * 100) / documents.size();
             IngestorDocument document = documents.get(i);
-            System.out.println(document);
+            jobContext().logger().info(document.getUri().toString());
             progressBar.setProgress(progress);
         }
-
+        jobContext().logger().info("End.");
         progressBar.setProgress(100);
     }
 }
