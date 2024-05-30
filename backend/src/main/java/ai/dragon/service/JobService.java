@@ -26,11 +26,11 @@ public class JobService {
         storageProvider.save(job);
     }
 
-    public void stopRecurringJob(String id) {
+    public void removeRecurringJob(String id) {
         storageProvider.deleteRecurringJob(id);
     }
 
-    public void stopAllRecurringJobs() {
+    public void removeAllRecurringJobs() {
         recurringJobResults()
                 .stream()
                 .map(RecurringJob::getId)
