@@ -16,13 +16,13 @@ public class EntityChangeListener<T extends AbstractEntity> implements Collectio
             Object document = collectionEventInfo.getItem();
             ObjectMapper objectMapper = new ObjectMapper();
             T entity = objectMapper.convertValue(document, getGenericSuperclass());
-            onChangeEvent((CollectionEventInfo<?>) collectionEventInfo, entity.getUuid());
+            onChangeEvent((CollectionEventInfo<?>) collectionEventInfo, entity);
         } catch (Throwable ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    public void onChangeEvent(CollectionEventInfo<?> collectionEventInfo, UUID uuid) {
+    public void onChangeEvent(CollectionEventInfo<?> collectionEventInfo, T entity) {
     }
 
     @SuppressWarnings("unchecked")
