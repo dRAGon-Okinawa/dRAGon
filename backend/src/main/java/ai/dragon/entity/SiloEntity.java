@@ -42,9 +42,11 @@ public class SiloEntity implements AbstractEntity {
     @Schema(description = "Type to be used for the Embedding Model", example = "BgeSmallEnV15QuantizedEmbeddingModel")
     private EmbeddingModelType embeddingModelType;
 
+    @NotNull
     @Schema(description = "Type of the Silo's Ingestor Type")
     private SiloType ingestorType;
 
+    @NotNull
     @Schema(description = "Cron Expression for the Silo's Ingestor Job", example = "Launch the Silo ingestor every 15 minutes : */15 * * * *")
     private String ingestorSchedule;
 
@@ -56,6 +58,7 @@ public class SiloEntity implements AbstractEntity {
         this.name = String.format("Silo %s", this.uuid.toString());
         this.vectorStoreType = VectorStoreType.InMemoryEmbeddingStore;
         this.embeddingModelType = EmbeddingModelType.BgeSmallEnV15QuantizedEmbeddingModel;
+        this.ingestorType = SiloType.LOCAL;
         this.ingestorSchedule = DEFAULT_CRON_EXPRESSION;
     }
 }

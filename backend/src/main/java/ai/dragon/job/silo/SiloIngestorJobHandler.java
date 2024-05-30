@@ -17,7 +17,7 @@ import ai.dragon.repository.SiloRepository;
 @Component
 public class SiloIngestorJobHandler implements JobRequestHandler<SiloIngestorJobRequest> {
     public static final String JOB_NAME = "Silo Ingestor Job";
-    
+
     private final Logger logger = new JobRunrDashboardLogger(LoggerFactory.getLogger(this.getClass()));
 
     @Autowired
