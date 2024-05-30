@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ai.dragon.entity.SiloEntity;
-import ai.dragon.job.SiloJobRequest;
+import ai.dragon.job.SiloIngestorRequest;
 import ai.dragon.listener.EntityChangeListener;
 import ai.dragon.repository.SiloRepository;
 import jakarta.annotation.PostConstruct;
@@ -42,12 +42,12 @@ public class SiloJobService {
         
         // Create Recurrent Job for each Silo
         siloRepository.find().forEach(siloEntity -> {
-            logger.info(String.format("Creating Recurrent Job for Silo : %s", siloEntity.getUuid().toString()));
+            logger.info(String.format("Creating Silo Ingestor Job : %s", siloEntity.getUuid().toString()));
             RecurringJobBuilder jobBuilder = RecurringJobBuilder.aRecurringJob()
                     .withId(siloEntity.getUuid().toString())
-                    .withName("Silo Recurrent Job")
+                    .withName("Silo Ingestor Job")
                     .withCron("* * * * *")
-                    .withJobRequest(new SiloJobRequest()); // Passer UUID !
+                    .withJobRequest(new SiloIngestorRequest()); // TODO Passer UUID !
             BackgroundJob.createRecurrently(jobBuilder);
         });
     }
