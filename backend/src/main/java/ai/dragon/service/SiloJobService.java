@@ -6,6 +6,7 @@ import org.dizitart.no2.collection.events.CollectionEventInfo;
 import org.dizitart.no2.collection.events.EventType;
 import org.jobrunr.jobs.context.JobRunrDashboardLogger;
 import org.jobrunr.scheduling.BackgroundJob;
+import org.jobrunr.scheduling.JobScheduler;
 import org.jobrunr.scheduling.RecurringJobBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,9 @@ public class SiloJobService {
     @Autowired
     private SiloRepository siloRepository;
 
+    @Autowired
+    private JobScheduler jobScheduler;
+
     private EntityChangeListener<SiloEntity> entityChangeListener;
 
     @PostConstruct
@@ -43,6 +47,7 @@ public class SiloJobService {
         // Create Recurrent Job for each Silo
         siloRepository.find().forEach(siloEntity -> {
             logger.info(String.format("Creating Silo Ingestor Job : %s", siloEntity.getUuid().toString()));
+            BackgroundJob.setJobScheduler(jobScheduler);
             RecurringJobBuilder jobBuilder = RecurringJobBuilder.aRecurringJob()
                     .withId(siloEntity.getUuid().toString())
                     .withName("Silo Ingestor Job")
@@ -55,5 +60,7 @@ public class SiloJobService {
     @PreDestroy
     private void destroy() {
         siloRepository.unsubscribe(entityChangeListener);
+
+        // TODO Stop all Recurrent Jobs
     }
 }
