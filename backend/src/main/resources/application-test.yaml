@@ -11,11 +11,12 @@ springdoc:
 org:
   jobrunr:
     background-job-server:
-      enabled: false
+      enabled: true
+      poll-interval-in-seconds: 5 # Check for new work every 5 seconds
     job-scheduler:
-      enabled: false
-    dashboard:
-      enabled: false
+      enabled: true
+    jobs:
+      default-number-of-retries: 0 # Number of retries for a failing job
 dragon:
   data:
     path: ":temp:"
