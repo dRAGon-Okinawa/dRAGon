@@ -15,10 +15,6 @@ public class JobService {
     @Autowired
     private StorageProvider storageProvider;
 
-    public void onApplicationStartup() {
-        this.triggerRecurringJob(IngestorService.INGESTOR_RECURRING_JOB_ID);
-    }
-
     public void triggerRecurringJob(String id) {
         final RecurringJob recurringJob = recurringJobResults()
                 .stream()
@@ -28,6 +24,25 @@ public class JobService {
 
         final Job job = recurringJob.toEnqueuedJob();
         storageProvider.save(job);
+    }
+
+    public RecurringJob getRecurringJob(String id) {
+        return recurringJobResults()
+                .stream()
+                .filter(rj -> rj.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new JobNotFoundException(id));
+    }
+
+    public void removeRecurringJob(String id) {
+        storageProvider.deleteRecurringJob(id);
+    }
+
+    public void removeAllRecurringJobs() {
+        recurringJobResults()
+                .stream()
+                .map(RecurringJob::getId)
+                .forEach(storageProvider::deleteRecurringJob);
     }
 
     private RecurringJobsResult recurringJobResults() {

@@ -8,21 +8,26 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
-import ai.dragon.service.JobService;
+import jakarta.annotation.PreDestroy;
 
 @Component
 @Profile("!test")
-public class StartupApplicationListener implements ApplicationListener<ContextRefreshedEvent> {
+public class DragonApplicationListener implements ApplicationListener<ContextRefreshedEvent> {
     @Autowired
     private ServletWebServerApplicationContext webServerAppCtxt;
-
-    @Autowired
-    private JobService jobService;
 
     @Override
     public void onApplicationEvent(@NonNull ContextRefreshedEvent event) {
         showAppURLs();
-        configureJobs();
+    }
+
+    @PreDestroy
+    public void destroy() {
+        System.out.println("================================================");
+        System.out.println("See you later, dRAGon!");
+        System.out.println("================================================");
+
+        webServerAppCtxt.close();
     }
 
     private void showAppURLs() {
@@ -35,9 +40,5 @@ public class StartupApplicationListener implements ApplicationListener<ContextRe
         System.out.println(String.format("Swagger UI\t : %s://%s:%d/api/swagger-ui.html", scheme, host, port));
         System.out.println(String.format("JobRunr\t\t : %s://%s:%d/", scheme, host, 1984));
         System.out.println("================================================");
-    }
-
-    private void configureJobs() {
-        jobService.onApplicationStartup();
     }
 }

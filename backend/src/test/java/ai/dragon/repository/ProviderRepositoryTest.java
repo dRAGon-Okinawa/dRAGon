@@ -31,7 +31,7 @@ public class ProviderRepositoryTest {
         provider.setType(ProviderType.ONNX);
         providerRepository.save(provider);
 
-        ProviderEntity retrievedProvider = providerRepository.getByUuid(provider.getUuid());
+        ProviderEntity retrievedProvider = providerRepository.getByUuid(provider.getUuid()).orElseThrow();
         assertNotNull(providerRepository.getByUuid(retrievedProvider.getUuid()));
         assertEquals(providerName, retrievedProvider.getName());
     }

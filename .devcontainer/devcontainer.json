@@ -22,6 +22,7 @@
 		"vscode": {
 			"extensions": [
 				"redhat.java",
+				"vscjava.vscode-java-debug",
 				"vscjava.vscode-java-pack",
 				"vscjava.vscode-gradle",
 				"Vue.volar"

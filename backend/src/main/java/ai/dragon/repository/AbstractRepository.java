@@ -2,26 +2,31 @@ package ai.dragon.repository;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 import org.dizitart.no2.Nitrite;
-import org.dizitart.no2.collection.events.CollectionEventListener;
+import org.dizitart.no2.collection.events.CollectionEventInfo;
+import org.dizitart.no2.collection.events.EventType;
 import org.dizitart.no2.filters.Filter;
 import org.dizitart.no2.filters.FluentFilter;
 import org.dizitart.no2.repository.Cursor;
 import org.dizitart.no2.repository.ObjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
-import ai.dragon.entity.IAbstractEntity;
+import ai.dragon.entity.AbstractEntity;
+import ai.dragon.listener.EntityChangeListener;
 import ai.dragon.service.DatabaseService;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 
 @Component
-public abstract class AbstractRepository<T extends IAbstractEntity> {
+public abstract class AbstractRepository<T extends AbstractEntity> {
     @Autowired
     private DatabaseService databaseService;
 
@@ -53,17 +58,17 @@ public abstract class AbstractRepository<T extends IAbstractEntity> {
     }
 
     public boolean exists(UUID uuid) {
-        return getByUuid(uuid) != null;
+        return getByUuid(uuid).isPresent();
     }
 
-    public T getByUuid(String uuid) {
+    public Optional<T> getByUuid(String uuid) {
         return getByUuid(UUID.fromString(uuid));
     }
 
-    public T getByUuid(UUID uuid) {
+    public Optional<T> getByUuid(UUID uuid) {
         Nitrite db = databaseService.getNitriteDB();
         ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
-        return repository.getById(uuid);
+        return Optional.ofNullable(repository.getById(uuid));
     }
 
     public Cursor<T> find() {
@@ -87,7 +92,8 @@ public abstract class AbstractRepository<T extends IAbstractEntity> {
     }
 
     public void delete(UUID uuid) {
-        delete(getByUuid(uuid));
+        delete(getByUuid(uuid)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found")));
     }
 
     public void delete(T entity) {
@@ -108,13 +114,26 @@ public abstract class AbstractRepository<T extends IAbstractEntity> {
         return repository.size();
     }
 
-    public void subscribe(CollectionEventListener listener) {
+    public EntityChangeListener<T> subscribe(EntityChangeListener<T> listener) {
         Nitrite db = databaseService.getNitriteDB();
         ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
         repository.subscribe(listener);
+        return listener;
     }
 
-    public void unsubscribe(CollectionEventListener listener) {
+    public EntityChangeListener<T> subscribe(EventType eventType, EntityChangeListener<T> listener) {
+        EntityChangeListener<T> filterListener = new EntityChangeListener<T>() {
+            @Override
+            public void onEvent(CollectionEventInfo<?> collectionEventInfo) {
+                if (collectionEventInfo.getEventType() == eventType) {
+                    listener.onEvent(collectionEventInfo);
+                }
+            }
+        };
+        return subscribe(filterListener);
+    }
+
+    public void unsubscribe(EntityChangeListener<T> listener) {
         Nitrite db = databaseService.getNitriteDB();
         ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
         repository.unsubscribe(listener);

@@ -10,9 +10,9 @@ public enum IngestorType {
     }
 
     public static IngestorType fromString(String text) {
-        for (IngestorType ingestor : IngestorType.values()) {
-            if (ingestor.value.equalsIgnoreCase(text)) {
-                return ingestor;
+        for (IngestorType type : IngestorType.values()) {
+            if (type.value.equalsIgnoreCase(text)) {
+                return type;
             }
         }
         return null;

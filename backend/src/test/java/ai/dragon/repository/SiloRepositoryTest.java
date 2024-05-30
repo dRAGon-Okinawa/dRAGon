@@ -29,7 +29,7 @@ public class SiloRepositoryTest {
         silo.setName(siloName);
         siloRepository.save(silo);
 
-        SiloEntity retrievedSilo = siloRepository.getByUuid(silo.getUuid());
+        SiloEntity retrievedSilo = siloRepository.getByUuid(silo.getUuid()).orElseThrow();
         assertNotNull(siloRepository.getByUuid(retrievedSilo.getUuid()));
         assertEquals(siloName, retrievedSilo.getName());
     }

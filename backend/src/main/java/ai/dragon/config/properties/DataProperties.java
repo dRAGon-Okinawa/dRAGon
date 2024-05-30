@@ -1,11 +1,8 @@
-package ai.dragon.properties;
-
-import org.springframework.boot.context.properties.ConfigurationProperties;
+package ai.dragon.config.properties;
 
 import lombok.Getter;
 import lombok.Setter;
 
-@ConfigurationProperties(prefix = DataProperties.PREFIX)
 @Getter
 @Setter
 public class DataProperties {

@@ -16,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ai.dragon.component.DirectoryStructureComponent;
-import ai.dragon.properties.DataProperties;
+import ai.dragon.config.properties.DataProperties;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 
 @Service
 public class DatabaseService {
@@ -38,6 +40,14 @@ public class DatabaseService {
         return db;
     }
 
+    @PreDestroy
+    public void closeDatabase() {
+        if (db != null && !db.isClosed()) {
+            db.close();
+        }
+    }
+
+    @PostConstruct
     public void openDatabase() {
         if (db != null && !db.isClosed()) {
             logger.debug("Database is already opened");

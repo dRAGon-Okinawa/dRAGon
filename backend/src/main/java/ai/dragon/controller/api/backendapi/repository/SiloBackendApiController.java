@@ -49,7 +49,8 @@ public class SiloBackendApiController extends AbstractCrudBackendApiController<S
     @ApiResponse(responseCode = "200", description = "Silo has been successfully retrieved.")
     @ApiResponse(responseCode = "404", description = "Silo not found.", content = @Content)
     @Operation(summary = "Retrieve one Silo", description = "Returns one Silo entity from its UUID stored in the database.")
-    public SiloEntity get(@PathVariable("uuid") @Parameter(description = "Identifier of the Silo") String uuid) {
+    public SiloEntity get(
+            @PathVariable("uuid") @Parameter(description = "Identifier of the Silo") String uuid) {
         return super.get(uuid, siloRepository);
     }
 

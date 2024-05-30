@@ -6,29 +6,28 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.CommandLineRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import ai.dragon.properties.DataProperties;
+import ai.dragon.config.properties.DataProperties;
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 
 @Component
-@Order(1)
-public class DirectoryStructureComponent implements CommandLineRunner {
+@Order(Ordered.HIGHEST_PRECEDENCE)
+public class DirectoryStructureComponent {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Autowired
     private DataProperties dataProperties;
 
     @Getter
     private File dataDirectory;
 
-    public DirectoryStructureComponent(DataProperties dataProperties) {
-        this.dataProperties = dataProperties;
-    }
-
-    @Override
-    public void run(String... args) throws Exception {
+    @PostConstruct
+    private void postConstruct() throws Exception {
         dataDirectory = createDataDirectories();
         createDatabaseDirectory();
     }
