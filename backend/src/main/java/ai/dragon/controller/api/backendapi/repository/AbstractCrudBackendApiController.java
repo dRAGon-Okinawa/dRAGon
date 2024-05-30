@@ -3,7 +3,6 @@ package ai.dragon.controller.api.backendapi.repository;
 import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 
 import org.dizitart.no2.exceptions.UniqueConstraintException;
@@ -18,10 +17,8 @@ import ai.dragon.repository.AbstractRepository;
 
 abstract class AbstractCrudBackendApiController<T extends AbstractEntity> {
     public T update(String uuid, Map<String, Object> fields, AbstractRepository<T> repository) {
-        T entityToUpdate = repository.getByUuid(uuid);
-        if (entityToUpdate == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Entity not found");
-        }
+        T entityToUpdate = repository.getByUuid(uuid)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found"));
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             String fieldsAsJson = objectMapper.writeValueAsString(fields);
@@ -61,7 +58,7 @@ abstract class AbstractCrudBackendApiController<T extends AbstractEntity> {
     }
 
     public T get(String uuid, AbstractRepository<T> repository) {
-        return Optional.ofNullable(repository.getByUuid(uuid))
+        return repository.getByUuid(uuid)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found."));
     }
 
