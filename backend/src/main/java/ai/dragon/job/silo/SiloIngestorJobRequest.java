@@ -10,7 +10,7 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 @Getter
 @Setter
-public class SiloIngestorRequest implements JobRequest {
+public class SiloIngestorJobRequest implements JobRequest {
     private UUID uuid;
 
     @Override
@@ -18,7 +18,7 @@ public class SiloIngestorRequest implements JobRequest {
         return SiloIngestorJobHandler.class;
     }
 
-    public static SiloIngestorRequest create() {
-        return new SiloIngestorRequest();
+    public static SiloIngestorJobRequest create() {
+        return new SiloIngestorJobRequest();
     }
 }

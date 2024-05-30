@@ -15,7 +15,7 @@ import ai.dragon.entity.SiloEntity;
 import ai.dragon.repository.SiloRepository;
 
 @Component
-public class SiloIngestorJobHandler implements JobRequestHandler<SiloIngestorRequest> {
+public class SiloIngestorJobHandler implements JobRequestHandler<SiloIngestorJobRequest> {
     private final Logger logger = new JobRunrDashboardLogger(LoggerFactory.getLogger(this.getClass()));
 
     @Autowired
@@ -23,13 +23,18 @@ public class SiloIngestorJobHandler implements JobRequestHandler<SiloIngestorReq
 
     @Override
     @Job(name = "Silo Ingestor Job", retries = 10, labels = { "silo", "ingestor" })
-    public void run(SiloIngestorRequest jobRequest) {
+    public void run(SiloIngestorJobRequest jobRequest) {
+        JobDashboardProgressBar progressBar = jobContext().progressBar(100);
         jobContext().logger().info(String.format("Running Job for Silo : %s", jobRequest.uuid()));
         SiloEntity siloEntity = siloRepository.getByUuid(jobRequest.uuid())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found"));
-        JobDashboardProgressBar progressBar = jobContext().progressBar(100);
+        ingestDataToSilo(siloEntity, progressBar);
+    }
+
+    private void ingestDataToSilo(SiloEntity siloEntity, JobDashboardProgressBar progressBar) {
+        jobContext().logger().info(String.format("Name : %s", siloEntity.getName()));
         progressBar.setProgress(100);
-        jobContext().logger().info("Job is running");
-        throw new RuntimeException("test");
+
+        // TODO Loop => if (Thread.currentThread().isInterrupted()) throw new InterruptedException();
     }
 }
