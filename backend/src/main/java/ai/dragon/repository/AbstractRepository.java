@@ -58,7 +58,7 @@ public abstract class AbstractRepository<T extends AbstractEntity> {
     }
 
     public boolean exists(UUID uuid) {
-        return getByUuid(uuid) != null;
+        return getByUuid(uuid).isPresent();
     }
 
     public Optional<T> getByUuid(String uuid) {
