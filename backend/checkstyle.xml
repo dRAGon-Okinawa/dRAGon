@@ -11,6 +11,7 @@
     <module name="EqualsAvoidNull"/>
     <module name="SimplifyBooleanExpression"/>
     <module name="SimplifyBooleanReturn"/>
+    <module name="UnnecessaryParentheses"/>
     <module name="RedundantImport"/>
     <module name="AvoidStarImport"/>
     <module name="AvoidStaticImport">
