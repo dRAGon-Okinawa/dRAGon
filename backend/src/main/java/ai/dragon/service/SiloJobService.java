@@ -4,17 +4,14 @@ import java.util.UUID;
 
 import org.dizitart.no2.collection.events.CollectionEventInfo;
 import org.dizitart.no2.collection.events.EventType;
-import org.jobrunr.jobs.context.JobRunrDashboardLogger;
-import org.jobrunr.scheduling.BackgroundJob;
-import org.jobrunr.scheduling.JobScheduler;
-import org.jobrunr.scheduling.RecurringJobBuilder;
+import org.jobrunr.scheduling.JobRequestScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ai.dragon.entity.SiloEntity;
-import ai.dragon.job.SiloIngestorRequest;
+import ai.dragon.job.silo.SiloIngestorRequest;
 import ai.dragon.listener.EntityChangeListener;
 import ai.dragon.repository.SiloRepository;
 import jakarta.annotation.PostConstruct;
@@ -22,13 +19,13 @@ import jakarta.annotation.PreDestroy;
 
 @Service
 public class SiloJobService {
-    private final Logger logger = new JobRunrDashboardLogger(LoggerFactory.getLogger(this.getClass()));
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private SiloRepository siloRepository;
 
     @Autowired
-    private JobScheduler jobScheduler;
+    private JobRequestScheduler jobRequestScheduler;
 
     private EntityChangeListener<SiloEntity> entityChangeListener;
 
@@ -43,17 +40,18 @@ public class SiloJobService {
                 }
             }
         });
-        
+
         // Create Recurrent Job for each Silo
         siloRepository.find().forEach(siloEntity -> {
             logger.info(String.format("Creating Silo Ingestor Job : %s", siloEntity.getUuid().toString()));
-            BackgroundJob.setJobScheduler(jobScheduler);
-            RecurringJobBuilder jobBuilder = RecurringJobBuilder.aRecurringJob()
-                    .withId(siloEntity.getUuid().toString())
-                    .withName("Silo Ingestor Job")
-                    .withCron("* * * * *")
-                    .withJobRequest(new SiloIngestorRequest()); // TODO Passer UUID !
-            BackgroundJob.createRecurrently(jobBuilder);
+            SiloIngestorRequest jobRequest = SiloIngestorRequest
+                    .create()
+                    .uuid(siloEntity.getUuid());
+            jobRequestScheduler.scheduleRecurrently(
+                    siloEntity.getUuid().toString(),
+                    "* * * * * ", // TODO Move to SiloEntity settings
+                    java.time.ZoneId.of("UTC"), // TODO Move to configuration
+                    jobRequest);
         });
     }
 
