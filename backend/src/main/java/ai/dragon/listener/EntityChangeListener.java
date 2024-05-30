@@ -1,7 +1,6 @@
 package ai.dragon.listener;
 
 import java.lang.reflect.ParameterizedType;
-import java.util.UUID;
 
 import org.dizitart.no2.collection.events.CollectionEventInfo;
 import org.dizitart.no2.collection.events.CollectionEventListener;
