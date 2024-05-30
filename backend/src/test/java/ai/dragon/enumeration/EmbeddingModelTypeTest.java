@@ -15,15 +15,15 @@ public class EmbeddingModelTypeTest {
         EmbeddingModelType[] models = EmbeddingModelType.values();
         for (EmbeddingModelType model : models) {
             EmbeddingModelDefinition embeddingModelDefinition = model.getModelDefinition();
-            assertNotNull(Class.forName(embeddingModelDefinition.embeddingModelClassName()));
-            assertNotNull(embeddingModelDefinition.embeddingModelClassName());
-            assertNotNull(embeddingModelDefinition.providerType());
-            assertNotNull(embeddingModelDefinition.dimensions());
-            assertNotEquals(0, embeddingModelDefinition.dimensions());
-            assertNotNull(embeddingModelDefinition.maxTokens());
-            assertNotEquals(0, embeddingModelDefinition.maxTokens());
-            assertNotNull(embeddingModelDefinition.languages());
-            assertNotEquals(0, embeddingModelDefinition.languages().size());
+            assertNotNull(Class.forName(embeddingModelDefinition.getEmbeddingModelClassName()));
+            assertNotNull(embeddingModelDefinition.getEmbeddingModelClassName());
+            assertNotNull(embeddingModelDefinition.getProviderType());
+            assertNotNull(embeddingModelDefinition.getDimensions());
+            assertNotEquals(0, embeddingModelDefinition.getDimensions());
+            assertNotNull(embeddingModelDefinition.getMaxTokens());
+            assertNotEquals(0, embeddingModelDefinition.getMaxTokens());
+            assertNotNull(embeddingModelDefinition.getLanguages());
+            assertNotEquals(0, embeddingModelDefinition.getLanguages().size());
         }
     }
 }
