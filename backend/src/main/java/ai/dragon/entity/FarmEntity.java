@@ -10,8 +10,6 @@ import org.dizitart.no2.repository.annotations.Id;
 import org.dizitart.no2.repository.annotations.Index;
 import org.dizitart.no2.repository.annotations.Indices;
 
-import ai.dragon.enumeration.EmbeddingModelType;
-import ai.dragon.enumeration.VectorStoreType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -32,14 +30,6 @@ public class FarmEntity implements AbstractEntity {
     @Schema(description = "Name of the Farm. Must be unique.")
     private String name;
 
-    @NotNull
-    @Schema(description = "Java Class to be used for the Vector Store", example = "InMemoryEmbeddingStore")
-    private VectorStoreType vectorStoreType;
-
-    @NotNull
-    @Schema(description = "Type to be used for the Embedding Model", example = "BgeSmallEnV15QuantizedEmbeddingModel")
-    private EmbeddingModelType embeddingModelType;
-
     @Schema(description = """
             List of Silo UUIDs to be linked to the Farm.
             A farm is a collection of Silos, each Silo is a collection of Documents.""")
@@ -48,8 +38,6 @@ public class FarmEntity implements AbstractEntity {
     public FarmEntity() {
         this.uuid = UUID.randomUUID();
         this.name = String.format("Farm %s", this.uuid.toString());
-        this.vectorStoreType = VectorStoreType.InMemoryEmbeddingStore;
-        this.embeddingModelType = EmbeddingModelType.BgeSmallEnV15QuantizedEmbeddingModel;
         this.silos = new ArrayList<UUID>();
     }
 }
