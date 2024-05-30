@@ -23,6 +23,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SiloEntity implements AbstractEntity {
+    public static final String DEFAULT_CRON_EXPRESSION = "*/15 * * * *";
+
     @Id
     @NotNull
     @Schema(description = "Identifier of the Silo")
@@ -32,9 +34,6 @@ public class SiloEntity implements AbstractEntity {
     @Schema(description = "Name of the Silo. Must be unique.")
     private String name;
 
-    @Schema(description = "Type of the Silo")
-    private SiloType type;
-
     @NotNull
     @Schema(description = "Java Class to be used for the Vector Store", example = "InMemoryEmbeddingStore")
     private VectorStoreType vectorStoreType;
@@ -42,6 +41,12 @@ public class SiloEntity implements AbstractEntity {
     @NotNull
     @Schema(description = "Type to be used for the Embedding Model", example = "BgeSmallEnV15QuantizedEmbeddingModel")
     private EmbeddingModelType embeddingModelType;
+
+    @Schema(description = "Type of the Silo's Ingestor Type")
+    private SiloType ingestorType;
+
+    @Schema(description = "Cron Expression for the Silo's Ingestor Job", example = "Launch the Silo ingestor every 15 minutes : */15 * * * *")
+    private String ingestorSchedule;
 
     @Schema(description = "Settings to be linked to the Silo (if applicable) in the form of key-value pairs.")
     private Map<String, String> settings;
@@ -51,5 +56,6 @@ public class SiloEntity implements AbstractEntity {
         this.name = String.format("Silo %s", this.uuid.toString());
         this.vectorStoreType = VectorStoreType.InMemoryEmbeddingStore;
         this.embeddingModelType = EmbeddingModelType.BgeSmallEnV15QuantizedEmbeddingModel;
+        this.ingestorSchedule = DEFAULT_CRON_EXPRESSION;
     }
 }
