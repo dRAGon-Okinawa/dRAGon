@@ -7,6 +7,7 @@ import java.util.List;
 import ai.dragon.entity.SiloEntity;
 import ai.dragon.job.silo.ingestor.dto.IngestorDocument;
 import ai.dragon.job.silo.ingestor.dto.LocalIngestorSettings;
+import ai.dragon.util.IniSettingUtil;
 
 public class LocalSiloIngestor extends ImplAbstractSiloIngestor {
     private LocalIngestorSettings localIngestorSettings;
@@ -24,7 +25,7 @@ public class LocalSiloIngestor extends ImplAbstractSiloIngestor {
         if (ingestorSettings == null) {
             throw new Exception(String.format("No 'ingestorSettings' found for Silo %s", entity.getUuid()));
         }
-        localIngestorSettings = convertIniSettingsToObject(ingestorSettings, LocalIngestorSettings.class);
+        localIngestorSettings = IniSettingUtil.convertIniSettingsToObject(ingestorSettings, LocalIngestorSettings.class);
         if (localIngestorSettings.getLocalPath() == null) {
             throw new Exception(String.format("No 'localPath' setting found for Silo's Ingestor %s", entity.getUuid()));
         }
