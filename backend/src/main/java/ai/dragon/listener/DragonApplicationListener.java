@@ -26,6 +26,8 @@ public class DragonApplicationListener implements ApplicationListener<ContextRef
         System.out.println("================================================");
         System.out.println("See you later, dRAGon!");
         System.out.println("================================================");
+
+        webServerAppCtxt.close();
     }
 
     private void showAppURLs() {
