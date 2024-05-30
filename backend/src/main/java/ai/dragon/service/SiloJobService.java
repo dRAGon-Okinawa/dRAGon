@@ -1,7 +1,5 @@
 package ai.dragon.service;
 
-import java.util.UUID;
-
 import org.dizitart.no2.collection.events.CollectionEventInfo;
 import org.jobrunr.scheduling.JobRequestScheduler;
 import org.slf4j.Logger;
@@ -10,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ai.dragon.entity.SiloEntity;
+import ai.dragon.job.silo.SiloIngestorJobHandler;
 import ai.dragon.job.silo.SiloIngestorJobRequest;
 import ai.dragon.listener.EntityChangeListener;
 import ai.dragon.repository.SiloRepository;
@@ -36,16 +35,16 @@ public class SiloJobService {
         // Subscribe to SiloEntity changes
         entityChangeListener = siloRepository.subscribe(new EntityChangeListener<SiloEntity>() {
             @Override
-            public void onChangeEvent(CollectionEventInfo<?> collectionEventInfo, UUID uuid) {
+            public void onChangeEvent(CollectionEventInfo<?> collectionEventInfo, SiloEntity entity) {
                 switch (collectionEventInfo.getEventType()) {
                     case Insert:
-                        createSiloIngestorJob(uuid);
+                        createSiloIngestorJob(entity);
                         break;
                     case Remove:
-                        removeSiloIngestorJob(uuid);
+                        removeSiloIngestorJob(entity);
                         break;
                     case Update:
-                        restartSiloIngestorJob(uuid);
+                        restartSiloIngestorJob(entity);
                         break;
                     default:
                         break;
@@ -55,7 +54,7 @@ public class SiloJobService {
 
         // Create Recurrent Job for each Silo
         siloRepository.find().forEach(siloEntity -> {
-            createSiloIngestorJob(siloEntity.getUuid());
+            createSiloIngestorJob(siloEntity);
         });
     }
 
@@ -65,26 +64,29 @@ public class SiloJobService {
         jobService.removeAllRecurringJobs();
     }
 
-    public void restartSiloIngestorJob(UUID uuid) {
-        logger.info(String.format("Restarting Silo Ingestor Job : %s", uuid.toString()));
-        removeSiloIngestorJob(uuid);
-        createSiloIngestorJob(uuid);
+    public void restartSiloIngestorJob(SiloEntity siloEntity) {
+        logger.info(
+                String.format("Restarting Silo Ingestor Job : %s -> %s", siloEntity.getUuid(), siloEntity.getName()));
+        removeSiloIngestorJob(siloEntity);
+        createSiloIngestorJob(siloEntity);
     }
 
-    public void removeSiloIngestorJob(UUID uuid) {
-        logger.info(String.format("Removing Silo Ingestor Job : %s", uuid.toString()));
-        jobService.removeRecurringJob(uuid.toString());
+    public void removeSiloIngestorJob(SiloEntity siloEntity) {
+        logger.info(String.format("Removing Silo Ingestor Job : %s -> %s", siloEntity.getUuid(), siloEntity.getName()));
+        jobService.removeRecurringJob(siloEntity.getUuid().toString());
     }
 
-    public void createSiloIngestorJob(UUID uuid) {
-        logger.info(String.format("Creating Silo Ingestor Job : %s", uuid.toString()));
+    public void createSiloIngestorJob(SiloEntity siloEntity) {
+        logger.info(String.format("Creating Silo Ingestor Job : %s -> %s", siloEntity.getUuid(), siloEntity.getName()));
         SiloIngestorJobRequest jobRequest = SiloIngestorJobRequest
                 .create()
-                .uuid(uuid);
+                .uuid(siloEntity.getUuid());
         jobRequestScheduler.scheduleRecurrently(
-                uuid.toString(),
+                siloEntity.getUuid().toString(),
                 "* * * * * ", // TODO Move to SiloEntity settings
                 java.time.ZoneId.of("UTC"), // TODO Move to configuration
                 jobRequest);
+        jobService.getRecurringJob(siloEntity.getUuid().toString())
+                .setJobName(String.format("%s : %s", SiloIngestorJobHandler.JOB_NAME, siloEntity.getName()));
     }
 }
