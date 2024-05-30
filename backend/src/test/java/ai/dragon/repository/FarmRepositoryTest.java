@@ -29,7 +29,7 @@ public class FarmRepositoryTest {
         farm.setName(farmName);
         farmRepository.save(farm);
 
-        FarmEntity retrievedFarm = farmRepository.getByUuid(farm.getUuid());
+        FarmEntity retrievedFarm = farmRepository.getByUuid(farm.getUuid()).orElseThrow();
         assertNotNull(farmRepository.getByUuid(retrievedFarm.getUuid()));
         assertEquals(farmName, retrievedFarm.getName());
     }
