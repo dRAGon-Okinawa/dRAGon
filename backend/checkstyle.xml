@@ -13,6 +13,9 @@
     <module name="SimplifyBooleanReturn"/>
     <module name="UnnecessaryParentheses"/>
     <module name="UnnecessarySemicolonAfterOuterTypeDeclaration"/>
+    <module name="UnnecessarySemicolonAfterTypeMemberDeclaration"/>
+    <module name="UnnecessarySemicolonInEnumeration"/>
+    <module name="UnnecessarySemicolonInTryWithResources"/>
     <module name="RedundantImport"/>
     <module name="AvoidStarImport"/>
     <module name="AvoidStaticImport">
