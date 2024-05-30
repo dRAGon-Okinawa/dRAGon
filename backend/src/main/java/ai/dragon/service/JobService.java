@@ -26,6 +26,14 @@ public class JobService {
         storageProvider.save(job);
     }
 
+    public RecurringJob getRecurringJob(String id) {
+        return recurringJobResults()
+                .stream()
+                .filter(rj -> rj.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new JobNotFoundException(id));
+    }
+
     public void removeRecurringJob(String id) {
         storageProvider.deleteRecurringJob(id);
     }
