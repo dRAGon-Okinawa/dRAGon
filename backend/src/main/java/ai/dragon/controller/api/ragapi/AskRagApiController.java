@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ai.dragon.entity.SiloEntity;
 import ai.dragon.service.EmbeddingStoreService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -22,7 +21,7 @@ public class AskRagApiController {
     @PostMapping("/searchDocuments")
     @ApiResponse(responseCode = "200", description = "Documents have been successfully retrieved.")
     @Operation(summary = "Search documents inside a Silo", description = "Search documents from the Silo.")
-    public SiloEntity searchDocuments() {
-        embeddingStoreService.query("TODO");
+    public void searchDocuments() throws Exception {
+        embeddingStoreService.query(null, null);
     }
 }

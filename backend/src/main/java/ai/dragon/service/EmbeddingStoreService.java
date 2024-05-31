@@ -11,7 +11,12 @@ import org.springframework.stereotype.Service;
 import ai.dragon.entity.SiloEntity;
 import ai.dragon.listener.EntityChangeListener;
 import ai.dragon.repository.SiloRepository;
+import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
+import dev.langchain4j.model.embedding.EmbeddingModel;
+import dev.langchain4j.store.embedding.EmbeddingMatch;
+import dev.langchain4j.store.embedding.EmbeddingSearchRequest;
+import dev.langchain4j.store.embedding.EmbeddingSearchResult;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 import jakarta.annotation.PostConstruct;
@@ -23,6 +28,9 @@ public class EmbeddingStoreService {
 
     @Autowired
     private SiloRepository siloRepository;
+
+    @Autowired
+    private EmbeddingModelService embeddingModelService;
 
     private EntityChangeListener<SiloEntity> entityChangeListener;
 
@@ -77,8 +85,23 @@ public class EmbeddingStoreService {
         }
     }
 
-    public void query(UUID siloUuid, String query) {
-        return retrieveEmbeddingStore(siloUuid).query(query);
+    public void query(UUID siloUuid, String query) throws Exception {
+        SiloEntity siloEntity = siloRepository.getByUuid(siloUuid).orElseThrow();
+        EmbeddingStore<TextSegment> embeddingStore = retrieveEmbeddingStore(siloUuid);
+        EmbeddingModel embeddingModel = embeddingModelService.modelForEntity(siloEntity);
+        Embedding queryEmbedding = embeddingModel.embed(query).content();
+        // Filter onlyForUser1 = metadataKey("userId").isEqualTo("1");
+        EmbeddingSearchRequest embeddingSearchRequest1 = EmbeddingSearchRequest.builder()
+                .queryEmbedding(queryEmbedding)
+                // .filter(onlyForUser1)
+                .build();
+        EmbeddingSearchResult<TextSegment> embeddingSearchResult1 = embeddingStore.search(embeddingSearchRequest1);
+        for (EmbeddingMatch<TextSegment> embeddingMatch : embeddingSearchResult1.matches()) {
+            System.out.println("=> " + embeddingMatch.score() + " : " +
+                    embeddingMatch.embedded().metadata());
+            System.out.println(embeddingMatch.embedded().text());
+            System.out.println("=====");
+        }
     }
 
     private EmbeddingStore<TextSegment> buildEmbeddingStore(SiloEntity siloEntity) {

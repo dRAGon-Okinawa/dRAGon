@@ -7,11 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ai.dragon.entity.SiloEntity;
-import ai.dragon.job.silo.embedding.EmbeddingModelSettings;
 import ai.dragon.job.silo.ingestor.AbstractSiloIngestor;
 import ai.dragon.job.silo.ingestor.FileSystemIngestor;
 import ai.dragon.job.silo.ingestor.dto.SiloIngestLogMessage;
-import ai.dragon.util.IniSettingUtil;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.splitter.DocumentSplitters;
 import dev.langchain4j.data.segment.TextSegment;
@@ -24,6 +22,9 @@ import jakarta.activation.UnsupportedDataTypeException;
 public class IngestorService {
     @Autowired
     private EmbeddingStoreService embeddingStoreService;
+
+    @Autowired
+    private EmbeddingModelService embeddingModelService;
 
     public void runSiloIngestion(SiloEntity siloEntity, Consumer<Integer> progressCallback,
             Consumer<SiloIngestLogMessage> logCallback)
@@ -41,7 +42,7 @@ public class IngestorService {
             Consumer<Integer> progressCallback, Consumer<SiloIngestLogMessage> logCallback)
             throws Exception {
         EmbeddingStore<TextSegment> embeddingStore = embeddingStoreService.retrieveEmbeddingStore(siloEntity.getUuid());
-        EmbeddingModel embeddingModel = modelForEntity(siloEntity);
+        EmbeddingModel embeddingModel = embeddingModelService.modelForEntity(siloEntity);
         EmbeddingStoreIngestor ingestor = buildIngestor(embeddingStore, embeddingModel);
         logCallback.accept(SiloIngestLogMessage.builder()
                 .message(String.format("Ingesting using '%s' Embedding Store and '%s' Embedding Model...",
@@ -80,13 +81,6 @@ public class IngestorService {
                 .embeddingModel(embeddingModel)
                 .embeddingStore(embeddingStore)
                 .build();
-    }
-
-    private EmbeddingModel modelForEntity(SiloEntity siloEntity) throws Exception {
-        EmbeddingModelSettings embeddingModelSettings = IniSettingUtil.convertIniSettingsToObject(
-                siloEntity.getEmbeddingModelSettings(), EmbeddingModelSettings.class);
-        return siloEntity.getEmbeddingModelType().getModelDefinition().getEmbeddingModelWithSettings()
-                .apply(embeddingModelSettings);
     }
 
     private AbstractSiloIngestor getIngestorFromEntity(SiloEntity siloEntity) throws Exception {
