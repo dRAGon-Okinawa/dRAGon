@@ -77,6 +77,10 @@ public class EmbeddingStoreService {
         }
     }
 
+    public void query(UUID siloUuid, String query) {
+        return retrieveEmbeddingStore(siloUuid).query(query);
+    }
+
     private EmbeddingStore<TextSegment> buildEmbeddingStore(SiloEntity siloEntity) {
         EmbeddingStore<TextSegment> embeddingStore = null;
 
