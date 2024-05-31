@@ -29,20 +29,12 @@ public class IngestorService {
             Consumer<SiloIngestLogMessage> logCallback)
             throws Exception {
         AbstractSiloIngestor ingestor = getIngestorFromEntity(siloEntity);
-        logCallback.accept(SiloIngestLogMessage.builder().message("Listing documents...").build());
+        logCallback.accept(SiloIngestLogMessage.builder()
+                .message(String.format("Listing documents using '%s' Ingestor...", ingestor.getClass())).build());
         List<Document> documents = ingestor.listDocuments();
         logCallback.accept(SiloIngestLogMessage.builder()
-                .message(String.format("Ingesting %d documents to Silo...", documents.size())).build());
+                .message(String.format("Will ingest %d documents to Silo...", documents.size())).build());
         ingestDocumentsToSilo(documents, siloEntity, progressCallback, logCallback);
-    }
-
-    private AbstractSiloIngestor getIngestorFromEntity(SiloEntity siloEntity) throws Exception {
-        switch (siloEntity.getIngestorType()) {
-            case FileSystem:
-                return new FileSystemIngestor(siloEntity);
-            default:
-                throw new UnsupportedDataTypeException("Ingestor type not supported");
-        }
     }
 
     private void ingestDocumentsToSilo(List<Document> documents, SiloEntity siloEntity,
@@ -51,6 +43,10 @@ public class IngestorService {
         EmbeddingStore<TextSegment> embeddingStore = embeddingStoreService.retrieveEmbeddingStore(siloEntity.getUuid());
         EmbeddingModel embeddingModel = modelForEntity(siloEntity);
         EmbeddingStoreIngestor ingestor = buildIngestor(embeddingStore, embeddingModel);
+        logCallback.accept(SiloIngestLogMessage.builder()
+                .message(String.format("Ingesting using '%s' Embedding Store and '%s' Embedding Model...",
+                        embeddingStore.getClass(), embeddingModel.getClass()))
+                .build());
         for (int i = 0; i < documents.size(); i++) {
             if (Thread.currentThread().isInterrupted()) {
                 throw new InterruptedException();
@@ -65,7 +61,6 @@ public class IngestorService {
         logCallback.accept(SiloIngestLogMessage.builder()
                 .message("End.").build());
         progressCallback.accept(100);
-
     }
 
     private EmbeddingStoreIngestor buildIngestor(EmbeddingStore<TextSegment> embeddingStore,
@@ -92,5 +87,14 @@ public class IngestorService {
                 siloEntity.getEmbeddingModelSettings(), EmbeddingModelSettings.class);
         return siloEntity.getEmbeddingModelType().getModelDefinition().getEmbeddingModelWithSettings()
                 .apply(embeddingModelSettings);
+    }
+
+    private AbstractSiloIngestor getIngestorFromEntity(SiloEntity siloEntity) throws Exception {
+        switch (siloEntity.getIngestorType()) {
+            case FileSystem:
+                return new FileSystemIngestor(siloEntity);
+            default:
+                throw new UnsupportedDataTypeException("Ingestor type not supported");
+        }
     }
 }
