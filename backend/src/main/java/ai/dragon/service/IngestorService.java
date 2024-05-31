@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import ai.dragon.entity.SiloEntity;
 import ai.dragon.job.silo.ingestor.AbstractSiloIngestor;
 import ai.dragon.job.silo.ingestor.FileSystemIngestor;
-import ai.dragon.job.silo.ingestor.dto.SiloIngestProgress;
+import ai.dragon.job.silo.ingestor.dto.SiloIngestLogMessage;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.store.embedding.EmbeddingStore;
@@ -21,14 +21,15 @@ public class IngestorService {
     @Autowired
     private EmbeddingStoreService embeddingStoreService;
 
-    public void runSiloIngestion(SiloEntity siloEntity, Consumer<SiloIngestProgress> progressCallback)
+    public void runSiloIngestion(SiloEntity siloEntity, Consumer<Integer> progressCallback,
+            Consumer<SiloIngestLogMessage> logCallback)
             throws Exception {
         AbstractSiloIngestor ingestor = getIngestorFromEntity(siloEntity);
-        progressCallback.accept(SiloIngestProgress.builder().message("Listing documents...").build());
+        logCallback.accept(SiloIngestLogMessage.builder().message("Listing documents...").build());
         List<Document> documents = ingestor.listDocuments();
-        progressCallback.accept(SiloIngestProgress.builder()
+        logCallback.accept(SiloIngestLogMessage.builder()
                 .message(String.format("Ingesting %d documents to Silo...", documents.size())).build());
-        ingestDocumentsToSilo(documents, siloEntity, progressCallback);
+        ingestDocumentsToSilo(documents, siloEntity, progressCallback, logCallback);
     }
 
     private AbstractSiloIngestor getIngestorFromEntity(SiloEntity siloEntity) throws Exception {
@@ -41,7 +42,7 @@ public class IngestorService {
     }
 
     private void ingestDocumentsToSilo(List<Document> documents, SiloEntity siloEntity,
-            Consumer<SiloIngestProgress> progressCallback)
+            Consumer<Integer> progressCallback, Consumer<SiloIngestLogMessage> logCallback)
             throws Exception {
         EmbeddingStore<TextSegment> embeddingStore = embeddingStoreService.retrieveEmbeddingStore(siloEntity.getUuid());
         for (int i = 0; i < documents.size(); i++) {
@@ -50,7 +51,7 @@ public class IngestorService {
             }
             int progress = (i * 100) / documents.size();
             Document document = documents.get(i);
-            progressCallback.accept(SiloIngestProgress.builder()
+            logCallback.accept(SiloIngestLogMessage.builder()
                     .message(document.metadata().toString()).build());
             /*
              * TODO
@@ -61,11 +62,11 @@ public class IngestorService {
              * EmbeddingStore<TextSegment> embeddingStore) {
              */
             EmbeddingStoreIngestor.ingest(documents, embeddingStore);
-            progressCallback.accept(SiloIngestProgress.builder().progressPercentage(progress).build());
+            progressCallback.accept(progress);
         }
-        progressCallback.accept(SiloIngestProgress.builder()
+        logCallback.accept(SiloIngestLogMessage.builder()
                 .message("End.").build());
-        progressCallback.accept(SiloIngestProgress.builder().progressPercentage(100).build());
+        progressCallback.accept(100);
 
         // TODO
         /*

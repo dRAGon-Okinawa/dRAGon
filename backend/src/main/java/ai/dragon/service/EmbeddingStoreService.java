@@ -54,7 +54,9 @@ public class EmbeddingStoreService {
             return embeddingStores.get(siloUuid);
         }
         SiloEntity siloEntity = siloRepository.getByUuid(siloUuid).orElseThrow();
-        return embeddingStores.put(siloUuid, buildEmbeddingStore(siloEntity));
+        EmbeddingStore<TextSegment> embeddingStore = buildEmbeddingStore(siloEntity);
+        embeddingStores.put(siloUuid, embeddingStore);
+        return embeddingStore;
     }
 
     public void closeEmbeddingStore(UUID siloUuid) {
@@ -77,14 +79,15 @@ public class EmbeddingStoreService {
 
     private EmbeddingStore<TextSegment> buildEmbeddingStore(SiloEntity siloEntity) {
         // TODO
-        EmbeddingStore<TextSegment> embeddingStore = null;//new InMemoryEmbeddingStore<>();
+        EmbeddingStore<TextSegment> embeddingStore = null;// new InMemoryEmbeddingStore<>();
 
-        switch(siloEntity.getVectorStoreType()) {
+        switch (siloEntity.getVectorStoreType()) {
             case InMemoryEmbeddingStore:
                 embeddingStore = new InMemoryEmbeddingStore<>();
                 break;
             default:
-                break;
+                throw new UnsupportedOperationException(
+                        String.format("VectorStoreType not supported : %s", siloEntity.getVectorStoreType()));
         }
 
         return embeddingStore;

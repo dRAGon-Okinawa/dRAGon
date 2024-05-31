@@ -30,11 +30,17 @@ public class SiloIngestorJobHandler implements JobRequestHandler<SiloIngestorJob
         SiloEntity siloEntity = siloRepository.getByUuid(jobRequest.getUuid())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found"));
         ingestorService.runSiloIngestion(siloEntity, ingestProgress -> {
-            if (ingestProgress.getProgressPercentage() != null) {
-                progressBar.setProgress(ingestProgress.getProgressPercentage());
-            }
-            if (ingestProgress.getMessage() != null) {
-                jobContext().logger().info(ingestProgress.getMessage());
+            progressBar.setProgress(ingestProgress);
+        }, ingestLogMessage -> {
+            switch (ingestLogMessage.getMessageLevel()) {
+                case Warning:
+                    jobContext().logger().warn(ingestLogMessage.getMessage());
+                    break;
+                case Error:
+                    jobContext().logger().error(ingestLogMessage.getMessage());
+                    break;
+                default:
+                    jobContext().logger().info(ingestLogMessage.getMessage());
             }
         });
     }
