@@ -4,3 +4,5 @@
 dRAGon is a multi-modal RAG engine which can search over multiple kind of documents to generate good quality answers for LLMs.
 
 [Your journey to the dRAGon starts here!](https://dragon.okinawa)
+
+![dRAGon](https://dragon.okinawa/img/dragon_okinawa.jpg)
