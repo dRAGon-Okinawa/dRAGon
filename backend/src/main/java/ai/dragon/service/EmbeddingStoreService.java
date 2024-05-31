@@ -78,8 +78,7 @@ public class EmbeddingStoreService {
     }
 
     private EmbeddingStore<TextSegment> buildEmbeddingStore(SiloEntity siloEntity) {
-        // TODO
-        EmbeddingStore<TextSegment> embeddingStore = null;// new InMemoryEmbeddingStore<>();
+        EmbeddingStore<TextSegment> embeddingStore = null;
 
         switch (siloEntity.getVectorStoreType()) {
             case InMemoryEmbeddingStore:

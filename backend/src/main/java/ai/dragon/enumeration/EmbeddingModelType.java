@@ -2,9 +2,10 @@ package ai.dragon.enumeration;
 
 import java.util.List;
 
+import ai.dragon.job.silo.embedding.EmbeddingModelDefinition;
+import dev.langchain4j.model.embedding.bge.small.en.v15.BgeSmallEnV15QuantizedEmbeddingModel;
+import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiEmbeddingModelName;
-import lombok.Builder;
-import lombok.Data;
 
 public enum EmbeddingModelType {
     BgeSmallEnV15QuantizedEmbeddingModel("BgeSmallEnV15QuantizedEmbeddingModel"),
@@ -36,6 +37,9 @@ public enum EmbeddingModelType {
                         .embeddingModelClassName(
                                 "dev.langchain4j.model.embedding.bge.small.en.v15.BgeSmallEnV15QuantizedEmbeddingModel")
                         .embeddingModelName("BgeSmallEnV15QuantizedEmbeddingModel")
+                        .embeddingModelWithSettings(parameters -> {
+                            return new BgeSmallEnV15QuantizedEmbeddingModel();
+                        })
                         .providerType(ProviderType.ONNX)
                         .dimensions(384)
                         .maxTokens(512)
@@ -46,6 +50,11 @@ public enum EmbeddingModelType {
                         .languages(List.of("en"))
                         .embeddingModelClassName("dev.langchain4j.model.openai.OpenAiEmbeddingModel")
                         .embeddingModelName(OpenAiEmbeddingModelName.TEXT_EMBEDDING_ADA_002.toString())
+                        .embeddingModelWithSettings(parameters -> {
+                            return OpenAiEmbeddingModel.builder()
+                                    .modelName(OpenAiEmbeddingModelName.TEXT_EMBEDDING_ADA_002)
+                                    .apiKey(parameters.getApiKey()).build();
+                        })
                         .providerType(ProviderType.OpenAI)
                         .dimensions(1536)
                         .maxTokens(8191)
@@ -56,6 +65,11 @@ public enum EmbeddingModelType {
                         .languages(List.of("en"))
                         .embeddingModelClassName("dev.langchain4j.model.openai.OpenAiEmbeddingModel")
                         .embeddingModelName(OpenAiEmbeddingModelName.TEXT_EMBEDDING_3_SMALL.toString())
+                        .embeddingModelWithSettings(parameters -> {
+                            return OpenAiEmbeddingModel.builder()
+                                    .modelName(OpenAiEmbeddingModelName.TEXT_EMBEDDING_3_SMALL)
+                                    .apiKey(parameters.getApiKey()).build();
+                        })
                         .providerType(ProviderType.OpenAI)
                         .dimensions(1536)
                         .maxTokens(8191)
@@ -66,6 +80,11 @@ public enum EmbeddingModelType {
                         .languages(List.of("en"))
                         .embeddingModelClassName("dev.langchain4j.model.openai.OpenAiEmbeddingModel")
                         .embeddingModelName(OpenAiEmbeddingModelName.TEXT_EMBEDDING_3_LARGE.toString())
+                        .embeddingModelWithSettings(parameters -> {
+                            return OpenAiEmbeddingModel.builder()
+                                    .modelName(OpenAiEmbeddingModelName.TEXT_EMBEDDING_3_LARGE)
+                                    .apiKey(parameters.getApiKey()).build();
+                        })
                         .providerType(ProviderType.OpenAI)
                         .dimensions(3072)
                         .maxTokens(8191)
@@ -79,15 +98,4 @@ public enum EmbeddingModelType {
     public String toString() {
         return value;
     }
-}
-
-@Data
-@Builder
-class EmbeddingModelDefinition {
-    private String embeddingModelClassName;
-    private String embeddingModelName;
-    private List<String> languages;
-    private ProviderType providerType;
-    private int dimensions;
-    private int maxTokens;
 }

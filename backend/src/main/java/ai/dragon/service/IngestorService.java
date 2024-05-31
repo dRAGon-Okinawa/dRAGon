@@ -7,11 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ai.dragon.entity.SiloEntity;
+import ai.dragon.job.silo.embedding.EmbeddingModelSettings;
 import ai.dragon.job.silo.ingestor.AbstractSiloIngestor;
 import ai.dragon.job.silo.ingestor.FileSystemIngestor;
 import ai.dragon.job.silo.ingestor.dto.SiloIngestLogMessage;
+import ai.dragon.util.IniSettingUtil;
 import dev.langchain4j.data.document.Document;
+import dev.langchain4j.data.document.splitter.DocumentSplitters;
 import dev.langchain4j.data.segment.TextSegment;
+import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 import jakarta.activation.UnsupportedDataTypeException;
@@ -45,6 +49,8 @@ public class IngestorService {
             Consumer<Integer> progressCallback, Consumer<SiloIngestLogMessage> logCallback)
             throws Exception {
         EmbeddingStore<TextSegment> embeddingStore = embeddingStoreService.retrieveEmbeddingStore(siloEntity.getUuid());
+        EmbeddingModel embeddingModel = modelForEntity(siloEntity);
+        EmbeddingStoreIngestor ingestor = buildIngestor(embeddingStore, embeddingModel);
         for (int i = 0; i < documents.size(); i++) {
             if (Thread.currentThread().isInterrupted()) {
                 throw new InterruptedException();
@@ -53,44 +59,38 @@ public class IngestorService {
             Document document = documents.get(i);
             logCallback.accept(SiloIngestLogMessage.builder()
                     .message(document.metadata().toString()).build());
-            /*
-             * TODO
-             * public EmbeddingStoreIngestor(DocumentTransformer documentTransformer,
-             * DocumentSplitter documentSplitter,
-             * TextSegmentTransformer textSegmentTransformer,
-             * EmbeddingModel embeddingModel,
-             * EmbeddingStore<TextSegment> embeddingStore) {
-             */
-            EmbeddingStoreIngestor.ingest(documents, embeddingStore);
+            ingestor.ingest(documents);
             progressCallback.accept(progress);
         }
         logCallback.accept(SiloIngestLogMessage.builder()
                 .message("End.").build());
         progressCallback.accept(100);
 
-        // TODO
-        /*
-         * EmbeddingModel embeddingModel = new BgeSmallEnV15QuantizedEmbeddingModel();
-         * String query = "How to construct a RAG system?";
-         * Embedding queryEmbedding = embeddingModel.embed(query).content();
-         * 
-         * Filter onlyForUser1 = metadataKey("userId").isEqualTo("1");
-         * 
-         * EmbeddingSearchRequest embeddingSearchRequest1 =
-         * EmbeddingSearchRequest.builder()
-         * .queryEmbedding(queryEmbedding)
-         * // .filter(onlyForUser1)
-         * .build();
-         * 
-         * EmbeddingSearchResult<TextSegment> embeddingSearchResult1 =
-         * embeddingStore.search(embeddingSearchRequest1);
-         * for (EmbeddingMatch<TextSegment> embeddingMatch :
-         * embeddingSearchResult1.matches()) {
-         * jobContext().logger().info("=> " + embeddingMatch.score() + " : " +
-         * embeddingMatch.embedded().metadata());
-         * jobContext().logger().info(embeddingMatch.embedded().text());
-         * jobContext().logger().info("=====");
-         * }
-         */
+    }
+
+    private EmbeddingStoreIngestor buildIngestor(EmbeddingStore<TextSegment> embeddingStore,
+            EmbeddingModel embeddingModel) {
+        return EmbeddingStoreIngestor.builder()
+                .documentTransformer(document -> {
+                    document.metadata().put("index_date", System.currentTimeMillis());
+                    return document;
+                })
+                // TODO .documentSplitter(DocumentSplitters.recursive(1000, 200, new
+                // OpenAiTokenizer()))
+                .documentSplitter(DocumentSplitters.recursive(300, 50))
+                .textSegmentTransformer(textSegment -> {
+                    textSegment.metadata().put("index_date", System.currentTimeMillis());
+                    return textSegment;
+                })
+                .embeddingModel(embeddingModel)
+                .embeddingStore(embeddingStore)
+                .build();
+    }
+
+    private EmbeddingModel modelForEntity(SiloEntity siloEntity) throws Exception {
+        EmbeddingModelSettings embeddingModelSettings = IniSettingUtil.convertIniSettingsToObject(
+                siloEntity.getEmbeddingModelSettings(), EmbeddingModelSettings.class);
+        return siloEntity.getEmbeddingModelType().getModelDefinition().getEmbeddingModelWithSettings()
+                .apply(embeddingModelSettings);
     }
 }

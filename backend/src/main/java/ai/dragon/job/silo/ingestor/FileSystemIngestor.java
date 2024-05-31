@@ -24,9 +24,19 @@ public class FileSystemIngestor extends ImplAbstractSiloIngestor {
         PathMatcher pathMatcher = fileSystemIngestorSettings.getPathMatcher() != null
                 ? FileSystems.getDefault().getPathMatcher(fileSystemIngestorSettings.getPathMatcher())
                 : FileSystems.getDefault().getPathMatcher(FileSystemIngestorSettings.DEFAULT_PATH_MATCHER);
-        return fileSystemIngestorSettings.isRecursive()
-                ? FileSystemDocumentLoader.loadDocumentsRecursively(ingestorPathFile.toPath(), pathMatcher, new ApacheTikaDocumentParser())
-                : FileSystemDocumentLoader.loadDocuments(ingestorPathFile.toPath(), pathMatcher, new ApacheTikaDocumentParser());
+        List<Document> documents = fileSystemIngestorSettings.isRecursive()
+                ? FileSystemDocumentLoader.loadDocumentsRecursively(ingestorPathFile.toPath(), pathMatcher,
+                        new ApacheTikaDocumentParser())
+                : FileSystemDocumentLoader.loadDocuments(ingestorPathFile.toPath(), pathMatcher,
+                        new ApacheTikaDocumentParser());
+        for (Document document : documents) {
+            File file = new File(document.metadata().getString("absolute_directory_path"),
+                    document.metadata().getString("file_name"));
+            document.metadata().put("silo_uuid", entity.getUuid().toString());
+            document.metadata().put("file_date", file.lastModified());
+            document.metadata().put("file_size", file.length());
+        }
+        return documents;
     }
 
     public void checkIngestorSettings() throws Exception {

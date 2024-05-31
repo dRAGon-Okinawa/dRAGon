@@ -50,6 +50,12 @@ public class SiloEntity implements AbstractEntity {
     @Schema(description = "Cron Expression for the Silo's Ingestor Job", example = "Launch the Silo ingestor every 15 minutes : */15 * * * *")
     private String ingestorSchedule;
 
+    @Schema(description = "Settings to be linked to the Silo's Vector Store in the form of `key = value` pairs.")
+    private List<String> vectorStoreSettings;
+
+    @Schema(description = "Settings to be linked to the Silo's Embedding Model in the form of `key = value` pairs.")
+    private List<String> embeddingModelSettings;
+
     @Schema(description = "Settings to be linked to the Silo's Ingestor in the form of `key = value` pairs.")
     private List<String> ingestorSettings;
 
