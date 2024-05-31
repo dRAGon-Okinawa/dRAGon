@@ -1,7 +1,7 @@
 package ai.dragon.enumeration;
 
 public enum IngestorType {
-    LOCAL("LOCAL");
+    FileSystem("FileSystem");
 
     private String value;
 

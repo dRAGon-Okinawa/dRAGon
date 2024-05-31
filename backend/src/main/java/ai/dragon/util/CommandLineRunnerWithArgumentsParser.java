@@ -32,11 +32,11 @@ public abstract class CommandLineRunnerWithArgumentsParser implements CommandLin
         }
 
         switch (executionResult) {
-            case BYPASS:
+            case Bypass:
                 return;
-            case ERROR:
+            case Error:
                 System.exit(1);
-            case EXECUTED:
+            case Executed:
                 System.exit(0);
         }
     }
@@ -44,16 +44,16 @@ public abstract class CommandLineRunnerWithArgumentsParser implements CommandLin
     public CommandLineExecutionResultType handleError(ArgumentParser parser, ArgumentParserException parentException,
             String... args) {
         if (parentException instanceof HelpScreenException) {
-            return CommandLineExecutionResultType.EXECUTED;
+            return CommandLineExecutionResultType.Executed;
         }
 
         String command = getCommandFromArgs(args);
         if (commandName == null || !commandName.equals(command)) {
-            return CommandLineExecutionResultType.BYPASS;
+            return CommandLineExecutionResultType.Bypass;
         }
 
         parser.handleError(parentException);
-        return CommandLineExecutionResultType.ERROR;
+        return CommandLineExecutionResultType.Error;
     }
 
     public ArgumentParser parserFor(String command, String description) {

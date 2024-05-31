@@ -30,6 +30,6 @@ public class DatabaseExportCommand extends CommandLineRunnerWithArgumentsParser 
         databaseService.exportDatabase(ns.getString("output"));
         logger.info("Database export completed to : " + ns.getString("output"));
 
-        return CommandLineExecutionResultType.EXECUTED;
+        return CommandLineExecutionResultType.Executed;
     }
 }

@@ -58,7 +58,7 @@ public class SiloEntity implements AbstractEntity {
         this.name = String.format("Silo %s", this.uuid.toString());
         this.vectorStoreType = VectorStoreType.InMemoryEmbeddingStore;
         this.embeddingModelType = EmbeddingModelType.BgeSmallEnV15QuantizedEmbeddingModel;
-        this.ingestorType = IngestorType.LOCAL;
+        this.ingestorType = IngestorType.FileSystem;
         this.ingestorSchedule = DEFAULT_CRON_EXPRESSION;
     }
 }
