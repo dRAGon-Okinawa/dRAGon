@@ -1,16 +1,16 @@
 package ai.dragon.enumeration;
 
-public enum IngestorType {
-    LOCAL("LOCAL");
+public enum IngestorLoaderType {
+    FileSystem("FileSystem");
 
     private String value;
 
-    IngestorType(String value) {
+    IngestorLoaderType(String value) {
         this.value = value;
     }
 
-    public static IngestorType fromString(String text) {
-        for (IngestorType type : IngestorType.values()) {
+    public static IngestorLoaderType fromString(String text) {
+        for (IngestorLoaderType type : IngestorLoaderType.values()) {
             if (type.value.equalsIgnoreCase(text)) {
                 return type;
             }

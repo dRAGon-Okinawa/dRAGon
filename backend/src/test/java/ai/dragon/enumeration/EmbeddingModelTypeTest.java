@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import ai.dragon.job.silo.ingestor.dto.embedding.EmbeddingModelDefinition;
+
 @SpringBootTest
 @ActiveProfiles("test")
 public class EmbeddingModelTypeTest {
