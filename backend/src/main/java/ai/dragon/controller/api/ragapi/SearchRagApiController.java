@@ -16,17 +16,18 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/ragapi/ask")
-@Tag(name = "Ask", description = "Ask API Endpoints")
-public class AskRagApiController {
+@RequestMapping("/api/ragapi/search")
+@Tag(name = "Ask", description = "Search API Endpoints")
+public class SearchRagApiController {
     @Autowired
     private EmbeddingStoreService embeddingStoreService;
 
     // TODO Silo OR Farm
-    @PostMapping("/searchDocuments/silo/{uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}")
+    @PostMapping("/documents/silo/{uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}")
     @ApiResponse(responseCode = "200", description = "Documents have been successfully retrieved.")
     @Operation(summary = "Search documents inside a Silo", description = "Search documents from the Silo.")
-    public void searchDocuments(@PathVariable("uuid") @Parameter(description = "Identifier of the Silo") UUID uuid,
+    public void searchDocumentsInSilo(
+            @PathVariable("uuid") @Parameter(description = "Identifier of the Silo") UUID uuid,
             @RequestBody String query)
             throws Exception {
         embeddingStoreService.query(uuid, query);
