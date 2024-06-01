@@ -1,5 +1,7 @@
 package ai.dragon.service;
 
+import java.util.UUID;
+
 import org.dizitart.no2.collection.events.CollectionEventInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,9 @@ public class SiloService {
     @Autowired
     private FarmRepository farmRepository;
 
+    @Autowired
+    private SiloJobService siloJobService;
+
     @PostConstruct
     private void init() {
         entityChangeListener = siloRepository.subscribe(new EntityChangeListener<SiloEntity>() {
@@ -45,6 +50,11 @@ public class SiloService {
     @PreDestroy
     private void destroy() {
         siloRepository.unsubscribe(entityChangeListener);
+    }
+
+    public void rebuildSilo(UUID uuid) {
+        SiloEntity entity = siloRepository.getByUuid(uuid).orElseThrow();
+        siloJobService.startSiloIngestorJobNow(entity);
     }
 
     private void removeFarmLinks(SiloEntity entity) {

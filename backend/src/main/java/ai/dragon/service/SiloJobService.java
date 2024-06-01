@@ -47,7 +47,7 @@ public class SiloJobService {
                         removeSiloIngestorJob(entity);
                         break;
                     case Update:
-                        restartSiloIngestorJob(entity);
+                        recreateSiloIngestorJob(entity);
                         break;
                     default:
                         break;
@@ -67,7 +67,13 @@ public class SiloJobService {
         jobService.removeAllRecurringJobs();
     }
 
-    public void restartSiloIngestorJob(SiloEntity siloEntity) {
+    public void startSiloIngestorJobNow(SiloEntity siloEntity) {
+        logger.info(
+                String.format("Starting Silo Ingestor Job Now : %s -> %s", siloEntity.getUuid(), siloEntity.getName()));
+        jobService.triggerRecurringJob(siloEntity.getUuid().toString());
+    }
+
+    public void recreateSiloIngestorJob(SiloEntity siloEntity) {
         logger.info(
                 String.format("Restarting Silo Ingestor Job : %s -> %s", siloEntity.getUuid(), siloEntity.getName()));
         removeSiloIngestorJob(siloEntity);
