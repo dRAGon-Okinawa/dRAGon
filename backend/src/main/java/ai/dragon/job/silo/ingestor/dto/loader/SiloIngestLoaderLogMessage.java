@@ -1,4 +1,4 @@
-package ai.dragon.job.silo.ingestor.dto;
+package ai.dragon.job.silo.ingestor.dto.loader;
 
 import ai.dragon.enumeration.SiloIngestProgressMessageLevel;
 import lombok.Builder;

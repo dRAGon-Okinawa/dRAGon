@@ -2,7 +2,7 @@ package ai.dragon.enumeration;
 
 import java.util.List;
 
-import ai.dragon.job.silo.embedding.EmbeddingModelDefinition;
+import ai.dragon.job.silo.ingestor.dto.embedding.EmbeddingModelDefinition;
 import dev.langchain4j.model.embedding.bge.small.en.v15.BgeSmallEnV15QuantizedEmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiEmbeddingModelName;

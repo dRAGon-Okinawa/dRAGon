@@ -1,4 +1,4 @@
-package ai.dragon.job.silo.embedding;
+package ai.dragon.job.silo.ingestor.dto.embedding;
 
 import java.util.List;
 import java.util.function.Function;

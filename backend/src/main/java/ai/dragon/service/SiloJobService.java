@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ai.dragon.entity.SiloEntity;
-import ai.dragon.job.silo.SiloIngestorJobHandler;
-import ai.dragon.job.silo.SiloIngestorJobRequest;
+import ai.dragon.job.silo.ingestor.handler.loader.SiloIngestorJobHandler;
+import ai.dragon.job.silo.ingestor.handler.loader.SiloIngestorJobRequest;
 import ai.dragon.listener.EntityChangeListener;
 import ai.dragon.repository.SiloRepository;
 import jakarta.annotation.PostConstruct;

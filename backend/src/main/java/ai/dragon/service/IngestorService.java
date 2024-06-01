@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ai.dragon.entity.SiloEntity;
-import ai.dragon.job.silo.ingestor.dto.SiloIngestLoaderLogMessage;
+import ai.dragon.job.silo.ingestor.dto.loader.SiloIngestLoaderLogMessage;
 import ai.dragon.job.silo.ingestor.loader.AbstractSiloIngestorLoader;
 import ai.dragon.job.silo.ingestor.loader.filesystem.FileSystemIngestorLoader;
 import dev.langchain4j.data.document.Document;
