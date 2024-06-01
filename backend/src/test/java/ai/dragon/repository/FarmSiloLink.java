@@ -1,14 +1,14 @@
 package ai.dragon.repository;
 
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collections;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,9 +42,9 @@ public class FarmSiloLink {
 
         siloRepository.delete(silo);
         final UUID farmUUID = farm.getUuid();
-        await()
-                .pollInterval(100, MILLISECONDS)
-                .atMost(500, MILLISECONDS)
+        Awaitility.await()
+                .pollInterval(100, TimeUnit.MILLISECONDS)
+                .atMost(500, TimeUnit.MILLISECONDS)
                 .until(() -> {
                     return farmRepository.getByUuid(farmUUID).orElseThrow().getSilos().isEmpty();
                 });
