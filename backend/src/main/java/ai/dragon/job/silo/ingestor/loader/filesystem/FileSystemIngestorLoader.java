@@ -42,7 +42,7 @@ public class FileSystemIngestorLoader extends ImplAbstractSiloIngestorLoader {
     public void checkIngestorLoaderSettings() throws Exception {
         List<String> ingestorLoaderSettings = entity.getIngestorLoaderSettings();
         if (ingestorLoaderSettings == null) {
-            throw new Exception(String.format("No 'ingestorSettings' found for Silo %s", entity.getUuid()));
+            throw new Exception(String.format("No 'ingestorLoaderSettings' found for Silo %s", entity.getUuid()));
         }
         fileSystemIngestorLoaderSettings = IniSettingUtil.convertIniSettingsToObject(ingestorLoaderSettings,
                 FileSystemIngestorLoaderSettings.class);

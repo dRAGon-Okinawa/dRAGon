@@ -26,12 +26,14 @@ public class IngestorService {
     @Autowired
     private EmbeddingModelService embeddingModelService;
 
+
     public void runSiloIngestion(SiloEntity siloEntity, Consumer<Integer> progressCallback,
             Consumer<SiloIngestLoaderLogMessage> logCallback)
             throws Exception {
         AbstractSiloIngestorLoader ingestorLoader = getIngestorLoaderFromEntity(siloEntity);
         logCallback.accept(SiloIngestLoaderLogMessage.builder()
-                .message(String.format("Listing documents using '%s' Ingestor Loader...", ingestorLoader.getClass())).build());
+                .message(String.format("Listing documents using '%s' Ingestor Loader...", ingestorLoader.getClass()))
+                .build());
         List<Document> documents = ingestorLoader.listDocuments();
         logCallback.accept(SiloIngestLoaderLogMessage.builder()
                 .message(String.format("Will ingest %d documents to Silo...", documents.size())).build());
@@ -56,7 +58,7 @@ public class IngestorService {
             Document document = documents.get(i);
             logCallback.accept(SiloIngestLoaderLogMessage.builder()
                     .message(document.metadata().toString()).build());
-            ingestor.ingest(documents);
+            ingestor.ingest(document);
             progressCallback.accept(progress);
         }
         logCallback.accept(SiloIngestLoaderLogMessage.builder()
