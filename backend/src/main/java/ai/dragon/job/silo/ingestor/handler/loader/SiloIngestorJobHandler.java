@@ -43,5 +43,6 @@ public class SiloIngestorJobHandler implements JobRequestHandler<SiloIngestorJob
                     jobContext().logger().info(ingestLogMessage.getMessage());
             }
         });
+        jobContext().logger().info("End of Silo Ingestor Job.");
     }
 }

@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ai.dragon.component.DirectoryStructureComponent;
-import ai.dragon.config.properties.DataProperties;
+import ai.dragon.properties.config.DataProperties;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 
@@ -59,7 +59,7 @@ public class DatabaseService {
                 .loadModule(new JacksonMapperModule());
 
         if (!isDatabaseInMemory()) {
-            File databaseFile = new File(directoryStructureComponent.getDataDirectory(), "db/" + getDatabaseFilename());
+            File databaseFile = new File(directoryStructureComponent.directoryFor("db"), getDatabaseFilename());
             logger.debug("Will use database file: " + databaseFile);
 
             MVStoreModule storeModule = MVStoreModule.withConfig()

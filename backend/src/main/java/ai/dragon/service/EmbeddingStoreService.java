@@ -1,5 +1,7 @@
 package ai.dragon.service;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -8,9 +10,12 @@ import org.dizitart.no2.collection.events.CollectionEventInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ai.dragon.component.DirectoryStructureComponent;
 import ai.dragon.entity.SiloEntity;
 import ai.dragon.listener.EntityChangeListener;
+import ai.dragon.properties.store.InMemoryEmbeddingStoreSettings;
 import ai.dragon.repository.SiloRepository;
+import ai.dragon.util.IniSettingUtil;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
@@ -32,7 +37,11 @@ public class EmbeddingStoreService {
     @Autowired
     private EmbeddingModelService embeddingModelService;
 
+    @Autowired
+    private DirectoryStructureComponent directoryStructureComponent;
+
     private EntityChangeListener<SiloEntity> entityChangeListener;
+    private Map<UUID, Path> inMemoryEmbededdingStorePersistPaths = new HashMap<>();
 
     @PostConstruct
     private void init() {
@@ -57,7 +66,7 @@ public class EmbeddingStoreService {
         closeAllEmbeddingStores();
     }
 
-    public EmbeddingStore<TextSegment> retrieveEmbeddingStore(UUID siloUuid) {
+    public EmbeddingStore<TextSegment> retrieveEmbeddingStore(UUID siloUuid) throws Exception {
         if (embeddingStores.containsKey(siloUuid)) {
             return embeddingStores.get(siloUuid);
         }
@@ -68,8 +77,21 @@ public class EmbeddingStoreService {
     }
 
     public void closeEmbeddingStore(UUID siloUuid) {
-        if (embeddingStores.containsKey(siloUuid)) {
+        EmbeddingStore<TextSegment> embeddingStore = embeddingStores.get(siloUuid);
+        if (embeddingStore != null) {
+            persistEmbeddingStore(siloUuid);
             embeddingStores.remove(siloUuid);
+        }
+    }
+
+    public void persistEmbeddingStore(UUID siloUuid) {
+        EmbeddingStore<TextSegment> embeddingStore = embeddingStores.get(siloUuid);
+        if (embeddingStore instanceof InMemoryEmbeddingStore) {
+            InMemoryEmbeddingStore<TextSegment> inMemoryEmbeddingStore = (InMemoryEmbeddingStore<TextSegment>) embeddingStore;
+            Path vectorFile = inMemoryEmbededdingStorePersistPaths.get(siloUuid);
+            if (vectorFile != null) {
+                inMemoryEmbeddingStore.serializeToFile(vectorFile);
+            }
         }
     }
 
@@ -94,6 +116,7 @@ public class EmbeddingStoreService {
         EmbeddingSearchRequest embeddingSearchRequest1 = EmbeddingSearchRequest.builder()
                 .queryEmbedding(queryEmbedding)
                 // .filter(onlyForUser1)
+                .maxResults(10)
                 .build();
         EmbeddingSearchResult<TextSegment> embeddingSearchResult1 = embeddingStore.search(embeddingSearchRequest1);
         for (EmbeddingMatch<TextSegment> embeddingMatch : embeddingSearchResult1.matches()) {
@@ -104,12 +127,24 @@ public class EmbeddingStoreService {
         }
     }
 
-    private EmbeddingStore<TextSegment> buildEmbeddingStore(SiloEntity siloEntity) {
+    private EmbeddingStore<TextSegment> buildEmbeddingStore(SiloEntity siloEntity) throws Exception {
         EmbeddingStore<TextSegment> embeddingStore = null;
 
         switch (siloEntity.getVectorStoreType()) {
             case InMemoryEmbeddingStore:
+                InMemoryEmbeddingStoreSettings storeSettings = IniSettingUtil.convertIniSettingsToObject(
+                        siloEntity.getVectorStoreSettings(), InMemoryEmbeddingStoreSettings.class);
+                String persistance = storeSettings.getPersistance();
                 embeddingStore = new InMemoryEmbeddingStore<>();
+                if (!":memory:".equals(persistance)) {
+                    File vectorFile = new File(directoryStructureComponent.directoryFor("vector"),
+                            siloEntity.getUuid().toString() + ".json");
+                    Path vectorPath = vectorFile.toPath();
+                    inMemoryEmbededdingStorePersistPaths.put(siloEntity.getUuid(), vectorPath);
+                    if (vectorFile.exists()) {
+                        embeddingStore = InMemoryEmbeddingStore.fromFile(vectorPath);
+                    }
+                }
                 break;
             default:
                 throw new UnsupportedOperationException(

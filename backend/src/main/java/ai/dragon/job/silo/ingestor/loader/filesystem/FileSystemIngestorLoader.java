@@ -7,6 +7,7 @@ import java.util.List;
 
 import ai.dragon.entity.SiloEntity;
 import ai.dragon.job.silo.ingestor.loader.ImplAbstractSiloIngestorLoader;
+import ai.dragon.properties.loader.FileSystemIngestorLoaderSettings;
 import ai.dragon.util.IniSettingUtil;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.loader.FileSystemDocumentLoader;

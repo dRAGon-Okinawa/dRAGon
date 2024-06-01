@@ -26,7 +26,6 @@ public class IngestorService {
     @Autowired
     private EmbeddingModelService embeddingModelService;
 
-
     public void runSiloIngestion(SiloEntity siloEntity, Consumer<Integer> progressCallback,
             Consumer<SiloIngestLoaderLogMessage> logCallback)
             throws Exception {
@@ -38,6 +37,9 @@ public class IngestorService {
         logCallback.accept(SiloIngestLoaderLogMessage.builder()
                 .message(String.format("Will ingest %d documents to Silo...", documents.size())).build());
         ingestDocumentsToSilo(documents, siloEntity, progressCallback, logCallback);
+        logCallback.accept(SiloIngestLoaderLogMessage.builder()
+                .message(String.format("Persisting the Embedding Store...", documents.size())).build());
+        embeddingStoreService.persistEmbeddingStore(siloEntity.getUuid());
     }
 
     private void ingestDocumentsToSilo(List<Document> documents, SiloEntity siloEntity,
@@ -62,7 +64,7 @@ public class IngestorService {
             progressCallback.accept(progress);
         }
         logCallback.accept(SiloIngestLoaderLogMessage.builder()
-                .message("End.").build());
+                .message("End of ingestion.").build());
         progressCallback.accept(100);
     }
 

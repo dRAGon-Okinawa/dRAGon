@@ -1,4 +1,4 @@
-package ai.dragon.job.silo.ingestor.loader.filesystem;
+package ai.dragon.properties.loader;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
