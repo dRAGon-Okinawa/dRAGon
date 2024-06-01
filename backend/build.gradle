@@ -61,7 +61,8 @@ application {
 
 openApi {
 	groupedApiMappings.set(['http://localhost:1985/api/docs/backendapi': 'swagger-backendapi.json',
-                            'http://localhost:1985/api/docs/publicapi': 'swagger-publicapi.json'])
+                            'http://localhost:1985/api/docs/publicapi': 'swagger-publicapi.json',
+							'http://localhost:1985/api/docs/ragapi': 'swagger-ragapi.json'])
     outputDir.set(file("$buildDir/docs"))
     waitTimeInSeconds.set(10)
     customBootRun {

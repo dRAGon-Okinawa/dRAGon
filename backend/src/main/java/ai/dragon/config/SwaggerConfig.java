@@ -29,8 +29,15 @@ public class SwaggerConfig {
     }
 
     @Bean
-    public OpenAPI backendOpenAPI() {
+    public GroupedOpenApi ragApi() {
+        return GroupedOpenApi.builder()
+                .group("ragapi")
+                .pathsToMatch("/api/ragapi/**")
+                .build();
+    }
 
+    @Bean
+    public OpenAPI openAPI() {
         return new OpenAPI()
                 .info(new Info().title("dRAGon API")
                         .description("dRAGon API Reference for Developers")
