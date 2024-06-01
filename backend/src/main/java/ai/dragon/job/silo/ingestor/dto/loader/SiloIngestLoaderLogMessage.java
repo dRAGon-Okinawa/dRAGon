@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class SiloIngestLogMessage {
+public class SiloIngestLoaderLogMessage {
     private String message;
 
     @Builder.Default

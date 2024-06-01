@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ai.dragon.entity.SiloEntity;
-import ai.dragon.job.silo.ingestor.AbstractSiloIngestor;
-import ai.dragon.job.silo.ingestor.FileSystemIngestor;
-import ai.dragon.job.silo.ingestor.dto.SiloIngestLogMessage;
+import ai.dragon.job.silo.ingestor.dto.SiloIngestLoaderLogMessage;
+import ai.dragon.job.silo.ingestor.loader.AbstractSiloIngestorLoader;
+import ai.dragon.job.silo.ingestor.loader.filesystem.FileSystemIngestorLoader;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.splitter.DocumentSplitters;
 import dev.langchain4j.data.segment.TextSegment;
@@ -27,24 +27,24 @@ public class IngestorService {
     private EmbeddingModelService embeddingModelService;
 
     public void runSiloIngestion(SiloEntity siloEntity, Consumer<Integer> progressCallback,
-            Consumer<SiloIngestLogMessage> logCallback)
+            Consumer<SiloIngestLoaderLogMessage> logCallback)
             throws Exception {
-        AbstractSiloIngestor ingestor = getIngestorFromEntity(siloEntity);
-        logCallback.accept(SiloIngestLogMessage.builder()
-                .message(String.format("Listing documents using '%s' Ingestor...", ingestor.getClass())).build());
-        List<Document> documents = ingestor.listDocuments();
-        logCallback.accept(SiloIngestLogMessage.builder()
+        AbstractSiloIngestorLoader ingestorLoader = getIngestorLoaderFromEntity(siloEntity);
+        logCallback.accept(SiloIngestLoaderLogMessage.builder()
+                .message(String.format("Listing documents using '%s' Ingestor Loader...", ingestorLoader.getClass())).build());
+        List<Document> documents = ingestorLoader.listDocuments();
+        logCallback.accept(SiloIngestLoaderLogMessage.builder()
                 .message(String.format("Will ingest %d documents to Silo...", documents.size())).build());
         ingestDocumentsToSilo(documents, siloEntity, progressCallback, logCallback);
     }
 
     private void ingestDocumentsToSilo(List<Document> documents, SiloEntity siloEntity,
-            Consumer<Integer> progressCallback, Consumer<SiloIngestLogMessage> logCallback)
+            Consumer<Integer> progressCallback, Consumer<SiloIngestLoaderLogMessage> logCallback)
             throws Exception {
         EmbeddingStore<TextSegment> embeddingStore = embeddingStoreService.retrieveEmbeddingStore(siloEntity.getUuid());
         EmbeddingModel embeddingModel = embeddingModelService.modelForEntity(siloEntity);
         EmbeddingStoreIngestor ingestor = buildIngestor(embeddingStore, embeddingModel);
-        logCallback.accept(SiloIngestLogMessage.builder()
+        logCallback.accept(SiloIngestLoaderLogMessage.builder()
                 .message(String.format("Ingesting using '%s' Embedding Store and '%s' Embedding Model...",
                         embeddingStore.getClass(), embeddingModel.getClass()))
                 .build());
@@ -54,12 +54,12 @@ public class IngestorService {
             }
             int progress = (i * 100) / documents.size();
             Document document = documents.get(i);
-            logCallback.accept(SiloIngestLogMessage.builder()
+            logCallback.accept(SiloIngestLoaderLogMessage.builder()
                     .message(document.metadata().toString()).build());
             ingestor.ingest(documents);
             progressCallback.accept(progress);
         }
-        logCallback.accept(SiloIngestLogMessage.builder()
+        logCallback.accept(SiloIngestLoaderLogMessage.builder()
                 .message("End.").build());
         progressCallback.accept(100);
     }
@@ -83,10 +83,10 @@ public class IngestorService {
                 .build();
     }
 
-    private AbstractSiloIngestor getIngestorFromEntity(SiloEntity siloEntity) throws Exception {
-        switch (siloEntity.getIngestorType()) {
+    private AbstractSiloIngestorLoader getIngestorLoaderFromEntity(SiloEntity siloEntity) throws Exception {
+        switch (siloEntity.getIngestorLoaderType()) {
             case FileSystem:
-                return new FileSystemIngestor(siloEntity);
+                return new FileSystemIngestorLoader(siloEntity);
             default:
                 throw new UnsupportedDataTypeException("Ingestor type not supported");
         }
