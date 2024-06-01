@@ -3,7 +3,7 @@ package ai.dragon.service;
 import org.springframework.stereotype.Service;
 
 import ai.dragon.entity.SiloEntity;
-import ai.dragon.job.silo.ingestor.dto.embedding.EmbeddingModelSettings;
+import ai.dragon.properties.embedding.EmbeddingModelSettings;
 import ai.dragon.util.IniSettingUtil;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 

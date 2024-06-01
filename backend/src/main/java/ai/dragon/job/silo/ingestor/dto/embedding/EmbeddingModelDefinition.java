@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import ai.dragon.enumeration.ProviderType;
+import ai.dragon.properties.embedding.EmbeddingModelSettings;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import lombok.Builder;
 import lombok.Data;
