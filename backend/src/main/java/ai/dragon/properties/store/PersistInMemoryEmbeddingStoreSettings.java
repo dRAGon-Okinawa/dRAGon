@@ -6,10 +6,10 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class InMemoryEmbeddingStoreSettings {
-    private String persistance;
+public class PersistInMemoryEmbeddingStoreSettings {
+    private Integer flushSecs;
 
-    public InMemoryEmbeddingStoreSettings() {
-        persistance = ":memory:";
+    public PersistInMemoryEmbeddingStoreSettings() {
+        flushSecs = 60;
     }
 }

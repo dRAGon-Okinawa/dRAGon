@@ -1,7 +1,8 @@
 package ai.dragon.enumeration;
 
 public enum VectorStoreType {
-    InMemoryEmbeddingStore("InMemoryEmbeddingStore");
+    InMemoryEmbeddingStore("InMemoryEmbeddingStore"),
+    PersistInMemoryEmbeddingStore("PersistInMemoryEmbeddingStore");
 
     private String value;
 
