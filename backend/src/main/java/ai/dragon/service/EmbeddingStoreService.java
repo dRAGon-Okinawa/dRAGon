@@ -15,7 +15,7 @@ import ai.dragon.listener.EntityChangeListener;
 import ai.dragon.properties.store.PersistInMemoryEmbeddingStoreSettings;
 import ai.dragon.repository.SiloRepository;
 import ai.dragon.util.IniSettingUtil;
-import ai.dragon.util.embedding.PersistInMemoryEmbeddingStore;
+import ai.dragon.util.embedding.store.inmemory.persist.PersistInMemoryEmbeddingStore;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
@@ -123,7 +123,7 @@ public class EmbeddingStoreService {
                         siloEntity.getVectorStoreSettings(), PersistInMemoryEmbeddingStoreSettings.class);
                 File vectorFile = new File(directoryStructureComponent.directoryFor("vector"),
                         siloEntity.getUuid().toString() + ".json");
-                return PersistInMemoryEmbeddingStore.createFromFile(vectorFile, storeSettings.getFlushSecs());
+                return PersistInMemoryEmbeddingStore.createFromFileAndSettings(vectorFile, storeSettings);
             default:
                 throw new UnsupportedOperationException(
                         String.format("VectorStoreType not supported : %s", siloEntity.getVectorStoreType()));
