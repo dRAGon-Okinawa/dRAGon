@@ -37,9 +37,6 @@ public class IngestorService {
         logCallback.accept(SiloIngestLoaderLogMessage.builder()
                 .message(String.format("Will ingest %d documents to Silo...", documents.size())).build());
         ingestDocumentsToSilo(documents, siloEntity, progressCallback, logCallback);
-        logCallback.accept(SiloIngestLoaderLogMessage.builder()
-                .message(String.format("Persisting the Embedding Store...", documents.size())).build());
-        embeddingStoreService.persistEmbeddingStore(siloEntity.getUuid());
     }
 
     private void ingestDocumentsToSilo(List<Document> documents, SiloEntity siloEntity,
