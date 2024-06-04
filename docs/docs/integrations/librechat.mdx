@@ -4,5 +4,21 @@ import WIPS from '../../src/components/Admonitions/_wip_section.mdx';
 ## As an AI Endpoint (OpenAI compatible)
 <WIPS />
 
+```yaml
+endpoints:
+  custom:
+    - name: "dRAGon"
+      apiKey: "YOUR_API_KEY"
+      baseURL: "http://localhost:1985/api/ragapi/v1"
+      models: 
+        default: ["dragon-silo-uuid", "dragon-farm-uuid"]
+        fetch: true
+      titleConvo: true
+      titleModel: "dragon-farm-uuid"
+      titleMethod: "completion"
+      modelDisplayLabel: "dRAGon"
+      iconURL: "https://dragon.okinawa/img/dragon_okinawa_icon.png"
+```
+
 ## As an OpenAPI Plugin
 <WIPS />
