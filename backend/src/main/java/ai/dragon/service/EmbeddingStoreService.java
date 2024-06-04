@@ -23,7 +23,6 @@ import dev.langchain4j.store.embedding.EmbeddingMatch;
 import dev.langchain4j.store.embedding.EmbeddingSearchRequest;
 import dev.langchain4j.store.embedding.EmbeddingSearchResult;
 import dev.langchain4j.store.embedding.EmbeddingStore;
-import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 
@@ -88,10 +87,9 @@ public class EmbeddingStoreService {
         }
     }
 
-    public void clearEmbeddingStore(UUID siloUuid) {
-        if (embeddingStores.containsKey(siloUuid)) {
-            embeddingStores.get(siloUuid).removeAll();
-        }
+    public void clearEmbeddingStore(UUID siloUuid) throws Exception {
+        EmbeddingStore<TextSegment> embeddingStore = retrieveEmbeddingStore(siloUuid);
+        embeddingStore.removeAll();
     }
 
     public void query(UUID siloUuid, String query) throws Exception {
@@ -117,13 +115,17 @@ public class EmbeddingStoreService {
     private EmbeddingStore<TextSegment> buildEmbeddingStore(SiloEntity siloEntity) throws Exception {
         switch (siloEntity.getVectorStoreType()) {
             case InMemoryEmbeddingStore:
-                return new InMemoryEmbeddingStore<>();
+                return PersistInMemoryEmbeddingStore.builder().build();
             case PersistInMemoryEmbeddingStore:
                 PersistInMemoryEmbeddingStoreSettings storeSettings = IniSettingUtil.convertIniSettingsToObject(
                         siloEntity.getVectorStoreSettings(), PersistInMemoryEmbeddingStoreSettings.class);
                 File vectorFile = new File(directoryStructureComponent.directoryFor("vector"),
                         siloEntity.getUuid().toString() + ".json");
-                return PersistInMemoryEmbeddingStore.builder().settings(storeSettings).persistFile(vectorFile).build();
+                return PersistInMemoryEmbeddingStore
+                        .builder()
+                        .flushSecs(storeSettings.getFlushSecs())
+                        .persistFile(vectorFile)
+                        .build();
             default:
                 throw new UnsupportedOperationException(
                         String.format("VectorStoreType not supported : %s", siloEntity.getVectorStoreType()));

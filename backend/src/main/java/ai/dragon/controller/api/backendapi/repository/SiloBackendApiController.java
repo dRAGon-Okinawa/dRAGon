@@ -2,6 +2,7 @@ package ai.dragon.controller.api.backendapi.repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,6 +18,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import ai.dragon.entity.SiloEntity;
 import ai.dragon.repository.SiloRepository;
+import ai.dragon.service.SiloService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,6 +31,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class SiloBackendApiController extends AbstractCrudBackendApiController<SiloEntity> {
     @Autowired
     private SiloRepository siloRepository;
+
+    @Autowired
+    private SiloService siloService;
 
     @GetMapping("/")
     @ApiResponse(responseCode = "200", description = "List has been successfully retrieved.")
@@ -68,7 +73,9 @@ public class SiloBackendApiController extends AbstractCrudBackendApiController<S
     @ApiResponse(responseCode = "200", description = "Silo has been successfully deleted.")
     @ApiResponse(responseCode = "404", description = "Silo not found.", content = @Content)
     @Operation(summary = "Delete a Silo", description = "Deletes one Silo entity from its UUID stored in the database.")
-    public void delete(@PathVariable("uuid") @Parameter(description = "Identifier of the Silo") String uuid) {
+    public void delete(@PathVariable("uuid") @Parameter(description = "Identifier of the Silo") UUID uuid)
+            throws Exception {
+        siloService.removeEmbeddings(uuid);
         super.delete(uuid, siloRepository);
     }
 }

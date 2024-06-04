@@ -38,7 +38,6 @@ public class SiloService {
                 switch (collectionEventInfo.getEventType()) {
                     case Remove:
                         removeFarmLinks(entity);
-                        removeEmbeddings(entity);
                         break;
                     default:
                         break;
@@ -57,6 +56,11 @@ public class SiloService {
         siloJobService.startSiloIngestorJobNow(entity);
     }
 
+    public void removeEmbeddings(UUID uuid) throws Exception {
+        SiloEntity entity = siloRepository.getByUuid(uuid).orElseThrow();
+        embeddingStoreService.clearEmbeddingStore(entity.getUuid());
+    }
+
     private void removeFarmLinks(SiloEntity entity) {
         for (FarmEntity farm : farmRepository.find()) {
             if (farm.getSilos().contains(entity.getUuid())) {
@@ -64,9 +68,5 @@ public class SiloService {
                 farmRepository.save(farm);
             }
         }
-    }
-
-    private void removeEmbeddings(SiloEntity entity) {
-        embeddingStoreService.clearEmbeddingStore(entity.getUuid());
     }
 }
