@@ -41,7 +41,7 @@ public class SearchRagApiController {
         for (EmbeddingMatch<TextSegment> embeddingMatch : embeddingSearchResult.matches()) {
             searchResults.add(EmbeddingMatchResponse.builder()
                     .score(embeddingMatch.score())
-                    //.metadata(embeddingMatch.embedded().metadata())
+                    // .metadata(embeddingMatch.embedded().metadata())
                     .text(embeddingMatch.embedded().text())
                     .build());
         }
