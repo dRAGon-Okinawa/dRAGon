@@ -34,9 +34,15 @@ public class IngestorService {
                 .message(String.format("Listing documents using '%s' Ingestor Loader...", ingestorLoader.getClass()))
                 .build());
         List<Document> documents = ingestorLoader.listDocuments();
+        // TODO ?
+        /*logCallback.accept(SiloIngestLoaderLogMessage.builder()
+                .message(String.format("Cleaning all current embeddings of Silo '%s'...", siloEntity.getUuid()))
+                .build());
+        embeddingStoreService.clearEmbeddingStore(siloEntity.getUuid());*/
         logCallback.accept(SiloIngestLoaderLogMessage.builder()
                 .message(String.format("Will ingest %d documents to Silo...", documents.size())).build());
         ingestDocumentsToSilo(documents, siloEntity, progressCallback, logCallback);
+        // TODO Need to clean embeddings unlinked to documents listing
     }
 
     private void ingestDocumentsToSilo(List<Document> documents, SiloEntity siloEntity,

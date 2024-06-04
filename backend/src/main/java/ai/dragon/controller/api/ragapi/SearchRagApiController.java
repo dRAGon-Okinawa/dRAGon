@@ -1,6 +1,8 @@
 package ai.dragon.controller.api.ragapi;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,6 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ai.dragon.service.EmbeddingStoreService;
+import ai.dragon.util.embedding.search.EmbeddingMatchResponse;
+import dev.langchain4j.data.segment.TextSegment;
+import dev.langchain4j.store.embedding.EmbeddingMatch;
+import dev.langchain4j.store.embedding.EmbeddingSearchResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,10 +32,19 @@ public class SearchRagApiController {
     @PostMapping("/documents/silo/{uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}")
     @ApiResponse(responseCode = "200", description = "Documents have been successfully retrieved.")
     @Operation(summary = "Search documents inside a Silo", description = "Search documents from the Silo.")
-    public void searchDocumentsInSilo(
+    public List<EmbeddingMatchResponse> searchDocumentsInSilo(
             @PathVariable("uuid") @Parameter(description = "Identifier of the Silo") UUID uuid,
             @RequestBody String query)
             throws Exception {
-        embeddingStoreService.query(uuid, query);
+        List<EmbeddingMatchResponse> searchResults = new ArrayList<>();
+        EmbeddingSearchResult<TextSegment> embeddingSearchResult = embeddingStoreService.query(uuid, query);
+        for (EmbeddingMatch<TextSegment> embeddingMatch : embeddingSearchResult.matches()) {
+            searchResults.add(EmbeddingMatchResponse.builder()
+                    .score(embeddingMatch.score())
+                    //.metadata(embeddingMatch.embedded().metadata())
+                    .text(embeddingMatch.embedded().text())
+                    .build());
+        }
+        return searchResults;
     }
 }

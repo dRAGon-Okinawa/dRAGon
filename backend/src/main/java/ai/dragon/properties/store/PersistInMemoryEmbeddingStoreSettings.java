@@ -2,6 +2,7 @@ package ai.dragon.properties.store;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import ai.dragon.util.embedding.store.inmemory.persist.PersistInMemoryEmbeddingStore;
 import lombok.Data;
 
 @Data
@@ -10,6 +11,6 @@ public class PersistInMemoryEmbeddingStoreSettings {
     private Integer flushSecs;
 
     public PersistInMemoryEmbeddingStoreSettings() {
-        flushSecs = 60;
+        flushSecs = PersistInMemoryEmbeddingStore.DEFAULT_FLUSH_SECS;
     }
 }

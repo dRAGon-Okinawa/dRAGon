@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.UUID;
 
 import org.dizitart.no2.exceptions.UniqueConstraintException;
 import org.springframework.http.HttpStatus;
@@ -57,9 +58,17 @@ abstract class AbstractCrudBackendApiController<T extends AbstractEntity> {
         return entity;
     }
 
+    public T get(UUID uuid, AbstractRepository<T> repository) {
+        return get(uuid.toString(), repository);
+    }
+
     public T get(String uuid, AbstractRepository<T> repository) {
         return repository.getByUuid(uuid)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found."));
+    }
+
+    public void delete(UUID uuid, AbstractRepository<T> repository) {
+        delete(uuid.toString(), repository);
     }
 
     public void delete(String uuid, AbstractRepository<T> repository) {

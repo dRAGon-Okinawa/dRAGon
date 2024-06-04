@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -16,7 +17,6 @@ import java.util.stream.IntStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ai.dragon.properties.store.PersistInMemoryEmbeddingStoreSettings;
 import ai.dragon.util.Debouncer;
 import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.embedding.Embedding;
@@ -29,37 +29,62 @@ import dev.langchain4j.store.embedding.EmbeddingSearchResult;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.RelevanceScore;
 import dev.langchain4j.store.embedding.filter.Filter;
+import lombok.Builder;
 
-// Based on :
+// Initialy based on:
 // https://raw.githubusercontent.com/langchain4j/langchain4j/main/langchain4j/src/main/java/dev/langchain4j/store/embedding/inmemory/InMemoryEmbeddingStore.java
+@Builder
 public class PersistInMemoryEmbeddingStore implements EmbeddingStore<TextSegment> {
+    public static final int DEFAULT_FLUSH_SECS = 60;
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final CopyOnWriteArrayList<PersistInMemoryEntry<TextSegment>> entries = new CopyOnWriteArrayList<>();
     private final Debouncer debouncer = new Debouncer();
 
     private File persistFile;
-    private PersistInMemoryEmbeddingStoreSettings settings;
+    private Integer flushSecs = DEFAULT_FLUSH_SECS;
 
-    private PersistInMemoryEmbeddingStore() {
+    public static Builder builder() {
+        return new Builder();
     }
 
-    public static PersistInMemoryEmbeddingStore createFromFileAndSettings(File persistFile,
-            PersistInMemoryEmbeddingStoreSettings settings) {
-        PersistInMemoryEmbeddingStore store = new PersistInMemoryEmbeddingStore();
-        store.persistFile = persistFile;
-        store.restoreFromFileNow();
-        return store;
-    }
+    public static class Builder extends PersistInMemoryEmbeddingStoreBuilder {
+        Builder() {
+            super();
+        }
 
-    // TODO Remove funcs...
-
-    public void flushToDisk() {
-        debouncer.debounce(Void.class, new Runnable() {
-            @Override
-            public void run() {
-                flushToDiskNow();
+        @Override
+        public PersistInMemoryEmbeddingStore build() {
+            PersistInMemoryEmbeddingStore embeddingStore = super.build();
+            if (embeddingStore.persistFile != null) {
+                embeddingStore.restoreFromFile();
             }
-        }, settings.getFlushSecs(), TimeUnit.SECONDS);
+            return embeddingStore;
+        }
+    }
+
+    @Override
+    public void remove(String id) {
+        entries.removeIf(entry -> entry.getId().equals(id));
+        flushToDisk();
+    }
+
+    @Override
+    public void removeAll(Collection<String> ids) {
+        entries.removeIf(entry -> ids.contains(entry.getId()));
+        flushToDisk();
+    }
+
+    @Override
+    public void removeAll(Filter filter) {
+        entries.removeIf(entry -> filter.test(entry.getEmbedded().metadata()));
+        flushToDisk();
+    }
+
+    @Override
+    public void removeAll() {
+        entries.clear();
+        flushToDisk();
     }
 
     @Override
@@ -113,7 +138,26 @@ public class PersistInMemoryEmbeddingStore implements EmbeddingStore<TextSegment
                 .collect(Collectors.toList());
     }
 
-    private void restoreFromFileNow() {
+    private void flushToDisk() {
+        if (persistFile == null) {
+            return;
+        }
+        int flushSecs = this.flushSecs == null ? DEFAULT_FLUSH_SECS : this.flushSecs;
+        debouncer.debounce(Void.class, new Runnable() {
+            @Override
+            public void run() {
+                if (persistFile == null) {
+                    return;
+                }
+                flushToDiskNow();
+            }
+        }, flushSecs, TimeUnit.SECONDS);
+    }
+
+    private void restoreFromFile() {
+        if (persistFile == null) {
+            return;
+        }
         try {
             logger.debug(String.format("Restoring embeddings from file : %s", persistFile));
             if (persistFile.exists()) {
@@ -131,8 +175,12 @@ public class PersistInMemoryEmbeddingStore implements EmbeddingStore<TextSegment
     }
 
     private void flushToDiskNow() {
+        if (persistFile == null) {
+            logger.warn("Won't flush to disk because persistFile is null.");
+            return;
+        }
+        logger.debug(String.format("Flushing %d embeddings to file : %s", entries.size(), persistFile));
         try {
-            logger.debug(String.format("Flushing %d embeddings to file : %s", entries.size(), persistFile));
             String json = codec().toJson(this.entries);
             Files.write(persistFile.toPath(), json.getBytes(), StandardOpenOption.CREATE,
                     StandardOpenOption.TRUNCATE_EXISTING);
