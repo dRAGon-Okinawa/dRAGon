@@ -38,6 +38,11 @@ jobs:
 
       - name: Build dRAGon
         run: gradle build -Pversion=$(gradle cV -q -Prelease.quiet)
+
+      - name: Test
+        run: |
+          ls -ail backend/
+          ls -ailR backend/build
       
       - name: Log in to the Container registry
         uses: docker/login-action@v3
@@ -46,7 +51,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Docker meta
+      - name: Docker Meta Data
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -54,7 +59,6 @@ jobs:
             dragon-okinawa/dragon
           tags: |
             type=ref,event=branch
-            type=ref,event=pr
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
 
