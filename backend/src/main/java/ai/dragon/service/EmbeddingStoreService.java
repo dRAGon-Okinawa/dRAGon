@@ -123,7 +123,7 @@ public class EmbeddingStoreService {
                         siloEntity.getVectorStoreSettings(), PersistInMemoryEmbeddingStoreSettings.class);
                 File vectorFile = new File(directoryStructureComponent.directoryFor("vector"),
                         siloEntity.getUuid().toString() + ".json");
-                return PersistInMemoryEmbeddingStore.createFromFileAndSettings(vectorFile, storeSettings);
+                return PersistInMemoryEmbeddingStore.builder().settings(storeSettings).persistFile(vectorFile).build();
             default:
                 throw new UnsupportedOperationException(
                         String.format("VectorStoreType not supported : %s", siloEntity.getVectorStoreType()));
