@@ -15,7 +15,10 @@ Let's discover **dRAGon in less than 5 minutes**.
 
 <WIPS />
 
-### Gradle
+### Docker
 ```shell
-gradle bootRun
+docker run --rm -p 1985:1985 -v $(pwd)/data:/data --name dragon dragon-okinawa/dragon
 ```
+
+### Gradle
+See [dRAGon Development Mode](/docs/contributing/launch-dragon-dev) for more information.
