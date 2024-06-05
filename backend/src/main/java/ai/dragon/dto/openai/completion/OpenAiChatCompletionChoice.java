@@ -9,4 +9,5 @@ public class OpenAiChatCompletionChoice {
     private String finish_reason;
     private Integer index;
     private OpenAiCompletionMessage message;
+    private OpenAiCompletionMessage delta;
 }
