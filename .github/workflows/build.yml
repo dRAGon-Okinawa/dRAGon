@@ -39,6 +39,9 @@ jobs:
       - name: Build dRAGon
         run: gradle build -Pversion=$(gradle cV -q -Prelease.quiet)
 
+      - name: Remove Plain Jar
+        run: rm -f backend/build/libs/*plain.jar
+
       - name: Test
         run: |
           ls -ail backend/
@@ -63,7 +66,7 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           context: .
           push: true

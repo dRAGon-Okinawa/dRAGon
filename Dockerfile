@@ -4,7 +4,7 @@ EXPOSE 1984
 
 RUN mkdir /data
 RUN chown app:app /data
-COPY backend/build/libs/backend-0.0.0.jar /dragon.jar
+COPY backend/build/libs/backend*.jar /dragon.jar
 
 USER app
 ENTRYPOINT ["java","-Xmx512m", "-XX:+CrashOnOutOfMemoryError","-jar","-Dspring.profiles.active=prod","/dragon.jar"]
