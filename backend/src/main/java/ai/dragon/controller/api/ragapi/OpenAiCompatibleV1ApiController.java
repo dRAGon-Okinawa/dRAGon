@@ -32,32 +32,53 @@ public class OpenAiCompatibleV1ApiController {
 
     @PostMapping("/completions")
     @Operation(summary = "Creates a completion", description = "Creates a completion for the provided prompt and parameters.")
-    public OpenAiCompletionResponse completions(@Valid @RequestBody OpenAiCompletionRequest request)
+    public Object completions(@Valid @RequestBody OpenAiCompletionRequest request)
             throws Exception {
-        OpenAiCompletionResponse response = new OpenAiCompletionResponse();
-
-        response.setId(UUID.randomUUID().toString());
-        response.setModel(request.getModel());
-        response.setCreated(System.currentTimeMillis() / 1000);
-        response.setObject("text_completion");
-        response.setUsage(OpenAiCompletionUsage
-                .builder()
-                .completion_tokens(0)
-                .prompt_tokens(0)
-                .total_tokens(0)
-                .build());
-
-        List<OpenAiCompletionChoice> choices = new ArrayList<>();
-        choices.add(OpenAiCompletionChoice
-                .builder()
-                .index(0)
-                .finish_reason("stop")
-                .text("Hello, how can I help you today?")
-                .build());
-
-        response.setChoices(choices);
-
-        return response;
+        if (Boolean.TRUE.equals(request.getStream())) {
+            UUID emitterID = sseService.createEmitter();
+            for (int i = 0; i < 3; i++) {
+                OpenAiCompletionResponse responseChunk = new OpenAiCompletionResponse();
+                responseChunk.setId(emitterID.toString());
+                responseChunk.setModel(request.getModel());
+                responseChunk.setCreated(System.currentTimeMillis() / 1000);
+                responseChunk.setObject("text_completion");
+                List<OpenAiCompletionChoice> choices = new ArrayList<>();
+                choices.add(OpenAiCompletionChoice
+                        .builder()
+                        .index(0)
+                        .finish_reason(i == 2 ? "stop" : null)
+                        .text("Chunk : " + i + "\r\n")
+                        .build());
+                responseChunk.setChoices(choices);
+                sseService.sendEvent(emitterID, responseChunk);
+            }
+            sseService.sendEvent(emitterID, "[DONE]");
+            new Thread(() -> {
+                sseService.complete(emitterID);
+            }).start();
+            return sseService.retrieveEmitter(emitterID);
+        } else {
+            OpenAiCompletionResponse response = new OpenAiCompletionResponse();
+            response.setId(UUID.randomUUID().toString());
+            response.setModel(request.getModel());
+            response.setCreated(System.currentTimeMillis() / 1000);
+            response.setObject("text_completion");
+            response.setUsage(OpenAiCompletionUsage
+                    .builder()
+                    .completion_tokens(0)
+                    .prompt_tokens(0)
+                    .total_tokens(0)
+                    .build());
+            List<OpenAiCompletionChoice> choices = new ArrayList<>();
+            choices.add(OpenAiCompletionChoice
+                    .builder()
+                    .index(0)
+                    .finish_reason("stop")
+                    .text("Hello, how can I help you today?")
+                    .build());
+            response.setChoices(choices);
+            return response;
+        }
     }
 
     @PostMapping("/chat/completions")
@@ -65,7 +86,6 @@ public class OpenAiCompatibleV1ApiController {
     public Object chatCompletions(@Valid @RequestBody OpenAiChatCompletionRequest request) throws Exception {
         if (Boolean.TRUE.equals(request.getStream())) {
             UUID emitterID = sseService.createEmitter();
-
             for (int i = 0; i < 3; i++) {
                 OpenAiChatCompletionResponse responseChunk = new OpenAiChatCompletionResponse();
                 responseChunk.setId(emitterID.toString());
