@@ -1,4 +1,4 @@
-package ai.dragon.controller.api.ragapi;
+package ai.dragon.controller.api.raag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/ragapi/v1")
+@RequestMapping("/api/raag/v1")
 @Tag(name = "Open AI Compatible", description = "Compatible Endpoints following Open AI API Format")
 public class OpenAiCompatibleV1ApiController {
     @Autowired

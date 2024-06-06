@@ -1,4 +1,4 @@
-package ai.dragon.controller.api.backendapi.repository;
+package ai.dragon.controller.api.backend.repository;
 
 import java.util.List;
 import java.util.Map;
@@ -24,7 +24,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/backendapi/repository/farm")
+@RequestMapping("/api/backend/repository/farm")
 @Tag(name = "Farm Repository", description = "Farm Repository Management API Endpoints")
 public class FarmBackendApiController extends AbstractCrudBackendApiController<FarmEntity> {
     @Autowired
