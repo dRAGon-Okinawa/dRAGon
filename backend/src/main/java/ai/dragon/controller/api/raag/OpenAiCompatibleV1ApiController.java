@@ -25,7 +25,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/raag/v1")
-@Tag(name = "Open AI Compatible", description = "Compatible Endpoints following Open AI API Format")
+@Tag(name = "RaaG", description = "RAG as a GPT : Compatible Endpoints following Open AI API Format")
 public class OpenAiCompatibleV1ApiController {
     @Autowired
     private SseService sseService;
