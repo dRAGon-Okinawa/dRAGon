@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,8 @@ import ai.dragon.dto.openai.completion.OpenAiCompletionMessage;
 import ai.dragon.dto.openai.completion.OpenAiCompletionRequest;
 import ai.dragon.dto.openai.completion.OpenAiCompletionResponse;
 import ai.dragon.dto.openai.completion.OpenAiCompletionUsage;
+import ai.dragon.dto.openai.model.OpenAiModel;
+import ai.dragon.dto.openai.model.OpenAiModelsReponse;
 import ai.dragon.service.SseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,6 +32,19 @@ import jakarta.validation.Valid;
 public class OpenAiCompatibleV1ApiController {
     @Autowired
     private SseService sseService;
+
+    @GetMapping("/models")
+    @Operation(summary = "List models", description = "Lists available models.")
+    public OpenAiModelsReponse models() {
+        return OpenAiModelsReponse.builder()
+                .data(List.of(OpenAiModel
+                        .builder()
+                        .created(System.currentTimeMillis() / 1000)
+                        .id("dragon-ppx")
+                        .owned_by("dRAGon")
+                        .build()))
+                .build();
+    }
 
     @PostMapping("/completions")
     @Operation(summary = "Creates a completion", description = "Creates a completion for the provided prompt and parameters.")
