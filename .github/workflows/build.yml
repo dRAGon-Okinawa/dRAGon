@@ -58,7 +58,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ghcr.io/dragon-okinawa/dragon
           tags: |
             type=raw,value=${{ github.ref_name }},enable=true
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
