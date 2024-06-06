@@ -23,6 +23,9 @@ import ai.dragon.dto.openai.model.OpenAiModel;
 import ai.dragon.dto.openai.model.OpenAiModelsReponse;
 import ai.dragon.service.SseService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
@@ -48,6 +51,7 @@ public class OpenAiCompatibleV1ApiController {
 
     @PostMapping("/completions")
     @Operation(summary = "Creates a completion", description = "Creates a completion for the provided prompt and parameters.")
+    @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OpenAiCompletionResponse.class)))
     public Object completions(@Valid @RequestBody OpenAiCompletionRequest request)
             throws Exception {
         if (Boolean.TRUE.equals(request.getStream())) {
@@ -99,6 +103,7 @@ public class OpenAiCompatibleV1ApiController {
 
     @PostMapping("/chat/completions")
     @Operation(summary = "Creates a chat completion", description = "Creates a chat completion for the provided prompt and parameters.")
+    @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OpenAiChatCompletionResponse.class)))
     public Object chatCompletions(@Valid @RequestBody OpenAiChatCompletionRequest request) throws Exception {
         if (Boolean.TRUE.equals(request.getStream())) {
             UUID emitterID = sseService.createEmitter();
@@ -113,11 +118,6 @@ public class OpenAiCompatibleV1ApiController {
                         .builder()
                         .index(0)
                         .finish_reason(i == 2 ? "stop" : null)
-                        .message2(OpenAiCompletionMessage
-                                .builder()
-                                .role("assistant")
-                                .content("ChunkKK : " + i + "\r\n")
-                                .build())
                         .delta(OpenAiCompletionMessage
                                 .builder()
                                 .role("assistant")
@@ -154,7 +154,7 @@ public class OpenAiCompatibleV1ApiController {
                     .builder()
                     .index(0)
                     .finish_reason("stop")
-                    .message2(OpenAiCompletionMessage
+                    .message(OpenAiCompletionMessage
                             .builder()
                             .role("assistant")
                             .content("Hello, how can I help you today?")
