@@ -108,17 +108,16 @@ public class OpenAiCompatibleV1ApiController {
                 responseChunk.setModel(request.getModel());
                 responseChunk.setCreated(System.currentTimeMillis() / 1000);
                 responseChunk.setObject("chat.completion.chunk");
-                responseChunk.setUsage(OpenAiCompletionUsage
-                    .builder()
-                    .completion_tokens(0)
-                    .prompt_tokens(0)
-                    .total_tokens(0)
-                    .build());
                 List<OpenAiChatCompletionChoice> choices = new ArrayList<>();
                 choices.add(OpenAiChatCompletionChoice
                         .builder()
                         .index(0)
                         .finish_reason(i == 2 ? "stop" : null)
+                        .message2(OpenAiCompletionMessage
+                                .builder()
+                                .role("assistant")
+                                .content("ChunkKK : " + i + "\r\n")
+                                .build())
                         .delta(OpenAiCompletionMessage
                                 .builder()
                                 .role("assistant")
@@ -130,6 +129,11 @@ public class OpenAiCompatibleV1ApiController {
             }
             sseService.sendEvent(emitterID, "[DONE]");
             new Thread(() -> {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 sseService.complete(emitterID);
             }).start();
             return sseService.retrieveEmitter(emitterID);
@@ -150,7 +154,7 @@ public class OpenAiCompatibleV1ApiController {
                     .builder()
                     .index(0)
                     .finish_reason("stop")
-                    .message(OpenAiCompletionMessage
+                    .message2(OpenAiCompletionMessage
                             .builder()
                             .role("assistant")
                             .content("Hello, how can I help you today?")
