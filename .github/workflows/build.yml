@@ -3,6 +3,11 @@ on: push
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -37,7 +42,35 @@ jobs:
         run: npm install --prefix docs && npm run build --prefix docs
 
       - name: Build dRAGon
-        run: gradle build -Pversion=$(gradle cV -q -Prelease.quiet)
+        run: gradle bootJar -Pversion=$(gradle cV -q -Prelease.quiet)
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker Meta Data
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/dragon-okinawa/dragon
+          tags: |
+            type=raw,value=${{ github.ref_name }},enable=true
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
       - name: Push Release
         if: github.ref == 'refs/heads/main'

@@ -8,7 +8,8 @@
 			"installGradle": "true",
 			"gradleVersion": "8.7"
 		},
-		"ghcr.io/devcontainers/features/node:1": {}
+		"ghcr.io/devcontainers/features/node:1": {},
+		"ghcr.io/devcontainers/features/docker-in-docker:2" : {}
 	},
 	"postStartCommand": ".devcontainer/postStart.sh",
 	"postCreateCommand": ".devcontainer/postCreate.sh",
