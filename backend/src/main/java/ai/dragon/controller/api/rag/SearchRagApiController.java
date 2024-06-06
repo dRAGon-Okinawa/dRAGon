@@ -1,4 +1,4 @@
-package ai.dragon.controller.api.ragapi;
+package ai.dragon.controller.api.rag;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,7 +22,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/ragapi/search")
+@RequestMapping("/api/rag/search")
 @Tag(name = "Ask", description = "Search API Endpoints")
 public class SearchRagApiController {
     @Autowired
@@ -41,7 +41,7 @@ public class SearchRagApiController {
         for (EmbeddingMatch<TextSegment> embeddingMatch : embeddingSearchResult.matches()) {
             searchResults.add(EmbeddingMatchResponse.builder()
                     .score(embeddingMatch.score())
-                    //.metadata(embeddingMatch.embedded().metadata())
+                    // .metadata(embeddingMatch.embedded().metadata())
                     .text(embeddingMatch.embedded().text())
                     .build());
         }

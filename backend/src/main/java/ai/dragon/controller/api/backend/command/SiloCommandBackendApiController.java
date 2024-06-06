@@ -1,4 +1,4 @@
-package ai.dragon.controller.api.backendapi.command;
+package ai.dragon.controller.api.backend.command;
 
 import java.util.UUID;
 
@@ -15,7 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/backendapi/command/silo")
+@RequestMapping("/api/backend/command/silo")
 @Tag(name = "Silo Command", description = "Silo Command API Endpoints")
 public class SiloCommandBackendApiController {
     @Autowired
