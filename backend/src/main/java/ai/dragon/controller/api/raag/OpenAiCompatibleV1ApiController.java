@@ -108,6 +108,12 @@ public class OpenAiCompatibleV1ApiController {
                 responseChunk.setModel(request.getModel());
                 responseChunk.setCreated(System.currentTimeMillis() / 1000);
                 responseChunk.setObject("chat.completion.chunk");
+                responseChunk.setUsage(OpenAiCompletionUsage
+                    .builder()
+                    .completion_tokens(0)
+                    .prompt_tokens(0)
+                    .total_tokens(0)
+                    .build());
                 List<OpenAiChatCompletionChoice> choices = new ArrayList<>();
                 choices.add(OpenAiChatCompletionChoice
                         .builder()
