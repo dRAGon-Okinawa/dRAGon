@@ -14,7 +14,13 @@ public class OpenAiCompletionMessage {
 
     @NotNull
     @NotBlank
-    private String content;
+    // https://platform.openai.com/docs/api-reference/chat/create
+    // string or array
+    // (string) The text contents of the message.
+    // (array) : Array of content parts with a defined type :
+    // -> type == string : 'text' field will contain the text.
+    // -> type == image_url : 'url' field will contain the image url.
+    private Object content;
 
     private String name;
 }
