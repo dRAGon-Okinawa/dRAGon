@@ -18,8 +18,8 @@ public class OpenAiCompletionMessage {
     // string or array
     // (string) The text contents of the message.
     // (array) : Array of content parts with a defined type :
-    // -> type == string : 'text' field will contain the text.
-    // -> type == image_url : 'url' field will contain the image url.
+    // -> type == string : 'text' field will contain the text
+    // -> type == image_url : 'url' field will contain a URL or base64 encoded image
     private Object content;
 
     private String name;
