@@ -1,4 +1,4 @@
-package ai.dragon.controller.api.backendapi.command;
+package ai.dragon.controller.api.backend.command;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,7 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
-@RequestMapping("/api/backendapi/command/database")
+@RequestMapping("/api/backend/command/database")
 @Tag(name = "Database Command", description = "Database Command API Endpoints")
 public class DatabaseCommandBackendApiController {
     @Autowired

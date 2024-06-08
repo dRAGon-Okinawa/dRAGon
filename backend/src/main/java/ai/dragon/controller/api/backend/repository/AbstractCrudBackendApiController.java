@@ -1,4 +1,4 @@
-package ai.dragon.controller.api.backendapi.repository;
+package ai.dragon.controller.api.backend.repository;
 
 import java.lang.reflect.Constructor;
 import java.util.List;

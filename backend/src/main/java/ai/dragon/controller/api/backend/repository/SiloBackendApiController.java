@@ -1,4 +1,4 @@
-package ai.dragon.controller.api.backendapi.repository;
+package ai.dragon.controller.api.backend.repository;
 
 import java.util.List;
 import java.util.Map;
@@ -26,7 +26,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/backendapi/repository/silo")
+@RequestMapping("/api/backend/repository/silo")
 @Tag(name = "Silo Repository", description = "Silo Repository Management API Endpoints")
 public class SiloBackendApiController extends AbstractCrudBackendApiController<SiloEntity> {
     @Autowired

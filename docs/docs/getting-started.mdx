@@ -17,8 +17,7 @@ Let's discover **dRAGon in less than 5 minutes**.
 
 ### Docker
 ```shell
-docker pull ghcr.io/dragon-okinawa/dragon:latest
-docker run -d -p 1985:1985 -v $(pwd)/data:/data --name dragon ghcr.io/dragon-okinawa/dragon:latest
+docker run --rm -p 1985:1985 -v $(pwd)/data:/data --name dragon ghcr.io/dragon-okinawa/dragon:latest
 ```
 
 ### Gradle
