@@ -1,18 +1,19 @@
 # Roadmap
-- [ ] Conversational RAG
+- [ ] RaaG : RAG as a GPT
 - [ ] SQL RAG
 - [ ] Web Search Engine RAG
 - [ ] Multi-Modal Input Sources
-  - [ ] Local Files
+  - [X] Local Files
   - [ ] Web URLs / Web Search
+  - [ ] SQL Database
   - [ ] NFS Mount
   - [ ] S3 Bucket
   - [ ] CIFS Mount
-  - [ ] SQL Database
   - [ ] Git
 - [ ] Documents Types
-  - [ ] Text : Plain / PDF / Word
-  - [ ] Sheets : CSV / Excel
+  - [X] Text : Plain / PDF / Word
+  - [X] Presentations : PowerPoint
+  - [ ] Spreadsheets : Excel / CSV
   - [ ] Images : PNG / JPEG / GIF
   - [ ] Audio : MP3 / WAV
   - [ ] Video : MP4 / AVI

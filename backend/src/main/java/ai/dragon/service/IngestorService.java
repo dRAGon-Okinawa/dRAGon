@@ -7,8 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ai.dragon.entity.SiloEntity;
+import ai.dragon.enumeration.SiloIngestProgressMessageLevel;
 import ai.dragon.job.silo.ingestor.dto.loader.SiloIngestLoaderLogMessage;
-import ai.dragon.job.silo.ingestor.loader.AbstractSiloIngestorLoader;
+import ai.dragon.job.silo.ingestor.loader.ImplAbstractSiloIngestorLoader;
 import ai.dragon.job.silo.ingestor.loader.filesystem.FileSystemIngestorLoader;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.splitter.DocumentSplitters;
@@ -29,16 +30,27 @@ public class IngestorService {
     public void runSiloIngestion(SiloEntity siloEntity, Consumer<Integer> progressCallback,
             Consumer<SiloIngestLoaderLogMessage> logCallback)
             throws Exception {
-        AbstractSiloIngestorLoader ingestorLoader = getIngestorLoaderFromEntity(siloEntity);
+        ImplAbstractSiloIngestorLoader ingestorLoader = getIngestorLoaderFromEntity(siloEntity);
         logCallback.accept(SiloIngestLoaderLogMessage.builder()
                 .message(String.format("Listing documents using '%s' Ingestor Loader...", ingestorLoader.getClass()))
                 .build());
         List<Document> documents = ingestorLoader.listDocuments();
+        if (documents == null || documents.isEmpty()) {
+            logCallback.accept(SiloIngestLoaderLogMessage
+                    .builder()
+                    .messageLevel(SiloIngestProgressMessageLevel.Warning)
+                    .message("No documents to ingest! Please check the Ingestor Settings.")
+                    .build());
+            return;
+        }
         // TODO ?
-        /*logCallback.accept(SiloIngestLoaderLogMessage.builder()
-                .message(String.format("Cleaning all current embeddings of Silo '%s'...", siloEntity.getUuid()))
-                .build());
-        embeddingStoreService.clearEmbeddingStore(siloEntity.getUuid());*/
+        /*
+         * logCallback.accept(SiloIngestLoaderLogMessage.builder()
+         * .message(String.format("Cleaning all current embeddings of Silo '%s'...",
+         * siloEntity.getUuid()))
+         * .build());
+         * embeddingStoreService.clearEmbeddingStore(siloEntity.getUuid());
+         */
         logCallback.accept(SiloIngestLoaderLogMessage.builder()
                 .message(String.format("Will ingest %d documents to Silo...", documents.size())).build());
         ingestDocumentsToSilo(documents, siloEntity, progressCallback, logCallback);
@@ -90,7 +102,7 @@ public class IngestorService {
                 .build();
     }
 
-    private AbstractSiloIngestorLoader getIngestorLoaderFromEntity(SiloEntity siloEntity) throws Exception {
+    private ImplAbstractSiloIngestorLoader getIngestorLoaderFromEntity(SiloEntity siloEntity) throws Exception {
         switch (siloEntity.getIngestorLoaderType()) {
             case FileSystem:
                 return new FileSystemIngestorLoader(siloEntity);
