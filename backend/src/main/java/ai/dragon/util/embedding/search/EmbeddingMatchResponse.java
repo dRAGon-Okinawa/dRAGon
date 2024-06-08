@@ -10,5 +10,5 @@ import lombok.Getter;
 public class EmbeddingMatchResponse {
     private Double score;
     private String text;
-    private Map<String, String> metadata;
+    private Map<String, Object> metadata;
 }

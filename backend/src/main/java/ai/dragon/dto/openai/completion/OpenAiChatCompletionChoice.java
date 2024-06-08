@@ -1,5 +1,8 @@
 package ai.dragon.dto.openai.completion;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import lombok.Builder;
 import lombok.Data;
 
@@ -8,6 +11,10 @@ import lombok.Data;
 public class OpenAiChatCompletionChoice {
     private String finish_reason;
     private Integer index;
-    private OpenAiCompletionMessage message2;
+
+    @JsonInclude(Include.NON_NULL)
+    private OpenAiCompletionMessage message;
+
+    @JsonInclude(Include.NON_NULL)
     private OpenAiCompletionMessage delta;
 }
