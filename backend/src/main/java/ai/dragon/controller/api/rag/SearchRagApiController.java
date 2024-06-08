@@ -23,7 +23,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/rag/search")
-@Tag(name = "Ask", description = "Search API Endpoints")
+@Tag(name = "Search", description = "Search API Endpoints")
 public class SearchRagApiController {
     @Autowired
     private EmbeddingStoreService embeddingStoreService;
