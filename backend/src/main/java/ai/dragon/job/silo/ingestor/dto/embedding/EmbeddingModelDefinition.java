@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import ai.dragon.enumeration.ProviderType;
-import ai.dragon.properties.embedding.EmbeddingModelSettings;
+import ai.dragon.properties.embedding.EmbeddingSettings;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +14,7 @@ import lombok.Data;
 public class EmbeddingModelDefinition {
     private String embeddingModelClassName;
     private String embeddingModelName;
-    private Function<EmbeddingModelSettings, EmbeddingModel> embeddingModelWithSettings;
+    private Function<EmbeddingSettings, EmbeddingModel> embeddingModelWithSettings;
     private List<String> languages;
     private ProviderType providerType;
     private int dimensions;

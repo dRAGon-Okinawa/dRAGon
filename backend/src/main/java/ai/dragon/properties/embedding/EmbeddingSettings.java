@@ -6,6 +6,8 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EmbeddingModelSettings {
+public class EmbeddingSettings {
     private String apiKey;
+    private Integer chunkSize = 500;
+    private Integer chunkOverlap = 50;
 }

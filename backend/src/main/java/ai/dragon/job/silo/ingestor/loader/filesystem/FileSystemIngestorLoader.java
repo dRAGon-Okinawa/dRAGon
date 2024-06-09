@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import ai.dragon.entity.SiloEntity;
 import ai.dragon.job.silo.ingestor.loader.ImplAbstractSiloIngestorLoader;
 import ai.dragon.properties.loader.FileSystemIngestorLoaderSettings;
-import ai.dragon.util.IniSettingUtil;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.loader.FileSystemDocumentLoader;
 import dev.langchain4j.data.document.parser.apache.tika.ApacheTikaDocumentParser;
@@ -20,11 +19,12 @@ import dev.langchain4j.data.document.parser.apache.tika.ApacheTikaDocumentParser
 public class FileSystemIngestorLoader extends ImplAbstractSiloIngestorLoader {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private FileSystemIngestorLoaderSettings fileSystemIngestorLoaderSettings = new FileSystemIngestorLoaderSettings();
+    private FileSystemIngestorLoaderSettings loaderSettings = new FileSystemIngestorLoaderSettings();
     private List<File> pathsToIngest = new ArrayList<>();
 
-    public FileSystemIngestorLoader(SiloEntity siloEntity) throws Exception {
+    public FileSystemIngestorLoader(SiloEntity siloEntity, FileSystemIngestorLoaderSettings settings) throws Exception {
         super(siloEntity);
+        loaderSettings = settings;
     }
 
     public List<Document> listIngestorDocuments() throws Exception {
@@ -36,12 +36,12 @@ public class FileSystemIngestorLoader extends ImplAbstractSiloIngestorLoader {
         for (File pathToIngest : pathsToIngest) {
             try {
                 logger.info("Listing documents (recursive: {}) for path : {}...",
-                        fileSystemIngestorLoaderSettings.isRecursive(), pathToIngest);
-                PathMatcher pathMatcher = fileSystemIngestorLoaderSettings.getPathMatcher() != null
-                        ? FileSystems.getDefault().getPathMatcher(fileSystemIngestorLoaderSettings.getPathMatcher())
+                        loaderSettings.isRecursive(), pathToIngest);
+                PathMatcher pathMatcher = loaderSettings.getPathMatcher() != null
+                        ? FileSystems.getDefault().getPathMatcher(loaderSettings.getPathMatcher())
                         : FileSystems.getDefault()
                                 .getPathMatcher(FileSystemIngestorLoaderSettings.DEFAULT_PATH_MATCHER);
-                List<Document> documents = fileSystemIngestorLoaderSettings.isRecursive()
+                List<Document> documents = loaderSettings.isRecursive()
                         ? FileSystemDocumentLoader.loadDocumentsRecursively(pathToIngest.toPath(),
                                 pathMatcher,
                                 new ApacheTikaDocumentParser())
@@ -65,18 +65,16 @@ public class FileSystemIngestorLoader extends ImplAbstractSiloIngestorLoader {
     }
 
     public void checkIngestorLoaderSettings() throws Exception {
-        List<String> ingestorLoaderSettings = entity.getIngestorLoaderSettings();
+        List<String> ingestorLoaderSettings = entity.getIngestorSettings();
         if (ingestorLoaderSettings == null) {
             logger.warn("No 'ingestorLoaderSettings' provided for Silo {}", entity.getUuid());
             return;
         }
-        fileSystemIngestorLoaderSettings = IniSettingUtil.convertIniSettingsToObject(ingestorLoaderSettings,
-                FileSystemIngestorLoaderSettings.class);
-        if (fileSystemIngestorLoaderSettings.getPath() == null) {
+        if (loaderSettings.getPath() == null) {
             logger.warn("No 'path' setting found for Silo's Ingestor {}", entity.getUuid());
             return;
         }
-        String[] paths = fileSystemIngestorLoaderSettings.getPath().trim().split(",");
+        String[] paths = loaderSettings.getPath().trim().split(",");
         pathsToIngest.clear();
         for (String path : paths) {
             File pathFile = new File(path);

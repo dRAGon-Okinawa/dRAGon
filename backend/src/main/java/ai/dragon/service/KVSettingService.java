@@ -1,19 +1,27 @@
-package ai.dragon.util;
+package ai.dragon.service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class IniSettingUtil {
-    public static <T> T convertIniSettingsToObject(List<String> settings, Class<T> clazz) throws Exception {
+@Service
+public class KVSettingService {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    public <T> T kvSettingsToObject(List<String> settings, Class<T> clazz) {
         Map<String, String> settingsMap = new HashMap<>();
         if (settings != null) {
             for (String setting : settings) {
                 String[] parts = setting.split("=", 2);
                 if (parts.length <= 1) {
-                    throw new Exception(String.format("Invalid setting '%s' for class '%s'", setting, clazz.getName()));
+                    logger.error("Invalid setting '{}' for class '{}'", setting, clazz.getName());
+                    continue;
                 }
                 String key = parts[0].trim();
                 String value = parts[1].trim();

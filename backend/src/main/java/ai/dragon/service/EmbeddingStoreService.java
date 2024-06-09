@@ -14,7 +14,6 @@ import ai.dragon.entity.SiloEntity;
 import ai.dragon.listener.EntityChangeListener;
 import ai.dragon.properties.store.PersistInMemoryEmbeddingStoreSettings;
 import ai.dragon.repository.SiloRepository;
-import ai.dragon.util.IniSettingUtil;
 import ai.dragon.util.embedding.store.inmemory.persist.PersistInMemoryEmbeddingStore;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
@@ -37,6 +36,9 @@ public class EmbeddingStoreService {
 
     @Autowired
     private DirectoryStructureComponent directoryStructureComponent;
+
+    @Autowired
+    private KVSettingService kvSettingService;
 
     private EntityChangeListener<SiloEntity> entityChangeListener;
 
@@ -106,11 +108,11 @@ public class EmbeddingStoreService {
     }
 
     private EmbeddingStore<TextSegment> buildEmbeddingStore(SiloEntity siloEntity) throws Exception {
-        switch (siloEntity.getVectorStoreType()) {
+        switch (siloEntity.getVectorStore()) {
             case InMemoryEmbeddingStore:
                 return PersistInMemoryEmbeddingStore.builder().build();
             case PersistInMemoryEmbeddingStore:
-                PersistInMemoryEmbeddingStoreSettings storeSettings = IniSettingUtil.convertIniSettingsToObject(
+                PersistInMemoryEmbeddingStoreSettings storeSettings = kvSettingService.kvSettingsToObject(
                         siloEntity.getVectorStoreSettings(), PersistInMemoryEmbeddingStoreSettings.class);
                 File vectorFile = new File(directoryStructureComponent.directoryFor("vector"),
                         siloEntity.getUuid().toString() + ".json");
@@ -121,7 +123,7 @@ public class EmbeddingStoreService {
                         .build();
             default:
                 throw new UnsupportedOperationException(
-                        String.format("VectorStoreType not supported : %s", siloEntity.getVectorStoreType()));
+                        String.format("VectorStoreType not supported : %s", siloEntity.getVectorStore()));
         }
     }
 }

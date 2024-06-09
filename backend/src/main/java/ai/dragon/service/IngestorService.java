@@ -11,7 +11,10 @@ import ai.dragon.enumeration.SiloIngestProgressMessageLevel;
 import ai.dragon.job.silo.ingestor.dto.loader.SiloIngestLoaderLogMessage;
 import ai.dragon.job.silo.ingestor.loader.ImplAbstractSiloIngestorLoader;
 import ai.dragon.job.silo.ingestor.loader.filesystem.FileSystemIngestorLoader;
+import ai.dragon.properties.embedding.EmbeddingSettings;
+import ai.dragon.properties.loader.FileSystemIngestorLoaderSettings;
 import dev.langchain4j.data.document.Document;
+import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.document.splitter.DocumentSplitters;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
@@ -27,12 +30,19 @@ public class IngestorService {
     @Autowired
     private EmbeddingModelService embeddingModelService;
 
+    @Autowired
+    private KVSettingService kvSettingService;
+
+    @Autowired
+    private EmbeddingSegmentService embeddingSegmentService;
+
     public void runSiloIngestion(SiloEntity siloEntity, Consumer<Integer> progressCallback,
             Consumer<SiloIngestLoaderLogMessage> logCallback)
             throws Exception {
         ImplAbstractSiloIngestorLoader ingestorLoader = getIngestorLoaderFromEntity(siloEntity);
         logCallback.accept(SiloIngestLoaderLogMessage.builder()
-                .message(String.format("Listing documents using '%s' Ingestor Loader...", ingestorLoader.getClass()))
+                .message(String.format("Listing documents using '%s' Ingestor Loader...",
+                        ingestorLoader.getClass()))
                 .build());
         List<Document> documents = ingestorLoader.listDocuments();
         if (documents == null || documents.isEmpty()) {
@@ -43,16 +53,18 @@ public class IngestorService {
                     .build());
             return;
         }
-        // TODO ?
-        /*
-         * logCallback.accept(SiloIngestLoaderLogMessage.builder()
-         * .message(String.format("Cleaning all current embeddings of Silo '%s'...",
-         * siloEntity.getUuid()))
-         * .build());
-         * embeddingStoreService.clearEmbeddingStore(siloEntity.getUuid());
-         */
+        // TODO Don't clean all embeddings, just the ones that are not linked to any
+        // document ->
         logCallback.accept(SiloIngestLoaderLogMessage.builder()
-                .message(String.format("Will ingest %d documents to Silo...", documents.size())).build());
+                .message(String.format("Cleaning all current embeddings of Silo '%s'...",
+                        siloEntity.getUuid()))
+                .build());
+        embeddingStoreService.clearEmbeddingStore(siloEntity.getUuid());
+        // <- TODO Don't clean all embeddings, just the ones that are not linked to any
+        // document
+        logCallback.accept(SiloIngestLoaderLogMessage.builder()
+                .message(String.format("Will ingest %d documents to Silo...", documents.size()))
+                .build());
         ingestDocumentsToSilo(documents, siloEntity, progressCallback, logCallback);
         // TODO Need to clean embeddings unlinked to documents listing
     }
@@ -60,23 +72,31 @@ public class IngestorService {
     private void ingestDocumentsToSilo(List<Document> documents, SiloEntity siloEntity,
             Consumer<Integer> progressCallback, Consumer<SiloIngestLoaderLogMessage> logCallback)
             throws Exception {
-        EmbeddingStore<TextSegment> embeddingStore = embeddingStoreService.retrieveEmbeddingStore(siloEntity.getUuid());
+        EmbeddingStore<TextSegment> embeddingStore = embeddingStoreService
+                .retrieveEmbeddingStore(siloEntity.getUuid());
         EmbeddingModel embeddingModel = embeddingModelService.modelForEntity(siloEntity);
-        EmbeddingStoreIngestor ingestor = buildIngestor(embeddingStore, embeddingModel);
+        EmbeddingStoreIngestor ingestor = buildIngestor(embeddingStore, embeddingModel, siloEntity);
         logCallback.accept(SiloIngestLoaderLogMessage.builder()
-                .message(String.format("Ingesting using '%s' Embedding Store and '%s' Embedding Model...",
+                .message(String.format(
+                        "Ingesting using '%s' Embedding Store and '%s' Embedding Model...",
                         embeddingStore.getClass(), embeddingModel.getClass()))
                 .build());
         for (int i = 0; i < documents.size(); i++) {
             if (Thread.currentThread().isInterrupted()) {
                 throw new InterruptedException();
             }
-            int progress = (i * 100) / documents.size();
-            Document document = documents.get(i);
-            logCallback.accept(SiloIngestLoaderLogMessage.builder()
-                    .message(document.metadata().toString()).build());
-            ingestor.ingest(document);
-            progressCallback.accept(progress);
+            progressCallback.accept((i * 100) / documents.size());
+            try {
+                Document document = documents.get(i);
+                logCallback.accept(SiloIngestLoaderLogMessage.builder()
+                        .message(document.metadata().toString()).build());
+                ingestor.ingest(document);
+            } catch (Exception ex) {
+                logCallback.accept(SiloIngestLoaderLogMessage.builder()
+                        .messageLevel(SiloIngestProgressMessageLevel.Error)
+                        .message(ex.getMessage())
+                        .build());
+            }
         }
         logCallback.accept(SiloIngestLoaderLogMessage.builder()
                 .message("End of ingestion.").build());
@@ -84,18 +104,21 @@ public class IngestorService {
     }
 
     private EmbeddingStoreIngestor buildIngestor(EmbeddingStore<TextSegment> embeddingStore,
-            EmbeddingModel embeddingModel) {
+            EmbeddingModel embeddingModel, SiloEntity siloEntity) {
+        EmbeddingSettings embeddingSettings = kvSettingService.kvSettingsToObject(
+                siloEntity.getEmbeddingSettings(),
+                EmbeddingSettings.class);
         return EmbeddingStoreIngestor.builder()
                 .documentTransformer(document -> {
                     document.metadata().put("index_date", System.currentTimeMillis());
                     return document;
                 })
-                // TODO .documentSplitter(DocumentSplitters.recursive(1000, 200, new
-                // OpenAiTokenizer()))
-                .documentSplitter(DocumentSplitters.recursive(300, 50))
+                .documentSplitter(DocumentSplitters.recursive(embeddingSettings.getChunkSize(),
+                        embeddingSettings.getChunkOverlap()))
                 .textSegmentTransformer(textSegment -> {
-                    textSegment.metadata().put("index_date", System.currentTimeMillis());
-                    return textSegment;
+                    Metadata metadata = textSegment.metadata();
+                    String text = embeddingSegmentService.cleanTextSegment(textSegment.text());
+                    return new TextSegment(text, metadata);
                 })
                 .embeddingModel(embeddingModel)
                 .embeddingStore(embeddingStore)
@@ -103,9 +126,12 @@ public class IngestorService {
     }
 
     private ImplAbstractSiloIngestorLoader getIngestorLoaderFromEntity(SiloEntity siloEntity) throws Exception {
-        switch (siloEntity.getIngestorLoaderType()) {
+        switch (siloEntity.getIngestorLoader()) {
             case FileSystem:
-                return new FileSystemIngestorLoader(siloEntity);
+                FileSystemIngestorLoaderSettings settings = kvSettingService.kvSettingsToObject(
+                        siloEntity.getIngestorSettings(),
+                        FileSystemIngestorLoaderSettings.class);
+                return new FileSystemIngestorLoader(siloEntity, settings);
             default:
                 throw new UnsupportedDataTypeException("Ingestor type not supported");
         }

@@ -35,36 +35,36 @@ public class SiloEntity implements AbstractEntity {
     private String name;
 
     @NotNull
-    @Schema(description = "Java Class to be used for the Vector Store", example = "InMemoryEmbeddingStore")
-    private VectorStoreType vectorStoreType;
+    @Schema(description = "Type to be used for the Vector Store", example = "InMemoryEmbeddingStore")
+    private VectorStoreType vectorStore;
 
     @NotNull
     @Schema(description = "Type to be used for the Embedding Model", example = "BgeSmallEnV15QuantizedEmbeddingModel")
-    private EmbeddingModelType embeddingModelType;
+    private EmbeddingModelType embeddingModel;
 
     @NotNull
-    @Schema(description = "Type of the Silo's Ingestor Loader Type")
-    private IngestorLoaderType ingestorLoaderType;
+    @Schema(description = "Type to be used for the Ingestor Loader", example = "FileSystem")
+    private IngestorLoaderType ingestorLoader;
 
     @NotNull
-    @Schema(description = "Cron Expression for the Silo's Ingestor Job", example = "Launch the Silo ingestor every 15 minutes : */15 * * * *")
+    @Schema(description = "Cron Expression for the Silo's Ingestor Job", example = "Launch the Silo Ingestor every 15 minutes : */15 * * * *")
     private String ingestorSchedule;
 
     @Schema(description = "Settings to be linked to the Silo's Vector Store in the form of `key = value` pairs.")
     private List<String> vectorStoreSettings;
 
-    @Schema(description = "Settings to be linked to the Silo's Embedding Model in the form of `key = value` pairs.")
-    private List<String> embeddingModelSettings;
+    @Schema(description = "Settings to be linked to the Silo's Embedding in the form of `key = value` pairs.")
+    private List<String> embeddingSettings;
 
-    @Schema(description = "Settings to be linked to the Silo's Ingestor Loader in the form of `key = value` pairs.")
-    private List<String> ingestorLoaderSettings;
+    @Schema(description = "Settings to be linked to the Silo's Ingestor in the form of `key = value` pairs.")
+    private List<String> ingestorSettings;
 
     public SiloEntity() {
         this.uuid = UUID.randomUUID();
         this.name = String.format("Silo %s", this.uuid.toString());
-        this.vectorStoreType = VectorStoreType.InMemoryEmbeddingStore;
-        this.embeddingModelType = EmbeddingModelType.BgeSmallEnV15QuantizedEmbeddingModel;
-        this.ingestorLoaderType = IngestorLoaderType.FileSystem;
+        this.vectorStore = VectorStoreType.InMemoryEmbeddingStore;
+        this.embeddingModel = EmbeddingModelType.BgeSmallEnV15QuantizedEmbeddingModel;
+        this.ingestorLoader = IngestorLoaderType.FileSystem;
         this.ingestorSchedule = DEFAULT_CRON_EXPRESSION;
     }
 }
