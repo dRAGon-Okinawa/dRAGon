@@ -14,7 +14,6 @@ import ai.dragon.entity.SiloEntity;
 import ai.dragon.listener.EntityChangeListener;
 import ai.dragon.properties.store.PersistInMemoryEmbeddingStoreSettings;
 import ai.dragon.repository.SiloRepository;
-import ai.dragon.util.IniSettingUtil;
 import ai.dragon.util.embedding.store.inmemory.persist.PersistInMemoryEmbeddingStore;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
@@ -37,6 +36,9 @@ public class EmbeddingStoreService {
 
     @Autowired
     private DirectoryStructureComponent directoryStructureComponent;
+
+    @Autowired
+    private KVSettingService kvSettingService;
 
     private EntityChangeListener<SiloEntity> entityChangeListener;
 
@@ -91,7 +93,7 @@ public class EmbeddingStoreService {
         embeddingStore.removeAll();
     }
 
-    public EmbeddingSearchResult<TextSegment> query(UUID siloUuid, String query) throws Exception {
+    public EmbeddingSearchResult<TextSegment> query(UUID siloUuid, String query, Integer maxResults) throws Exception {
         SiloEntity siloEntity = siloRepository.getByUuid(siloUuid).orElseThrow();
         EmbeddingStore<TextSegment> embeddingStore = retrieveEmbeddingStore(siloUuid);
         EmbeddingModel embeddingModel = embeddingModelService.modelForEntity(siloEntity);
@@ -100,17 +102,17 @@ public class EmbeddingStoreService {
         EmbeddingSearchRequest embeddingSearchRequest1 = EmbeddingSearchRequest.builder()
                 .queryEmbedding(queryEmbedding)
                 // .filter(onlyForUser1)
-                .maxResults(10)
+                .maxResults(maxResults)
                 .build();
         return embeddingStore.search(embeddingSearchRequest1);
     }
 
     private EmbeddingStore<TextSegment> buildEmbeddingStore(SiloEntity siloEntity) throws Exception {
-        switch (siloEntity.getVectorStoreType()) {
+        switch (siloEntity.getVectorStore()) {
             case InMemoryEmbeddingStore:
                 return PersistInMemoryEmbeddingStore.builder().build();
             case PersistInMemoryEmbeddingStore:
-                PersistInMemoryEmbeddingStoreSettings storeSettings = IniSettingUtil.convertIniSettingsToObject(
+                PersistInMemoryEmbeddingStoreSettings storeSettings = kvSettingService.kvSettingsToObject(
                         siloEntity.getVectorStoreSettings(), PersistInMemoryEmbeddingStoreSettings.class);
                 File vectorFile = new File(directoryStructureComponent.directoryFor("vector"),
                         siloEntity.getUuid().toString() + ".json");
@@ -121,7 +123,7 @@ public class EmbeddingStoreService {
                         .build();
             default:
                 throw new UnsupportedOperationException(
-                        String.format("VectorStoreType not supported : %s", siloEntity.getVectorStoreType()));
+                        String.format("VectorStoreType not supported : %s", siloEntity.getVectorStore()));
         }
     }
 }
