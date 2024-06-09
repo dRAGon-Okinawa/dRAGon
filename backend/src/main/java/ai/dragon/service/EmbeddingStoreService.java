@@ -93,7 +93,7 @@ public class EmbeddingStoreService {
         embeddingStore.removeAll();
     }
 
-    public EmbeddingSearchResult<TextSegment> query(UUID siloUuid, String query) throws Exception {
+    public EmbeddingSearchResult<TextSegment> query(UUID siloUuid, String query, Integer maxResults) throws Exception {
         SiloEntity siloEntity = siloRepository.getByUuid(siloUuid).orElseThrow();
         EmbeddingStore<TextSegment> embeddingStore = retrieveEmbeddingStore(siloUuid);
         EmbeddingModel embeddingModel = embeddingModelService.modelForEntity(siloEntity);
@@ -102,7 +102,7 @@ public class EmbeddingStoreService {
         EmbeddingSearchRequest embeddingSearchRequest1 = EmbeddingSearchRequest.builder()
                 .queryEmbedding(queryEmbedding)
                 // .filter(onlyForUser1)
-                .maxResults(10)
+                .maxResults(maxResults)
                 .build();
         return embeddingStore.search(embeddingSearchRequest1);
     }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -40,12 +41,14 @@ public class SearchRagApiController {
     @Operation(summary = "Search documents inside a Silo", description = "Search documents from the Silo.")
     public List<EmbeddingMatchResponse> searchDocumentsInSilo(
             @PathVariable("uuid") @Parameter(description = "Identifier of the Silo") UUID uuid,
+            @RequestParam(name = "maxResults", required = false, defaultValue = "10") @Parameter(description = "Max results to return") Integer maxResults,
             @RequestBody String query)
             throws Exception {
         siloRepository.getByUuid(uuid)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found"));
         List<EmbeddingMatchResponse> searchResults = new ArrayList<>();
-        EmbeddingSearchResult<TextSegment> embeddingSearchResult = embeddingStoreService.query(uuid, query);
+        // TODO : Builder query
+        EmbeddingSearchResult<TextSegment> embeddingSearchResult = embeddingStoreService.query(uuid, query, maxResults);
         for (EmbeddingMatch<TextSegment> embeddingMatch : embeddingSearchResult.matches()) {
             searchResults.add(EmbeddingMatchResponse.builder()
                     .score(embeddingMatch.score())
