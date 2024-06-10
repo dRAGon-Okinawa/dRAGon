@@ -34,6 +34,10 @@
       <property name="arrayInitIndent" value="4"/>
       <property name="lineWrappingIndentation" value="4"/>
     </module>
+    <module name="RegexpSinglelineJava">
+      <property name="format" value="sk\-proj\-[a-zA-Z0-9+]"/>
+      <property name="ignoreComments" value="false"/>
+    </module>
   </module>
   <module name="NewlineAtEndOfFile"/>
   <module name="LineLength">
