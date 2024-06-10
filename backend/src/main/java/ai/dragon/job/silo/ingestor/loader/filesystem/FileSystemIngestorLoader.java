@@ -77,7 +77,7 @@ public class FileSystemIngestorLoader extends ImplAbstractSiloIngestorLoader {
         String[] paths = loaderSettings.getPath().trim().split(",");
         pathsToIngest.clear();
         for (String path : paths) {
-            File pathFile = new File(path);
+            File pathFile = new File(path.trim());
             if (!pathFile.exists() || !pathFile.isDirectory()) {
                 logger.warn("Skipping directory because not found : {}", pathFile);
                 continue;
