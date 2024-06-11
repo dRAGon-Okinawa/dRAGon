@@ -1,6 +1,9 @@
 package ai.dragon.enumeration;
 
+import java.time.Duration;
+
 import ai.dragon.dto.llm.StreamingChatLanguageModelDefinition;
+import ai.dragon.service.SseService;
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 
 public enum LanguageModelType {
@@ -36,6 +39,7 @@ public enum LanguageModelType {
                                     .builder()
                                     .apiKey(parameters.getApiKey())
                                     .modelName(parameters.getModelName())
+                                    .timeout(Duration.ofSeconds(SseService.DEFAULT_TIMEOUT))
                                     .build();
                         })
                         .providerType(ProviderType.OpenAI)

@@ -77,34 +77,44 @@ public class RaagService {
         // TODO request.getMessages().get(0).getContent())
         TokenStream stream = assistant.chat((String) request.getMessages().get(0).getContent());
         UUID emitterID = sseService.createEmitter();
-        stream.onNext(nextChunk -> {
-            OpenAiChatCompletionResponse responseChunk = new OpenAiChatCompletionResponse();
-            responseChunk.setId(emitterID.toString());
-            responseChunk.setModel(request.getModel());
-            responseChunk.setCreated(System.currentTimeMillis() / 1000);
-            responseChunk.setObject("chat.completion.chunk");
-            List<OpenAiChatCompletionChoice> choices = new ArrayList<>();
-            choices.add(OpenAiChatCompletionChoice
-                    .builder()
-                    .index(0)
-                    // .finish_reason(i == 2 ? "stop" : null)
-                    .delta(OpenAiCompletionMessage
-                            .builder()
-                            .role("assistant")
-                            .content(nextChunk)
-                            .build())
-                    .build());
-            responseChunk.setChoices(choices);
-            sseService.sendEvent(emitterID, responseChunk);
-        })
+        stream
+                .onNext(nextChunk -> {
+                    sseService.sendEvent(emitterID,
+                            this.createChatCompletionResponse(emitterID, request, nextChunk, false));
+                })
                 .onComplete(response -> {
-                    // response.finishReason(). // "stop"
+                    sseService.sendEvent(emitterID,
+                            this.createChatCompletionResponse(emitterID, request, "", true));
                     sseService.sendEvent(emitterID, "[DONE]");
                     sseService.complete(emitterID);
                 })
                 .onError(Throwable::printStackTrace)
                 .start();
         return sseService.retrieveEmitter(emitterID);
+    }
+
+    private OpenAiChatCompletionResponse createChatCompletionResponse(
+            UUID emitterID,
+            OpenAiChatCompletionRequest request,
+            String nextChunk,
+            boolean isLastChunk) {
+        return OpenAiChatCompletionResponse
+                .builder()
+                .id(emitterID.toString())
+                .model(request.getModel())
+                .created(System.currentTimeMillis() / 1000)
+                .object("chat.completion.chunk")
+                .choices(List.of(OpenAiChatCompletionChoice
+                        .builder()
+                        .index(0)
+                        .finish_reason(isLastChunk ? "stop" : null)
+                        .delta(OpenAiCompletionMessage
+                                .builder()
+                                .role("assistant")
+                                .content(nextChunk)
+                                .build())
+                        .build()))
+                .build();
     }
 
     private StreamingChatLanguageModel buildStreamingChatLanguageModel(FarmEntity farm) throws Exception {
