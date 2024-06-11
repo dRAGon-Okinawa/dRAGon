@@ -28,6 +28,11 @@ public enum EmbeddingModelType {
         return null;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public EmbeddingModelDefinition getModelDefinition() throws ClassNotFoundException {
         switch (this) {
             case BgeSmallEnV15QuantizedEmbeddingModel:
@@ -92,10 +97,5 @@ public enum EmbeddingModelType {
             default:
                 throw new ClassNotFoundException("Model not found");
         }
-    }
-
-    @Override
-    public String toString() {
-        return value;
     }
 }

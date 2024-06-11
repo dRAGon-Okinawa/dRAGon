@@ -5,11 +5,13 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import ai.dragon.dto.openai.completion.OpenAiChatCompletionChoice;
 import ai.dragon.dto.openai.completion.OpenAiChatCompletionRequest;
@@ -19,8 +21,10 @@ import ai.dragon.dto.openai.completion.OpenAiCompletionMessage;
 import ai.dragon.dto.openai.completion.OpenAiCompletionRequest;
 import ai.dragon.dto.openai.completion.OpenAiCompletionResponse;
 import ai.dragon.dto.openai.completion.OpenAiCompletionUsage;
-import ai.dragon.dto.openai.model.OpenAiModel;
 import ai.dragon.dto.openai.model.OpenAiModelsReponse;
+import ai.dragon.entity.FarmEntity;
+import ai.dragon.repository.FarmRepository;
+import ai.dragon.service.RaagService;
 import ai.dragon.service.SseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -36,16 +40,17 @@ public class OpenAiCompatibleV1ApiController {
     @Autowired
     private SseService sseService;
 
+    @Autowired
+    private FarmRepository farmRepository;
+
+    @Autowired
+    private RaagService raagService;
+
     @GetMapping("/models")
     @Operation(summary = "List models", description = "Lists available models.")
     public OpenAiModelsReponse models() {
         return OpenAiModelsReponse.builder()
-                .data(List.of(OpenAiModel
-                        .builder()
-                        .created(System.currentTimeMillis() / 1000)
-                        .id("dragon-ppx")
-                        .owned_by("dRAGon")
-                        .build()))
+                .data(raagService.listAvailableModels())
                 .build();
     }
 
@@ -105,38 +110,11 @@ public class OpenAiCompatibleV1ApiController {
     @Operation(summary = "Creates a chat completion", description = "Creates a chat completion for the provided prompt and parameters.")
     @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OpenAiChatCompletionResponse.class)))
     public Object chatCompletions(@Valid @RequestBody OpenAiChatCompletionRequest request) throws Exception {
+        FarmEntity farm = farmRepository
+                .findUniqueByFieldValue("raagIdentifier", request.getModel())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Farm not found"));
         if (Boolean.TRUE.equals(request.getStream())) {
-            UUID emitterID = sseService.createEmitter();
-            for (int i = 0; i < 3; i++) {
-                OpenAiChatCompletionResponse responseChunk = new OpenAiChatCompletionResponse();
-                responseChunk.setId(emitterID.toString());
-                responseChunk.setModel(request.getModel());
-                responseChunk.setCreated(System.currentTimeMillis() / 1000);
-                responseChunk.setObject("chat.completion.chunk");
-                List<OpenAiChatCompletionChoice> choices = new ArrayList<>();
-                choices.add(OpenAiChatCompletionChoice
-                        .builder()
-                        .index(0)
-                        .finish_reason(i == 2 ? "stop" : null)
-                        .delta(OpenAiCompletionMessage
-                                .builder()
-                                .role("assistant")
-                                .content("Chunk : " + i + "\r\n")
-                                .build())
-                        .build());
-                responseChunk.setChoices(choices);
-                sseService.sendEvent(emitterID, responseChunk);
-            }
-            sseService.sendEvent(emitterID, "[DONE]");
-            new Thread(() -> {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                sseService.complete(emitterID);
-            }).start();
-            return sseService.retrieveEmitter(emitterID);
+            return raagService.chatResponse(farm, request);
         } else {
             OpenAiChatCompletionResponse response = new OpenAiChatCompletionResponse();
             response.setId(UUID.randomUUID().toString());

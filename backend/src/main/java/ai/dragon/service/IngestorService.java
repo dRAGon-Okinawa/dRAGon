@@ -74,7 +74,7 @@ public class IngestorService {
             throws Exception {
         EmbeddingStore<TextSegment> embeddingStore = embeddingStoreService
                 .retrieveEmbeddingStore(siloEntity.getUuid());
-        EmbeddingModel embeddingModel = embeddingModelService.modelForEntity(siloEntity);
+        EmbeddingModel embeddingModel = embeddingModelService.modelForSilo(siloEntity);
         EmbeddingStoreIngestor ingestor = buildIngestor(embeddingStore, embeddingModel, siloEntity);
         logCallback.accept(SiloIngestLoaderLogMessage.builder()
                 .message(String.format(

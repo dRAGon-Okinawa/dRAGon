@@ -96,7 +96,7 @@ public class EmbeddingStoreService {
     public EmbeddingSearchResult<TextSegment> query(UUID siloUuid, String query, Integer maxResults) throws Exception {
         SiloEntity siloEntity = siloRepository.getByUuid(siloUuid).orElseThrow();
         EmbeddingStore<TextSegment> embeddingStore = retrieveEmbeddingStore(siloUuid);
-        EmbeddingModel embeddingModel = embeddingModelService.modelForEntity(siloEntity);
+        EmbeddingModel embeddingModel = embeddingModelService.modelForSilo(siloEntity);
         Embedding queryEmbedding = embeddingModel.embed(query).content();
         // Filter onlyForUser1 = metadataKey("userId").isEqualTo("1");
         EmbeddingSearchRequest embeddingSearchRequest1 = EmbeddingSearchRequest.builder()
