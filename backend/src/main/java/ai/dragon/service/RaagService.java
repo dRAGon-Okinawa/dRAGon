@@ -20,7 +20,9 @@ import ai.dragon.entity.FarmEntity;
 import ai.dragon.properties.embedding.LanguageModelSettings;
 import ai.dragon.repository.FarmRepository;
 import ai.dragon.util.ai.AiAssistant;
+import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.data.segment.TextSegment;
+import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.StreamingChatLanguageModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.rag.DefaultRetrievalAugmentor;
@@ -51,6 +53,9 @@ public class RaagService {
     @Autowired
     private KVSettingService kvSettingService;
 
+    @Autowired
+    private ChatMessageService chatMessageService;
+
     public List<OpenAiModel> listAvailableModels() {
         return farmRepository
                 .find()
@@ -71,11 +76,13 @@ public class RaagService {
         AiAssistant assistant = AiServices.builder(AiAssistant.class)
                 .streamingChatLanguageModel(this.buildStreamingChatLanguageModel(farm))
                 // TODO support of chatLanguageModel in addition of streamingChatLanguageModel
-                // TODO .chatMemory(MessageWindowChatMemory.withMaxMessages(10)) // it should
                 .retrievalAugmentor(this.buildRetrievalAugmentor(farm))
+                .chatMemory(this.buildChatMemory(request))
                 .build();
-        // TODO request.getMessages().get(0).getContent())
-        TokenStream stream = assistant.chat((String) request.getMessages().get(0).getContent());
+        OpenAiCompletionMessage lastCompletionMessage = request.getMessages().get(request.getMessages().size() - 1);
+        UserMessage lastChatMessage = (UserMessage) chatMessageService.convertToChatMessage(lastCompletionMessage)
+                .orElseThrow();
+        TokenStream stream = assistant.chat(chatMessageService.singleTextFrom(lastChatMessage));
         UUID emitterID = sseService.createEmitter();
         stream
                 .onNext(nextChunk -> {
@@ -91,6 +98,16 @@ public class RaagService {
                 .onError(Throwable::printStackTrace)
                 .start();
         return sseService.retrieveEmitter(emitterID);
+    }
+
+    private MessageWindowChatMemory buildChatMemory(OpenAiChatCompletionRequest request) {
+        MessageWindowChatMemory memory = MessageWindowChatMemory.withMaxMessages(10); // TODO maxMessages
+        // Don't retrieve the last message, it's not for history but for completion!
+        for (int i = 0; i < request.getMessages().size() - 1; i++) {
+            OpenAiCompletionMessage requestMessage = request.getMessages().get(i);
+            chatMessageService.convertToChatMessage(requestMessage).ifPresent(memory::add);
+        }
+        return memory;
     }
 
     private OpenAiChatCompletionResponse createChatCompletionResponse(
