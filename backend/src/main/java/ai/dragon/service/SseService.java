@@ -11,12 +11,15 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @Service
 public class SseService {
+    // TODO Custom timeout :
+    public static final long DEFAULT_TIMEOUT = 90L * 1000;
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private ConcurrentHashMap<UUID, SseEmitter> emitters = new ConcurrentHashMap<>();
 
     public UUID createEmitter() {
-        return createEmitter(10L * 1000L);
+        return createEmitter(DEFAULT_TIMEOUT);
     }
 
     public UUID createEmitter(Long timeout) {
@@ -36,27 +39,31 @@ public class SseService {
         return emitters.get(id);
     }
 
-    public void complete(UUID id) {
+    public boolean complete(UUID id) {
         SseEmitter emitter = emitters.get(id);
         if (emitter == null) {
-            logger.warn("No emitter found for id: {}", id);
-            return;
+            logger.warn("Can't complete : No emitter found for id '{}'", id);
+            return false;
         }
         emitter.complete();
         emitters.remove(id);
+        return true;
     }
 
-    public void sendEvent(UUID id, Object event) {
+    public boolean sendEvent(UUID id, Object event) {
         SseEmitter emitter = emitters.get(id);
         if (emitter == null) {
-            logger.warn("No emitter found for id: {}", id);
-            return;
+            logger.info(event.toString());
+            logger.warn("Can't send event : No emitter found for id '{}'", id);
+            return false;
         }
         try {
             emitter.send(event);
         } catch (IOException e) {
             emitter.complete();
             emitters.remove(id);
+            return false;
         }
+        return true;
     }
 }
