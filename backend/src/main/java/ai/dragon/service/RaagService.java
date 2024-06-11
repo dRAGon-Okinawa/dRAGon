@@ -20,6 +20,7 @@ import ai.dragon.entity.FarmEntity;
 import ai.dragon.properties.embedding.LanguageModelSettings;
 import ai.dragon.repository.FarmRepository;
 import ai.dragon.util.ai.AiAssistant;
+import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.StreamingChatLanguageModel;
@@ -78,8 +79,10 @@ public class RaagService {
                 .retrievalAugmentor(this.buildRetrievalAugmentor(farm))
                 .chatMemory(this.buildChatMemory(request))
                 .build();
-        // TODO request.getMessages().get(0).getContent())
-        TokenStream stream = assistant.chat((String) request.getMessages().get(0).getContent());
+        OpenAiCompletionMessage lastCompletionMessage = request.getMessages().get(request.getMessages().size() - 1);
+        UserMessage lastChatMessage = (UserMessage) chatMessageService.convertToChatMessage(lastCompletionMessage)
+                .orElseThrow();
+        TokenStream stream = assistant.chat(chatMessageService.singleTextFrom(lastChatMessage));
         UUID emitterID = sseService.createEmitter();
         stream
                 .onNext(nextChunk -> {

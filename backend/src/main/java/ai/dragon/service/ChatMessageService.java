@@ -22,12 +22,24 @@ import dev.langchain4j.data.message.UserMessage;
 public class ChatMessageService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    public String singleTextFrom(UserMessage message) {
+        StringBuilder sb = new StringBuilder();
+        message.contents().forEach(content -> {
+            if (content instanceof TextContent) {
+                sb.append(((TextContent) content).text());
+            }
+        });
+        return sb.toString();
+    }
+
+    @SuppressWarnings("unchecked")
     public Optional<ChatMessage> convertToChatMessage(OpenAiCompletionMessage completionMessage) {
         ChatMessage chatMessage;
         switch (completionMessage.getRole()) {
             case "user":
                 if (completionMessage.getContent() instanceof String) {
-                    chatMessage = new UserMessage(completionMessage.getName(), (String) completionMessage.getContent());
+                    // TODO name
+                    chatMessage = new UserMessage((String) completionMessage.getContent());
                 } else {
                     List<Map<String, Object>> content = (List<Map<String, Object>>) completionMessage.getContent();
                     List<Content> contents = new ArrayList<>();
@@ -47,7 +59,8 @@ public class ChatMessageService {
                             contents.add(new ImageContent(url));
                         }
                     });
-                    chatMessage = new UserMessage(completionMessage.getName(), contents);
+                    // TODO name
+                    chatMessage = new UserMessage(contents);
                 }
                 break;
             case "system":
