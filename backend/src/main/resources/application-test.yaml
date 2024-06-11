@@ -15,6 +15,8 @@ org:
       poll-interval-in-seconds: 5 # Check for new work every 5 seconds
     job-scheduler:
       enabled: true
+    dashboard:
+      enabled: false
     jobs:
       default-number-of-retries: 0 # Number of retries for a failing job
 dragon:
