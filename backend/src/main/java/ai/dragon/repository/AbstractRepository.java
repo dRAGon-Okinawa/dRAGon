@@ -87,6 +87,14 @@ public abstract class AbstractRepository<T extends AbstractEntity> {
         return this.findWithFilter(FluentFilter.where(fieldName).eq(fieldValue));
     }
 
+    public Optional<T> findUniqueByFieldValue(String fieldName, Object fieldValue) {
+        Cursor<T> cursor = this.findByFieldValue(fieldName, fieldValue);
+        if (cursor.size() > 1) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Multiple entities found");
+        }
+        return cursor.size() == 1 ? Optional.of(cursor.firstOrNull()) : Optional.empty();
+    }
+
     public void delete(String uuid) {
         delete(UUID.fromString(uuid));
     }
