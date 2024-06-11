@@ -116,30 +116,29 @@ public class OpenAiCompatibleV1ApiController {
         if (Boolean.TRUE.equals(request.getStream())) {
             return raagService.chatResponse(farm, request);
         } else {
-            OpenAiChatCompletionResponse response = new OpenAiChatCompletionResponse();
-            response.setId(UUID.randomUUID().toString());
-            response.setModel(request.getModel());
-            response.setCreated(System.currentTimeMillis() / 1000);
-            response.setObject("chat.completion");
-            response.setUsage(OpenAiCompletionUsage
+            return OpenAiChatCompletionResponse
                     .builder()
-                    .completion_tokens(0)
-                    .prompt_tokens(0)
-                    .total_tokens(0)
-                    .build());
-            List<OpenAiChatCompletionChoice> choices = new ArrayList<>();
-            choices.add(OpenAiChatCompletionChoice
-                    .builder()
-                    .index(0)
-                    .finish_reason("stop")
-                    .message(OpenAiCompletionMessage
+                    .id(UUID.randomUUID().toString())
+                    .model(request.getModel())
+                    .created(System.currentTimeMillis() / 1000)
+                    .object("chat.completion")
+                    .usage(OpenAiCompletionUsage
                             .builder()
-                            .role("assistant")
-                            .content("Hello, how can I help you today?")
+                            .completion_tokens(0)
+                            .prompt_tokens(0)
+                            .total_tokens(0)
                             .build())
-                    .build());
-            response.setChoices(choices);
-            return response;
+                    .choices(List.of(OpenAiChatCompletionChoice
+                            .builder()
+                            .index(0)
+                            .finish_reason("stop")
+                            .message(OpenAiCompletionMessage
+                                    .builder()
+                                    .role("assistant")
+                                    .content("Hello, how can I help you today?")
+                                    .build())
+                            .build()))
+                    .build();
         }
     }
 }
