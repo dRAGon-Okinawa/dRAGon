@@ -1,5 +1,10 @@
 plugins {
-  id "com.github.node-gradle.node" version "7.0.2"
+  id 'com.github.node-gradle.node' version '7.0.2'
+  id 'org.openapi.generator' version '7.5.0'
+}
+
+ext {
+    backendBuildDir = project(':backend').buildDir
 }
 
 task npmBuild(type: NpmTask) {
@@ -16,4 +21,16 @@ task test(type: NpmTask) {
 	inputs.dir("src")
 	outputs.dir("dist")
 	args = ['run', 'build']
+}
+
+task buildOpenApiMarkdownDocs(type: org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
+	dependsOn(':backend:generateOpenApiDocs')
+    generatorName.set("markdown")
+	inputSpecRootDirectory.set("$backendBuildDir/docs/api")
+	cleanupOutput.set(true)
+	outputDir.set("$backendBuildDir/docs/api/markdown")
+	doLast {
+		delete "docs/api/specification"
+        file("$backendBuildDir/docs/api/markdown").renameTo(file("docs/api/specification"))
+    }
 }

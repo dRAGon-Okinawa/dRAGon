@@ -67,7 +67,7 @@ openApi {
                             'http://localhost:1985/api/docs/app': 'swagger-app.json',
 							'http://localhost:1985/api/docs/rag': 'swagger-rag.json',
 							'http://localhost:1985/api/docs/raag': 'swagger-raag.json'])
-    outputDir.set(file("$buildDir/docs"))
+    outputDir.set(file("$buildDir/docs/api"))
     waitTimeInSeconds.set(10)
     customBootRun {
         args.set(['--spring.profiles.active=test']) 
