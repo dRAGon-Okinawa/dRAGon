@@ -65,8 +65,10 @@ public class ChatMessageService {
                 break;
             case "system":
                 chatMessage = new SystemMessage((String) completionMessage.getContent());
+                break;
             case "assistant":
                 chatMessage = new AiMessage((String) completionMessage.getContent());
+                break;
             default:
                 throw new IllegalArgumentException("Invalid Message Role: " + completionMessage.getRole());
         }
