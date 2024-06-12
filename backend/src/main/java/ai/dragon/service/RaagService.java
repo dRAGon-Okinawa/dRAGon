@@ -102,8 +102,7 @@ public class RaagService {
 
     private MessageWindowChatMemory buildChatMemory(OpenAiChatCompletionRequest request) {
         MessageWindowChatMemory memory = MessageWindowChatMemory.withMaxMessages(10); // TODO maxMessages
-        // Don't retrieve the last message, it's not for history but for completion!
-        for (int i = 0; i < request.getMessages().size() - 1; i++) {
+        for (int i = 0; i < request.getMessages().size(); i++) {
             OpenAiCompletionMessage requestMessage = request.getMessages().get(i);
             chatMessageService.convertToChatMessage(requestMessage).ifPresent(memory::add);
         }
