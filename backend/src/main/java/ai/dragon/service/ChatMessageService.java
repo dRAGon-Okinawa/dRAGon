@@ -24,22 +24,40 @@ import dev.langchain4j.data.message.UserMessage;
 public class ChatMessageService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public String singleTextFrom(UserMessage message) {
+    @SuppressWarnings("unchecked")
+    public String singleTextFrom(ChatMessage message) {
         StringBuilder sb = new StringBuilder();
-        message.contents().forEach(content -> {
-            if (content instanceof TextContent) {
-                sb.append(((TextContent) content).text());
-            }
-        });
+        Object contents = null;
+        if (message instanceof UserMessage) {
+            contents = ((UserMessage) message).contents();
+        } else if (message instanceof AiMessage) {
+            contents = ((AiMessage) message).text();
+        } else if (message instanceof SystemMessage) {
+            contents = ((SystemMessage) message).text();
+        }
+        if (contents == null) {
+            return sb.toString();
+        }
+        if (contents instanceof String) {
+            return (String) contents;
+        } else if (contents instanceof List) {
+            List<Content> contentList = (List<Content>) contents;
+            contentList.forEach(content -> {
+                if (content instanceof TextContent) {
+                    sb.append(((TextContent) content).text());
+                }
+            });
+            return sb.toString();
+        }
         return sb.toString();
     }
 
     @SuppressWarnings("unchecked")
     public String singleTextFrom(OpenAiCompletionRequest request) {
         Object prompt = request.getPrompt();
-        if(prompt instanceof String) {
+        if (prompt instanceof String) {
             return (String) prompt;
-        } else if(prompt instanceof List) {
+        } else if (prompt instanceof List) {
             List<String> promptList = (List<String>) prompt;
             StringBuilder sb = new StringBuilder();
             promptList.forEach(promptItem -> {
