@@ -2,8 +2,10 @@ package ai.dragon.enumeration;
 
 import java.time.Duration;
 
+import ai.dragon.dto.llm.ChatLanguageModelDefinition;
 import ai.dragon.dto.llm.StreamingChatLanguageModelDefinition;
 import ai.dragon.service.SseService;
+import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 
 public enum LanguageModelType {
@@ -36,6 +38,26 @@ public enum LanguageModelType {
                         .builder()
                         .modelWithSettings(parameters -> {
                             return OpenAiStreamingChatModel
+                                    .builder()
+                                    .apiKey(parameters.getApiKey())
+                                    .modelName(parameters.getModelName())
+                                    .timeout(Duration.ofSeconds(SseService.DEFAULT_TIMEOUT))
+                                    .build();
+                        })
+                        .providerType(ProviderType.OpenAI)
+                        .build();
+            default:
+                throw new ClassNotFoundException("Model not found");
+        }
+    }
+
+    public ChatLanguageModelDefinition getChatLanguageModel() throws ClassNotFoundException {
+        switch (this) {
+            case OpenAiModel:
+                return ChatLanguageModelDefinition
+                        .builder()
+                        .modelWithSettings(parameters -> {
+                            return OpenAiChatModel
                                     .builder()
                                     .apiKey(parameters.getApiKey())
                                     .modelName(parameters.getModelName())

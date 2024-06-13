@@ -13,11 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import ai.dragon.dto.openai.completion.OpenAiChatCompletionChoice;
 import ai.dragon.dto.openai.completion.OpenAiChatCompletionRequest;
 import ai.dragon.dto.openai.completion.OpenAiChatCompletionResponse;
 import ai.dragon.dto.openai.completion.OpenAiCompletionChoice;
-import ai.dragon.dto.openai.completion.OpenAiCompletionMessage;
 import ai.dragon.dto.openai.completion.OpenAiCompletionRequest;
 import ai.dragon.dto.openai.completion.OpenAiCompletionResponse;
 import ai.dragon.dto.openai.completion.OpenAiCompletionUsage;
@@ -113,32 +111,6 @@ public class OpenAiCompatibleV1ApiController {
         FarmEntity farm = farmRepository
                 .findUniqueByFieldValue("raagIdentifier", request.getModel())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Farm not found"));
-        if (Boolean.TRUE.equals(request.getStream())) {
-            return raagService.chatResponse(farm, request);
-        } else {
-            return OpenAiChatCompletionResponse
-                    .builder()
-                    .id(UUID.randomUUID().toString())
-                    .model(request.getModel())
-                    .created(System.currentTimeMillis() / 1000)
-                    .object("chat.completion")
-                    .usage(OpenAiCompletionUsage
-                            .builder()
-                            .completion_tokens(0)
-                            .prompt_tokens(0)
-                            .total_tokens(0)
-                            .build())
-                    .choices(List.of(OpenAiChatCompletionChoice
-                            .builder()
-                            .index(0)
-                            .finish_reason("stop")
-                            .message(OpenAiCompletionMessage
-                                    .builder()
-                                    .role("assistant")
-                                    .content("Hello, how can I help you today?")
-                                    .build())
-                            .build()))
-                    .build();
-        }
+        return raagService.chatCompletionResponse(farm, request, request.getStream());
     }
 }
