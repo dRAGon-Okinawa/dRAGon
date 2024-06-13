@@ -50,7 +50,7 @@ public class OpenAiCompatibleV1ApiController {
         FarmEntity farm = farmRepository
                 .findUniqueByFieldValue("raagIdentifier", request.getModel())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Farm not found"));
-        return raagService.completionResponse(farm, request, request.getStream());
+        return raagService.makeCompletionResponse(farm, request);
     }
 
     @PostMapping("/chat/completions")
@@ -60,6 +60,6 @@ public class OpenAiCompatibleV1ApiController {
         FarmEntity farm = farmRepository
                 .findUniqueByFieldValue("raagIdentifier", request.getModel())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Farm not found"));
-        return raagService.chatCompletionResponse(farm, request, request.getStream());
+        return raagService.makeChatCompletionResponse(farm, request);
     }
 }

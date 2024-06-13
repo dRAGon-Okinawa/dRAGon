@@ -78,23 +78,21 @@ public class RaagService {
                 .toList();
     }
 
-    public Object completionResponse(FarmEntity farm, OpenAiCompletionRequest request, boolean stream)
-            throws Exception {
+    public Object makeCompletionResponse(FarmEntity farm, OpenAiCompletionRequest request) throws Exception {
         return Boolean.TRUE.equals(request.getStream()) ? this.streamCompletionResponse(farm, request)
                 : this.completionResponse(farm, request);
     }
 
-    public OpenAiCompletionResponse completionResponse(FarmEntity farm, OpenAiCompletionRequest request)
+    public Object makeChatCompletionResponse(FarmEntity farm, OpenAiChatCompletionRequest request) throws Exception {
+        return Boolean.TRUE.equals(request.getStream()) ? this.streamChatCompletionResponse(farm, request)
+                : this.chatCompletionResponse(farm, request);
+    }
+
+    private OpenAiCompletionResponse completionResponse(FarmEntity farm, OpenAiCompletionRequest request)
             throws Exception {
         AiAssistant assistant = this.makeCompletionAssistant(farm, request, false);
         Result<String> answer = assistant.answer(chatMessageService.singleTextFrom(request));
         return openAiCompletionService.createCompletionResponse(request, answer);
-    }
-
-    public Object chatCompletionResponse(FarmEntity farm, OpenAiChatCompletionRequest request, boolean stream)
-            throws Exception {
-        return Boolean.TRUE.equals(request.getStream()) ? this.streamChatCompletionResponse(farm, request)
-                : this.chatCompletionResponse(farm, request);
     }
 
     private SseEmitter streamCompletionResponse(FarmEntity farm, OpenAiCompletionRequest request) throws Exception {
