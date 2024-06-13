@@ -21,7 +21,7 @@ import ai.dragon.entity.FarmEntity;
 import ai.dragon.properties.embedding.LanguageModelSettings;
 import ai.dragon.repository.FarmRepository;
 import ai.dragon.util.ai.AiAssistant;
-import dev.langchain4j.data.message.UserMessage;
+import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatLanguageModel;
@@ -120,7 +120,7 @@ public class RaagService {
             throws Exception {
         AiAssistant assistant = this.makeChatAssistant(farm, request, false);
         OpenAiCompletionMessage lastCompletionMessage = request.getMessages().get(request.getMessages().size() - 1);
-        UserMessage lastChatMessage = (UserMessage) chatMessageService.convertToChatMessage(lastCompletionMessage)
+        ChatMessage lastChatMessage = chatMessageService.convertToChatMessage(lastCompletionMessage)
                 .orElseThrow();
         Result<String> answer = assistant.answer(chatMessageService.singleTextFrom(lastChatMessage));
         return openAiCompletionService.createChatCompletionResponse(answer);
@@ -130,7 +130,7 @@ public class RaagService {
             throws Exception {
         AiAssistant assistant = this.makeChatAssistant(farm, request, true);
         OpenAiCompletionMessage lastCompletionMessage = request.getMessages().get(request.getMessages().size() - 1);
-        UserMessage lastChatMessage = (UserMessage) chatMessageService.convertToChatMessage(lastCompletionMessage)
+        ChatMessage lastChatMessage = chatMessageService.convertToChatMessage(lastCompletionMessage)
                 .orElseThrow();
         TokenStream stream = assistant.chat(chatMessageService.singleTextFrom(lastChatMessage));
         UUID emitterID = sseService.createEmitter();
