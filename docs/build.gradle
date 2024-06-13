@@ -32,5 +32,8 @@ task buildOpenApiMarkdownDocs(type: org.openapitools.generator.gradle.plugin.tas
 	doLast {
 		delete "docs/api/specification"
         file("$backendBuildDir/docs/api/markdown").renameTo(file("docs/api/specification"))
+		delete "docs/api/specification/.openapi-generator"
+		delete "docs/api/specification/.openapi-generator-ignore"
+		file("docs/api/specification/README.md").renameTo(file("docs/api/specification/api-specification.md"))
     }
 }
