@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import ai.dragon.dto.openai.completion.OpenAiCompletionMessage;
+import ai.dragon.dto.openai.completion.OpenAiCompletionRequest;
 import ai.dragon.util.DataUrlUtil;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
@@ -31,6 +32,22 @@ public class ChatMessageService {
             }
         });
         return sb.toString();
+    }
+
+    @SuppressWarnings("unchecked")
+    public String singleTextFrom(OpenAiCompletionRequest request) {
+        Object prompt = request.getPrompt();
+        if(prompt instanceof String) {
+            return (String) prompt;
+        } else if(prompt instanceof List) {
+            List<String> promptList = (List<String>) prompt;
+            StringBuilder sb = new StringBuilder();
+            promptList.forEach(promptItem -> {
+                sb.append(promptItem);
+            });
+            return sb.toString();
+        }
+        return null;
     }
 
     @SuppressWarnings("unchecked")
