@@ -11,11 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import ai.dragon.dto.openai.completion.OpenAiChatCompletionChoice;
 import ai.dragon.dto.openai.completion.OpenAiChatCompletionRequest;
 import ai.dragon.dto.openai.completion.OpenAiChatCompletionResponse;
 import ai.dragon.dto.openai.completion.OpenAiCompletionMessage;
-import ai.dragon.dto.openai.completion.OpenAiCompletionUsage;
+import ai.dragon.dto.openai.completion.OpenAiCompletionRequest;
+import ai.dragon.dto.openai.completion.OpenAiCompletionResponse;
 import ai.dragon.dto.openai.model.OpenAiModel;
 import ai.dragon.entity.FarmEntity;
 import ai.dragon.properties.embedding.LanguageModelSettings;
@@ -59,6 +59,9 @@ public class RaagService {
     @Autowired
     private ChatMessageService chatMessageService;
 
+    @Autowired
+    private OpenAiCompletionService openAiCompletionService;
+
     public List<OpenAiModel> listAvailableModels() {
         return farmRepository
                 .find()
@@ -75,38 +78,38 @@ public class RaagService {
                 .toList();
     }
 
+    public Object completionResponse(FarmEntity farm, OpenAiCompletionRequest request, boolean stream)
+            throws Exception {
+        return Boolean.TRUE.equals(request.getStream()) ? this.streamCompletionResponse(farm, request)
+                : this.completionResponse(farm, request);
+    }
+
+    public OpenAiCompletionResponse completionResponse(FarmEntity farm, OpenAiCompletionRequest request)
+            throws Exception {
+        AiAssistant assistant = this.makeCompletionAssistant(farm, request, false);
+        Result<String> answer = assistant.answer(chatMessageService.singleTextFrom(request));
+        return openAiCompletionService.createCompletionResponse(request, answer);
+    }
+
     public Object chatCompletionResponse(FarmEntity farm, OpenAiChatCompletionRequest request, boolean stream)
             throws Exception {
         return Boolean.TRUE.equals(request.getStream()) ? this.streamChatCompletionResponse(farm, request)
                 : this.chatCompletionResponse(farm, request);
     }
 
-    public OpenAiChatCompletionResponse chatCompletionResponse(FarmEntity farm, OpenAiChatCompletionRequest request)
-            throws Exception {
-        AiAssistant assistant = this.makeAssistant(farm, request, false);
-        OpenAiCompletionMessage lastCompletionMessage = request.getMessages().get(request.getMessages().size() - 1);
-        UserMessage lastChatMessage = (UserMessage) chatMessageService.convertToChatMessage(lastCompletionMessage)
-                .orElseThrow();
-        Result<String> answer = assistant.answer(chatMessageService.singleTextFrom(lastChatMessage));
-        return this.createChatCompletionResponse(answer);
-    }
-
-    public SseEmitter streamChatCompletionResponse(FarmEntity farm, OpenAiChatCompletionRequest request)
-            throws Exception {
-        AiAssistant assistant = this.makeAssistant(farm, request, true);
-        OpenAiCompletionMessage lastCompletionMessage = request.getMessages().get(request.getMessages().size() - 1);
-        UserMessage lastChatMessage = (UserMessage) chatMessageService.convertToChatMessage(lastCompletionMessage)
-                .orElseThrow();
-        TokenStream stream = assistant.chat(chatMessageService.singleTextFrom(lastChatMessage));
+    private SseEmitter streamCompletionResponse(FarmEntity farm, OpenAiCompletionRequest request) throws Exception {
+        AiAssistant assistant = this.makeCompletionAssistant(farm, request, true);
+        TokenStream stream = assistant.chat(chatMessageService.singleTextFrom(request));
         UUID emitterID = sseService.createEmitter();
         stream
                 .onNext(nextChunk -> {
                     sseService.sendEvent(emitterID,
-                            this.createChatCompletionChunkResponse(emitterID, request, nextChunk, false));
+                            openAiCompletionService.createCompletionChunkResponse(emitterID, request, nextChunk,
+                                    false));
                 })
                 .onComplete(response -> {
                     sseService.sendEvent(emitterID,
-                            this.createChatCompletionChunkResponse(emitterID, request, "", true));
+                            openAiCompletionService.createCompletionChunkResponse(emitterID, request, "", true));
                     sseService.sendEvent(emitterID, "[DONE]");
                     sseService.complete(emitterID);
                 })
@@ -115,11 +118,58 @@ public class RaagService {
         return sseService.retrieveEmitter(emitterID);
     }
 
-    private AiAssistant makeAssistant(FarmEntity farm, OpenAiChatCompletionRequest request, boolean stream)
+    private OpenAiChatCompletionResponse chatCompletionResponse(FarmEntity farm, OpenAiChatCompletionRequest request)
+            throws Exception {
+        AiAssistant assistant = this.makeChatAssistant(farm, request, false);
+        OpenAiCompletionMessage lastCompletionMessage = request.getMessages().get(request.getMessages().size() - 1);
+        UserMessage lastChatMessage = (UserMessage) chatMessageService.convertToChatMessage(lastCompletionMessage)
+                .orElseThrow();
+        Result<String> answer = assistant.answer(chatMessageService.singleTextFrom(lastChatMessage));
+        return openAiCompletionService.createChatCompletionResponse(answer);
+    }
+
+    private SseEmitter streamChatCompletionResponse(FarmEntity farm, OpenAiChatCompletionRequest request)
+            throws Exception {
+        AiAssistant assistant = this.makeChatAssistant(farm, request, true);
+        OpenAiCompletionMessage lastCompletionMessage = request.getMessages().get(request.getMessages().size() - 1);
+        UserMessage lastChatMessage = (UserMessage) chatMessageService.convertToChatMessage(lastCompletionMessage)
+                .orElseThrow();
+        TokenStream stream = assistant.chat(chatMessageService.singleTextFrom(lastChatMessage));
+        UUID emitterID = sseService.createEmitter();
+        stream
+                .onNext(nextChunk -> {
+                    sseService.sendEvent(emitterID,
+                            openAiCompletionService.createChatCompletionChunkResponse(emitterID, request, nextChunk,
+                                    false));
+                })
+                .onComplete(response -> {
+                    sseService.sendEvent(emitterID,
+                            openAiCompletionService.createChatCompletionChunkResponse(emitterID, request, "", true));
+                    sseService.sendEvent(emitterID, "[DONE]");
+                    sseService.complete(emitterID);
+                })
+                .onError(Throwable::printStackTrace)
+                .start();
+        return sseService.retrieveEmitter(emitterID);
+    }
+
+    private AiAssistant makeChatAssistant(FarmEntity farm, OpenAiChatCompletionRequest request, boolean stream)
             throws Exception {
         AiServices<AiAssistant> assistantBuilder = AiServices.builder(AiAssistant.class)
                 .retrievalAugmentor(this.buildRetrievalAugmentor(farm))
                 .chatMemory(this.buildChatMemory(request));
+        if (stream) {
+            assistantBuilder.streamingChatLanguageModel(this.buildStreamingChatLanguageModel(farm));
+        } else {
+            assistantBuilder.chatLanguageModel(this.buildChatLanguageModel(farm));
+        }
+        return assistantBuilder.build();
+    }
+
+    private AiAssistant makeCompletionAssistant(FarmEntity farm, OpenAiCompletionRequest request, boolean stream)
+            throws Exception {
+        AiServices<AiAssistant> assistantBuilder = AiServices.builder(AiAssistant.class)
+                .retrievalAugmentor(this.buildRetrievalAugmentor(farm));
         if (stream) {
             assistantBuilder.streamingChatLanguageModel(this.buildStreamingChatLanguageModel(farm));
         } else {
@@ -135,55 +185,6 @@ public class RaagService {
             chatMessageService.convertToChatMessage(requestMessage).ifPresent(memory::add);
         }
         return memory;
-    }
-
-    private OpenAiChatCompletionResponse createChatCompletionResponse(Result<String> answer) {
-        return OpenAiChatCompletionResponse
-                .builder()
-                .id(UUID.randomUUID().toString())
-                .created(System.currentTimeMillis() / 1000)
-                .object("chat.completion")
-                .usage(OpenAiCompletionUsage
-                        .builder()
-                        .completion_tokens(0)
-                        .prompt_tokens(0)
-                        .total_tokens(0)
-                        .build())
-                .choices(List.of(OpenAiChatCompletionChoice
-                        .builder()
-                        .index(0)
-                        .finish_reason("stop")
-                        .message(OpenAiCompletionMessage
-                                .builder()
-                                .role("assistant")
-                                .content(answer.content())
-                                .build())
-                        .build()))
-                .build();
-    }
-
-    private OpenAiChatCompletionResponse createChatCompletionChunkResponse(
-            UUID emitterID,
-            OpenAiChatCompletionRequest request,
-            String nextChunk,
-            boolean isLastChunk) {
-        return OpenAiChatCompletionResponse
-                .builder()
-                .id(emitterID.toString())
-                .model(request.getModel())
-                .created(System.currentTimeMillis() / 1000)
-                .object("chat.completion.chunk")
-                .choices(List.of(OpenAiChatCompletionChoice
-                        .builder()
-                        .index(0)
-                        .finish_reason(isLastChunk ? "stop" : null)
-                        .delta(OpenAiCompletionMessage
-                                .builder()
-                                .role("assistant")
-                                .content(nextChunk)
-                                .build())
-                        .build()))
-                .build();
     }
 
     private StreamingChatLanguageModel buildStreamingChatLanguageModel(FarmEntity farm) throws Exception {
