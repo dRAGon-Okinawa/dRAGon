@@ -11,10 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import ai.dragon.dto.openai.completion.OpenAiChatCompletionChoice;
 import ai.dragon.dto.openai.completion.OpenAiChatCompletionRequest;
 import ai.dragon.dto.openai.completion.OpenAiChatCompletionResponse;
 import ai.dragon.dto.openai.completion.OpenAiCompletionMessage;
+import ai.dragon.dto.openai.completion.OpenAiCompletionRequest;
+import ai.dragon.dto.openai.completion.OpenAiCompletionResponse;
 import ai.dragon.dto.openai.model.OpenAiModel;
 import ai.dragon.entity.FarmEntity;
 import ai.dragon.properties.embedding.LanguageModelSettings;
@@ -23,6 +24,7 @@ import ai.dragon.util.ai.AiAssistant;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
+import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.chat.StreamingChatLanguageModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.rag.DefaultRetrievalAugmentor;
@@ -31,6 +33,7 @@ import dev.langchain4j.rag.content.retriever.ContentRetriever;
 import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
 import dev.langchain4j.rag.query.router.DefaultQueryRouter;
 import dev.langchain4j.service.AiServices;
+import dev.langchain4j.service.Result;
 import dev.langchain4j.service.TokenStream;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 
@@ -56,6 +59,9 @@ public class RaagService {
     @Autowired
     private ChatMessageService chatMessageService;
 
+    @Autowired
+    private OpenAiCompletionService openAiCompletionService;
+
     public List<OpenAiModel> listAvailableModels() {
         return farmRepository
                 .find()
@@ -72,13 +78,57 @@ public class RaagService {
                 .toList();
     }
 
-    public SseEmitter chatResponse(FarmEntity farm, OpenAiChatCompletionRequest request) throws Exception {
-        AiAssistant assistant = AiServices.builder(AiAssistant.class)
-                .streamingChatLanguageModel(this.buildStreamingChatLanguageModel(farm))
-                // TODO support of chatLanguageModel in addition of streamingChatLanguageModel
-                .retrievalAugmentor(this.buildRetrievalAugmentor(farm))
-                .chatMemory(this.buildChatMemory(request))
-                .build();
+    public Object makeCompletionResponse(FarmEntity farm, OpenAiCompletionRequest request) throws Exception {
+        return Boolean.TRUE.equals(request.getStream()) ? this.streamCompletionResponse(farm, request)
+                : this.completionResponse(farm, request);
+    }
+
+    public Object makeChatCompletionResponse(FarmEntity farm, OpenAiChatCompletionRequest request) throws Exception {
+        return Boolean.TRUE.equals(request.getStream()) ? this.streamChatCompletionResponse(farm, request)
+                : this.chatCompletionResponse(farm, request);
+    }
+
+    private OpenAiCompletionResponse completionResponse(FarmEntity farm, OpenAiCompletionRequest request)
+            throws Exception {
+        AiAssistant assistant = this.makeCompletionAssistant(farm, request, false);
+        Result<String> answer = assistant.answer(chatMessageService.singleTextFrom(request));
+        return openAiCompletionService.createCompletionResponse(request, answer);
+    }
+
+    private SseEmitter streamCompletionResponse(FarmEntity farm, OpenAiCompletionRequest request) throws Exception {
+        AiAssistant assistant = this.makeCompletionAssistant(farm, request, true);
+        TokenStream stream = assistant.chat(chatMessageService.singleTextFrom(request));
+        UUID emitterID = sseService.createEmitter();
+        stream
+                .onNext(nextChunk -> {
+                    sseService.sendEvent(emitterID,
+                            openAiCompletionService.createCompletionChunkResponse(emitterID, request, nextChunk,
+                                    false));
+                })
+                .onComplete(response -> {
+                    sseService.sendEvent(emitterID,
+                            openAiCompletionService.createCompletionChunkResponse(emitterID, request, "", true));
+                    sseService.sendEvent(emitterID, "[DONE]");
+                    sseService.complete(emitterID);
+                })
+                .onError(Throwable::printStackTrace)
+                .start();
+        return sseService.retrieveEmitter(emitterID);
+    }
+
+    private OpenAiChatCompletionResponse chatCompletionResponse(FarmEntity farm, OpenAiChatCompletionRequest request)
+            throws Exception {
+        AiAssistant assistant = this.makeChatAssistant(farm, request, false);
+        OpenAiCompletionMessage lastCompletionMessage = request.getMessages().get(request.getMessages().size() - 1);
+        UserMessage lastChatMessage = (UserMessage) chatMessageService.convertToChatMessage(lastCompletionMessage)
+                .orElseThrow();
+        Result<String> answer = assistant.answer(chatMessageService.singleTextFrom(lastChatMessage));
+        return openAiCompletionService.createChatCompletionResponse(answer);
+    }
+
+    private SseEmitter streamChatCompletionResponse(FarmEntity farm, OpenAiChatCompletionRequest request)
+            throws Exception {
+        AiAssistant assistant = this.makeChatAssistant(farm, request, true);
         OpenAiCompletionMessage lastCompletionMessage = request.getMessages().get(request.getMessages().size() - 1);
         UserMessage lastChatMessage = (UserMessage) chatMessageService.convertToChatMessage(lastCompletionMessage)
                 .orElseThrow();
@@ -87,17 +137,43 @@ public class RaagService {
         stream
                 .onNext(nextChunk -> {
                     sseService.sendEvent(emitterID,
-                            this.createChatCompletionResponse(emitterID, request, nextChunk, false));
+                            openAiCompletionService.createChatCompletionChunkResponse(emitterID, request, nextChunk,
+                                    false));
                 })
                 .onComplete(response -> {
                     sseService.sendEvent(emitterID,
-                            this.createChatCompletionResponse(emitterID, request, "", true));
+                            openAiCompletionService.createChatCompletionChunkResponse(emitterID, request, "", true));
                     sseService.sendEvent(emitterID, "[DONE]");
                     sseService.complete(emitterID);
                 })
                 .onError(Throwable::printStackTrace)
                 .start();
         return sseService.retrieveEmitter(emitterID);
+    }
+
+    private AiAssistant makeChatAssistant(FarmEntity farm, OpenAiChatCompletionRequest request, boolean stream)
+            throws Exception {
+        AiServices<AiAssistant> assistantBuilder = AiServices.builder(AiAssistant.class)
+                .retrievalAugmentor(this.buildRetrievalAugmentor(farm))
+                .chatMemory(this.buildChatMemory(request));
+        if (stream) {
+            assistantBuilder.streamingChatLanguageModel(this.buildStreamingChatLanguageModel(farm));
+        } else {
+            assistantBuilder.chatLanguageModel(this.buildChatLanguageModel(farm));
+        }
+        return assistantBuilder.build();
+    }
+
+    private AiAssistant makeCompletionAssistant(FarmEntity farm, OpenAiCompletionRequest request, boolean stream)
+            throws Exception {
+        AiServices<AiAssistant> assistantBuilder = AiServices.builder(AiAssistant.class)
+                .retrievalAugmentor(this.buildRetrievalAugmentor(farm));
+        if (stream) {
+            assistantBuilder.streamingChatLanguageModel(this.buildStreamingChatLanguageModel(farm));
+        } else {
+            assistantBuilder.chatLanguageModel(this.buildChatLanguageModel(farm));
+        }
+        return assistantBuilder.build();
     }
 
     private MessageWindowChatMemory buildChatMemory(OpenAiChatCompletionRequest request) {
@@ -107,30 +183,6 @@ public class RaagService {
             chatMessageService.convertToChatMessage(requestMessage).ifPresent(memory::add);
         }
         return memory;
-    }
-
-    private OpenAiChatCompletionResponse createChatCompletionResponse(
-            UUID emitterID,
-            OpenAiChatCompletionRequest request,
-            String nextChunk,
-            boolean isLastChunk) {
-        return OpenAiChatCompletionResponse
-                .builder()
-                .id(emitterID.toString())
-                .model(request.getModel())
-                .created(System.currentTimeMillis() / 1000)
-                .object("chat.completion.chunk")
-                .choices(List.of(OpenAiChatCompletionChoice
-                        .builder()
-                        .index(0)
-                        .finish_reason(isLastChunk ? "stop" : null)
-                        .delta(OpenAiCompletionMessage
-                                .builder()
-                                .role("assistant")
-                                .content(nextChunk)
-                                .build())
-                        .build()))
-                .build();
     }
 
     private StreamingChatLanguageModel buildStreamingChatLanguageModel(FarmEntity farm) throws Exception {
@@ -143,7 +195,18 @@ public class RaagService {
                                 LanguageModelSettings.class));
     }
 
+    private ChatLanguageModel buildChatLanguageModel(FarmEntity farm) throws Exception {
+        return farm
+                .getLanguageModel()
+                .getChatLanguageModel()
+                .getModelWithSettings()
+                .apply(kvSettingService
+                        .kvSettingsToObject(farm.getLanguageModelSettings(),
+                                LanguageModelSettings.class));
+    }
+
     private RetrievalAugmentor buildRetrievalAugmentor(FarmEntity farm) {
+        // TODO Enhanced Query Router : langchain4j => LanguageModelQueryRouter
         return DefaultRetrievalAugmentor.builder()
                 .queryRouter(new DefaultQueryRouter(this.buildRetrieverList(farm)))
                 .build();
