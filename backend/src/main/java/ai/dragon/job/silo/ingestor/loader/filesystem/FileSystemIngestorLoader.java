@@ -70,11 +70,11 @@ public class FileSystemIngestorLoader extends ImplAbstractSiloIngestorLoader {
             logger.warn("No 'ingestorLoaderSettings' provided for Silo {}", entity.getUuid());
             return;
         }
-        if (loaderSettings.getPath() == null) {
-            logger.warn("No 'path' setting found for Silo's Ingestor {}", entity.getUuid());
+        if (loaderSettings.getPaths() == null) {
+            logger.warn("No 'paths' setting found for Silo's Ingestor {}", entity.getUuid());
             return;
         }
-        String[] paths = loaderSettings.getPath().trim().split(",");
+        List<String> paths = loaderSettings.getPaths();
         pathsToIngest.clear();
         for (String path : paths) {
             File pathFile = new File(path.trim());

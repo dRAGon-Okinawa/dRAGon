@@ -15,6 +15,7 @@ import ai.dragon.listener.EntityChangeListener;
 import ai.dragon.properties.store.PGVectorEmbeddingStoreSettings;
 import ai.dragon.properties.store.PersistInMemoryEmbeddingStoreSettings;
 import ai.dragon.repository.SiloRepository;
+import ai.dragon.util.KVSettingUtil;
 import ai.dragon.util.embedding.store.inmemory.persist.PersistInMemoryEmbeddingStore;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
@@ -38,9 +39,6 @@ public class EmbeddingStoreService {
 
     @Autowired
     private DirectoryStructureComponent directoryStructureComponent;
-
-    @Autowired
-    private KVSettingService kvSettingService;
 
     private EntityChangeListener<SiloEntity> entityChangeListener;
 
@@ -114,7 +112,7 @@ public class EmbeddingStoreService {
             case InMemoryEmbeddingStore:
                 return PersistInMemoryEmbeddingStore.builder().build();
             case PersistInMemoryEmbeddingStore:
-                PersistInMemoryEmbeddingStoreSettings persistInMemoryEmbeddingStoreSettings = kvSettingService
+                PersistInMemoryEmbeddingStoreSettings persistInMemoryEmbeddingStoreSettings = KVSettingUtil
                         .kvSettingsToObject(
                                 siloEntity.getVectorStoreSettings(), PersistInMemoryEmbeddingStoreSettings.class);
                 File vectorFile = new File(directoryStructureComponent.directoryFor("vector"),
@@ -125,7 +123,7 @@ public class EmbeddingStoreService {
                         .persistFile(vectorFile)
                         .build();
             case PGVectorEmbeddingStore:
-                PGVectorEmbeddingStoreSettings pgVectorEmbeddingStoreSettings = kvSettingService.kvSettingsToObject(
+                PGVectorEmbeddingStoreSettings pgVectorEmbeddingStoreSettings = KVSettingUtil.kvSettingsToObject(
                         siloEntity.getVectorStoreSettings(), PGVectorEmbeddingStoreSettings.class);
                 return PgVectorEmbeddingStore
                         .builder()

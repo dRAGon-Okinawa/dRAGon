@@ -20,6 +20,7 @@ import ai.dragon.dto.openai.model.OpenAiModel;
 import ai.dragon.entity.FarmEntity;
 import ai.dragon.properties.embedding.LanguageModelSettings;
 import ai.dragon.repository.FarmRepository;
+import ai.dragon.util.KVSettingUtil;
 import ai.dragon.util.ai.AiAssistant;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.segment.TextSegment;
@@ -52,9 +53,6 @@ public class RaagService {
 
     @Autowired
     private FarmRepository farmRepository;
-
-    @Autowired
-    private KVSettingService kvSettingService;
 
     @Autowired
     private ChatMessageService chatMessageService;
@@ -190,7 +188,7 @@ public class RaagService {
                 .getLanguageModel()
                 .getStreamingChatLanguageModel()
                 .getModelWithSettings()
-                .apply(kvSettingService
+                .apply(KVSettingUtil
                         .kvSettingsToObject(farm.getLanguageModelSettings(),
                                 LanguageModelSettings.class));
     }
@@ -200,7 +198,7 @@ public class RaagService {
                 .getLanguageModel()
                 .getChatLanguageModel()
                 .getModelWithSettings()
-                .apply(kvSettingService
+                .apply(KVSettingUtil
                         .kvSettingsToObject(farm.getLanguageModelSettings(),
                                 LanguageModelSettings.class));
     }
