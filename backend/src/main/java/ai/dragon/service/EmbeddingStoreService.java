@@ -132,8 +132,8 @@ public class EmbeddingStoreService {
                         .host(pgVectorEmbeddingStoreSettings.getHost())
                         .port(pgVectorEmbeddingStoreSettings.getPort())
                         .database(pgVectorEmbeddingStoreSettings.getDatabase())
-                        .user(pgVectorEmbeddingStoreSettings.getUser()) // TODO Ability to use env var
-                        .password(pgVectorEmbeddingStoreSettings.getPassword()) // TODO Ability to use env var
+                        .user(pgVectorEmbeddingStoreSettings.getUser())
+                        .password(pgVectorEmbeddingStoreSettings.getPassword())
                         .table(siloEntity.getUuid().toString())
                         .createTable(true)
                         .useIndex(true)
