@@ -31,9 +31,19 @@ task buildOpenApiMarkdownDocs(type: org.openapitools.generator.gradle.plugin.tas
 	outputDir.set("$backendBuildDir/docs/api/markdown")
 	doLast {
 		delete "docs/api/specification"
-        file("$backendBuildDir/docs/api/markdown").renameTo(file("docs/api/specification"))
+		copy {
+			from("$backendBuildDir/docs/api/markdown")
+			into("docs/api/specification")
+			filter {
+				String line -> line
+					.replace("[**Map**](../Models/object.md)", "**Map**")
+					.replace("[**Object**](.md)", "**object**")
+					.replace("{uuid}", "\\{uuid\\}")
+					.replace("http://localhost:8080", "http://localhost:1985")
+					.replace("# Documentation for merged spec", "# API Specification")
+			}
+		}
 		delete "docs/api/specification/.openapi-generator"
 		delete "docs/api/specification/.openapi-generator-ignore"
-		file("docs/api/specification/README.md").renameTo(file("docs/api/specification/api-specification.md"))
     }
 }
