@@ -29,6 +29,9 @@ task buildOpenApiMarkdownDocs(type: org.openapitools.generator.gradle.plugin.tas
 	inputSpecRootDirectory.set("$backendBuildDir/docs/api")
 	cleanupOutput.set(true)
 	outputDir.set("$backendBuildDir/docs/api/markdown")
+	doFirst {
+		delete "$backendBuildDir/docs/api/markdown"
+	}
 	doLast {
 		delete "docs/api/specification"
 		copy {
@@ -40,10 +43,17 @@ task buildOpenApiMarkdownDocs(type: org.openapitools.generator.gradle.plugin.tas
 					.replace("[**Object**](.md)", "**object**")
 					.replace("{uuid}", "\\{uuid\\}")
 					.replace("http://localhost:8080", "http://localhost:1985")
-					.replace("# Documentation for merged spec", "# API Specification")
+					.replace("# Documentation for merged spec", "# Specification")
 			}
 		}
 		delete "docs/api/specification/.openapi-generator"
 		delete "docs/api/specification/.openapi-generator-ignore"
+		delete "static/openapi"
+		copy {
+			from("$backendBuildDir/docs/api") {
+				include 'swagger-*.json'
+			}
+			into("static/openapi")
+		}
     }
 }
