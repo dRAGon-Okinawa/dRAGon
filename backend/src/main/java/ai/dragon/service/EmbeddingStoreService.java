@@ -136,7 +136,6 @@ public class EmbeddingStoreService {
                         .password(pgVectorEmbeddingStoreSettings.getPassword())
                         .table(siloEntity.getUuid().toString().replace("-", "_"))
                         .createTable(true)
-                        .useIndex(true)
                         .dimension(siloEntity.getEmbeddingModel().getModelDefinition().getDimensions())
                         .build();
             default:
