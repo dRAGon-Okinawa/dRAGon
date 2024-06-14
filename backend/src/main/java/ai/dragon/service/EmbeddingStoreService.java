@@ -12,8 +12,10 @@ import org.springframework.stereotype.Service;
 import ai.dragon.component.DirectoryStructureComponent;
 import ai.dragon.entity.SiloEntity;
 import ai.dragon.listener.EntityChangeListener;
+import ai.dragon.properties.store.PGVectorEmbeddingStoreSettings;
 import ai.dragon.properties.store.PersistInMemoryEmbeddingStoreSettings;
 import ai.dragon.repository.SiloRepository;
+import ai.dragon.util.KVSettingUtil;
 import ai.dragon.util.embedding.store.inmemory.persist.PersistInMemoryEmbeddingStore;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
@@ -21,6 +23,7 @@ import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.store.embedding.EmbeddingSearchRequest;
 import dev.langchain4j.store.embedding.EmbeddingSearchResult;
 import dev.langchain4j.store.embedding.EmbeddingStore;
+import dev.langchain4j.store.embedding.pgvector.PgVectorEmbeddingStore;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 
@@ -36,9 +39,6 @@ public class EmbeddingStoreService {
 
     @Autowired
     private DirectoryStructureComponent directoryStructureComponent;
-
-    @Autowired
-    private KVSettingService kvSettingService;
 
     private EntityChangeListener<SiloEntity> entityChangeListener;
 
@@ -112,14 +112,29 @@ public class EmbeddingStoreService {
             case InMemoryEmbeddingStore:
                 return PersistInMemoryEmbeddingStore.builder().build();
             case PersistInMemoryEmbeddingStore:
-                PersistInMemoryEmbeddingStoreSettings storeSettings = kvSettingService.kvSettingsToObject(
-                        siloEntity.getVectorStoreSettings(), PersistInMemoryEmbeddingStoreSettings.class);
+                PersistInMemoryEmbeddingStoreSettings persistInMemoryEmbeddingStoreSettings = KVSettingUtil
+                        .kvSettingsToObject(
+                                siloEntity.getVectorStoreSettings(), PersistInMemoryEmbeddingStoreSettings.class);
                 File vectorFile = new File(directoryStructureComponent.directoryFor("vector"),
                         siloEntity.getUuid().toString() + ".json");
                 return PersistInMemoryEmbeddingStore
                         .builder()
-                        .flushSecs(storeSettings.getFlushSecs())
+                        .flushSecs(persistInMemoryEmbeddingStoreSettings.getFlushSecs())
                         .persistFile(vectorFile)
+                        .build();
+            case PGVectorEmbeddingStore:
+                PGVectorEmbeddingStoreSettings pgVectorEmbeddingStoreSettings = KVSettingUtil.kvSettingsToObject(
+                        siloEntity.getVectorStoreSettings(), PGVectorEmbeddingStoreSettings.class);
+                return PgVectorEmbeddingStore
+                        .builder()
+                        .host(pgVectorEmbeddingStoreSettings.getHost())
+                        .port(pgVectorEmbeddingStoreSettings.getPort())
+                        .database(pgVectorEmbeddingStoreSettings.getDatabase())
+                        .user(pgVectorEmbeddingStoreSettings.getUser())
+                        .password(pgVectorEmbeddingStoreSettings.getPassword())
+                        .table(String.format("dragon_silo_%s", siloEntity.getUuid().toString().replace("-", "_")))
+                        .createTable(true)
+                        .dimension(siloEntity.getEmbeddingModel().getModelDefinition().getDimensions())
                         .build();
             default:
                 throw new UnsupportedOperationException(

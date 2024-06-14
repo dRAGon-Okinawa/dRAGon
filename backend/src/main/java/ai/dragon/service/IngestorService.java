@@ -13,6 +13,7 @@ import ai.dragon.job.silo.ingestor.loader.ImplAbstractSiloIngestorLoader;
 import ai.dragon.job.silo.ingestor.loader.filesystem.FileSystemIngestorLoader;
 import ai.dragon.properties.embedding.EmbeddingSettings;
 import ai.dragon.properties.loader.FileSystemIngestorLoaderSettings;
+import ai.dragon.util.KVSettingUtil;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.document.splitter.DocumentSplitters;
@@ -29,9 +30,6 @@ public class IngestorService {
 
     @Autowired
     private EmbeddingModelService embeddingModelService;
-
-    @Autowired
-    private KVSettingService kvSettingService;
 
     @Autowired
     private EmbeddingSegmentService embeddingSegmentService;
@@ -105,7 +103,7 @@ public class IngestorService {
 
     private EmbeddingStoreIngestor buildIngestor(EmbeddingStore<TextSegment> embeddingStore,
             EmbeddingModel embeddingModel, SiloEntity siloEntity) {
-        EmbeddingSettings embeddingSettings = kvSettingService.kvSettingsToObject(
+        EmbeddingSettings embeddingSettings = KVSettingUtil.kvSettingsToObject(
                 siloEntity.getEmbeddingSettings(),
                 EmbeddingSettings.class);
         return EmbeddingStoreIngestor.builder()
@@ -128,7 +126,7 @@ public class IngestorService {
     private ImplAbstractSiloIngestorLoader getIngestorLoaderFromEntity(SiloEntity siloEntity) throws Exception {
         switch (siloEntity.getIngestorLoader()) {
             case FileSystem:
-                FileSystemIngestorLoaderSettings settings = kvSettingService.kvSettingsToObject(
+                FileSystemIngestorLoaderSettings settings = KVSettingUtil.kvSettingsToObject(
                         siloEntity.getIngestorSettings(),
                         FileSystemIngestorLoaderSettings.class);
                 return new FileSystemIngestorLoader(siloEntity, settings);
