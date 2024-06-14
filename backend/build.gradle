@@ -33,7 +33,7 @@ dependencies {
 	implementation 'dev.langchain4j:langchain4j:0.31.0'
     implementation 'dev.langchain4j:langchain4j-core:0.31.0'
     implementation 'dev.langchain4j:langchain4j-embeddings:0.31.0'
-	implementation 'dev.langchain4j:langchain4j-pgvector:0.31.0'
+    implementation 'dev.langchain4j:langchain4j-pgvector:0.31.0'
     implementation 'dev.langchain4j:langchain4j-open-ai:0.31.0'
     implementation 'dev.langchain4j:langchain4j-easy-rag:0.31.0'
 
