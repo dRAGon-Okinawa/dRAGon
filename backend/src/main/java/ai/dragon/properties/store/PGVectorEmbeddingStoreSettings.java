@@ -18,6 +18,18 @@ public class PGVectorEmbeddingStoreSettings {
         port = 5432;
     }
 
+    public void setHost(String hostOrExpression) {
+        this.host = SettingsExpressionParserUtil.parse(hostOrExpression, hostOrExpression, String.class);
+    }
+
+    public void setPort(Integer portOrExpression) {
+        this.port = SettingsExpressionParserUtil.parse(String.valueOf(portOrExpression), portOrExpression, Integer.class);
+    }
+
+    public void setDatabase(String databaseOrExpression) {
+        this.database = SettingsExpressionParserUtil.parse(databaseOrExpression, databaseOrExpression, String.class);
+    }
+
     public void setUser(String userOrExpression) {
         this.user = SettingsExpressionParserUtil.parse(userOrExpression, userOrExpression, String.class);
     }
