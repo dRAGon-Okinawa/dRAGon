@@ -10,13 +10,11 @@ import org.springframework.web.server.ResponseStatusException;
 import ai.dragon.entity.SiloEntity;
 import ai.dragon.properties.embedding.EmbeddingSettings;
 import ai.dragon.repository.SiloRepository;
+import ai.dragon.util.KVSettingUtil;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 
 @Service
 public class EmbeddingModelService {
-    @Autowired
-    private KVSettingService kvSettingService;
-
     @Autowired
     private SiloRepository siloRepository;
 
@@ -27,7 +25,7 @@ public class EmbeddingModelService {
     }
 
     public EmbeddingModel modelForSilo(SiloEntity siloEntity) throws Exception {
-        EmbeddingSettings embeddingSettings = kvSettingService.kvSettingsToObject(
+        EmbeddingSettings embeddingSettings = KVSettingUtil.kvSettingsToObject(
                 siloEntity.getEmbeddingSettings(), EmbeddingSettings.class);
         return siloEntity.getEmbeddingModel().getModelDefinition().getEmbeddingModelWithSettings()
                 .apply(embeddingSettings);
