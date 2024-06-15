@@ -21,7 +21,7 @@ public class DatabaseCommandBackendApiController {
     @PostMapping("/export")
     @ApiResponse(responseCode = "200", description = "Database dump has been successfully created.")
     @Operation(summary = "Create a database export", description = "Creates a JSON database dump.")
-    public void export(HttpServletResponse response) throws Exception {
+    public void exportDatabase(HttpServletResponse response) throws Exception {
         response.setContentType("application/json");
         databaseService.exportDatabase(response.getOutputStream());
         response.flushBuffer();
