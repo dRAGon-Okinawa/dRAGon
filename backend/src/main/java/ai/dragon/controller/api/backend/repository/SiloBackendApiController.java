@@ -38,7 +38,7 @@ public class SiloBackendApiController extends AbstractCrudBackendApiController<S
     @GetMapping("/")
     @ApiResponse(responseCode = "200", description = "List has been successfully retrieved.")
     @Operation(summary = "List all Silos", description = "Returns all Silo entities stored in the database.")
-    public List<SiloEntity> list() {
+    public List<SiloEntity> listSilos() {
         return super.list(siloRepository);
     }
 
@@ -46,7 +46,7 @@ public class SiloBackendApiController extends AbstractCrudBackendApiController<S
     @ApiResponse(responseCode = "200", description = "Silo has been successfully created.")
     @ApiResponse(responseCode = "409", description = "Constraint violation.", content = @Content)
     @Operation(summary = "Create a new Silo", description = "Creates one Silo entity in the database.")
-    public SiloEntity create() throws Exception {
+    public SiloEntity createSilo() throws Exception {
         return super.create(siloRepository);
     }
 
@@ -54,7 +54,7 @@ public class SiloBackendApiController extends AbstractCrudBackendApiController<S
     @ApiResponse(responseCode = "200", description = "Silo has been successfully retrieved.")
     @ApiResponse(responseCode = "404", description = "Silo not found.", content = @Content)
     @Operation(summary = "Retrieve one Silo", description = "Returns one Silo entity from its UUID stored in the database.")
-    public SiloEntity get(
+    public SiloEntity getSilo(
             @PathVariable("uuid") @Parameter(description = "Identifier of the Silo") String uuid) {
         return super.get(uuid, siloRepository);
     }
@@ -63,7 +63,7 @@ public class SiloBackendApiController extends AbstractCrudBackendApiController<S
     @ApiResponse(responseCode = "200", description = "Silo has been successfully created.")
     @ApiResponse(responseCode = "404", description = "Silo not found.", content = @Content)
     @Operation(summary = "Update a Silo", description = "Updates one Silo entity in the database.")
-    public SiloEntity update(
+    public SiloEntity updateSilo(
             @PathVariable("uuid") @Parameter(description = "Identifier of the Silo", required = true) String uuid,
             @RequestBody Map<String, Object> fields) throws JsonMappingException {
         return super.update(uuid, fields, siloRepository);
@@ -73,7 +73,7 @@ public class SiloBackendApiController extends AbstractCrudBackendApiController<S
     @ApiResponse(responseCode = "200", description = "Silo has been successfully deleted.")
     @ApiResponse(responseCode = "404", description = "Silo not found.", content = @Content)
     @Operation(summary = "Delete a Silo", description = "Deletes one Silo entity from its UUID stored in the database.")
-    public void delete(@PathVariable("uuid") @Parameter(description = "Identifier of the Silo") UUID uuid)
+    public void deleteSilo(@PathVariable("uuid") @Parameter(description = "Identifier of the Silo") UUID uuid)
             throws Exception {
         siloService.removeEmbeddings(uuid);
         super.delete(uuid, siloRepository);

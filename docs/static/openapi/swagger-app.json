@@ -1,0 +1,53 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "dRAGon API",
+    "description": "dRAGon API Reference for Developers",
+    "license": {
+      "name": "MIT License",
+      "url": "https://github.com/dRAGon-Okinawa/dRAGon/blob/main/LICENSE"
+    },
+    "version": "0.0.0"
+  },
+  "externalDocs": {
+    "description": "dRAGon Documentation",
+    "url": "https://dragon.okinawa"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:1985",
+      "description": "Generated server url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Health",
+      "description": "Health Check API Endpoints"
+    }
+  ],
+  "paths": {
+    "/api/app/health/status": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Check dRAGon app health",
+        "description": "Returns a simple message to confirm that the app is alive.",
+        "operationId": "health",
+        "responses": {
+          "200": {
+            "description": "dRAGon app is alive.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {}
+}

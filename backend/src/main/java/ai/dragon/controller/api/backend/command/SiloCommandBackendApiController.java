@@ -24,7 +24,7 @@ public class SiloCommandBackendApiController {
     @PostMapping("/rebuild/{uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}")
     @ApiResponse(responseCode = "200", description = "Silo is being rebuilt.")
     @Operation(summary = "Rebuild Silo", description = "This will recompute the embeddings of the Silo.")
-    public void export(@PathVariable("uuid") @Parameter(description = "Identifier of the Silo") UUID uuid) throws Exception {
+    public void rebuildSilo(@PathVariable("uuid") @Parameter(description = "Identifier of the Silo") UUID uuid) throws Exception {
         siloService.rebuildSilo(uuid);
     }
 }

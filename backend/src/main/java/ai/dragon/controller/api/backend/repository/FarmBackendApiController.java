@@ -33,7 +33,7 @@ public class FarmBackendApiController extends AbstractCrudBackendApiController<F
     @GetMapping("/")
     @ApiResponse(responseCode = "200", description = "List has been successfully retrieved.")
     @Operation(summary = "List all Farms", description = "Returns all Farm entities stored in the database.")
-    public List<FarmEntity> list() {
+    public List<FarmEntity> listFarms() {
         return super.list(farmRepository);
     }
 
@@ -41,7 +41,7 @@ public class FarmBackendApiController extends AbstractCrudBackendApiController<F
     @ApiResponse(responseCode = "200", description = "Farm has been successfully created.")
     @ApiResponse(responseCode = "409", description = "Constraint violation.", content = @Content)
     @Operation(summary = "Create a new Farm", description = "Creates one Farm entity in the database.")
-    public FarmEntity create() throws Exception {
+    public FarmEntity createFarm() throws Exception {
         return super.create(farmRepository);
     }
 
@@ -49,7 +49,7 @@ public class FarmBackendApiController extends AbstractCrudBackendApiController<F
     @ApiResponse(responseCode = "200", description = "Farm has been successfully retrieved.")
     @ApiResponse(responseCode = "404", description = "Farm not found.", content = @Content)
     @Operation(summary = "Retrieve one Farm", description = "Returns one Farm entity from its UUID stored in the database.")
-    public FarmEntity get(@PathVariable("uuid") @Parameter(description = "Identifier of the Farm") String uuid) {
+    public FarmEntity getFarm(@PathVariable("uuid") @Parameter(description = "Identifier of the Farm") String uuid) {
         return super.get(uuid, farmRepository);
     }
 
@@ -57,7 +57,7 @@ public class FarmBackendApiController extends AbstractCrudBackendApiController<F
     @ApiResponse(responseCode = "200", description = "Farm has been successfully created.")
     @ApiResponse(responseCode = "404", description = "Farm not found.", content = @Content)
     @Operation(summary = "Update a Farm", description = "Updates one Farm entity in the database.")
-    public FarmEntity update(
+    public FarmEntity updateFarm(
             @PathVariable("uuid") @Parameter(description = "Identifier of the Farm", required = true) String uuid,
             @RequestBody Map<String, Object> fields) throws JsonMappingException {
         return super.update(uuid, fields, farmRepository);
@@ -67,7 +67,7 @@ public class FarmBackendApiController extends AbstractCrudBackendApiController<F
     @ApiResponse(responseCode = "200", description = "Farm has been successfully deleted.")
     @ApiResponse(responseCode = "404", description = "Farm not found.", content = @Content)
     @Operation(summary = "Delete a Farm", description = "Deletes one Farm entity from its UUID stored in the database.")
-    public void delete(@PathVariable("uuid") @Parameter(description = "Identifier of the Farm") String uuid) {
+    public void deleteFarm(@PathVariable("uuid") @Parameter(description = "Identifier of the Farm") String uuid) {
         super.delete(uuid, farmRepository);
     }
 }
