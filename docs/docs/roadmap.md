@@ -1,15 +1,19 @@
 # Roadmap
-- [ ] RaaG : RAG as a GPT
-- [ ] SQL RAG
-- [ ] Web Search Engine RAG
+- [X] RaaG : RAG as a GPT
 - [ ] Multi-Modal Input Sources
-  - [X] Local Files
-  - [ ] Web URLs / Web Search
-  - [ ] SQL Database
-  - [ ] NFS Mount
-  - [ ] S3 Bucket
-  - [ ] CIFS Mount
-  - [ ] Git
+  - [ ] Vector Ingestors
+    - [X] Local Files
+    - [ ] Web URLs
+    - [ ] SQL Database
+    - [ ] NFS Mount
+    - [ ] S3 Bucket
+    - [ ] SMB / CIFS Mount
+    - [ ] Git
+  - [ ] Live / Direct Ingestors
+    - [ ] Web Search
+    - [ ] API Endpoints
+    - [ ] SQL Query
+    - [ ] SQL Query Generator
 - [ ] Documents Types
   - [X] Text : Plain / PDF / Word
   - [X] Presentations : PowerPoint
