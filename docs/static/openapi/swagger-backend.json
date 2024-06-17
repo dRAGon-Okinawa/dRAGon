@@ -404,7 +404,6 @@
         "required": [
           "embeddingModel",
           "ingestorLoader",
-          "ingestorSchedule",
           "name",
           "uuid",
           "vectorStore"
@@ -426,7 +425,8 @@
             "example": "InMemoryEmbeddingStore",
             "enum": [
               "InMemoryEmbeddingStore",
-              "PersistInMemoryEmbeddingStore"
+              "PersistInMemoryEmbeddingStore",
+              "PGVectorEmbeddingStore"
             ]
           },
           "embeddingModel": {
@@ -445,13 +445,9 @@
             "description": "Type to be used for the Ingestor Loader",
             "example": "FileSystem",
             "enum": [
+              "None",
               "FileSystem"
             ]
-          },
-          "ingestorSchedule": {
-            "type": "string",
-            "description": "Cron Expression for the Silo\u0027s Ingestor Job",
-            "example": "Launch the Silo Ingestor every 15 minutes : */15 * * * *"
           },
           "vectorStoreSettings": {
             "type": "array",

@@ -1,4 +1,4 @@
-package ai.dragon.job.silo.ingestor.loader.filesystem;
+package ai.dragon.job.silo.ingestor.loader;
 
 import java.io.File;
 import java.nio.file.FileSystems;
@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ai.dragon.entity.SiloEntity;
-import ai.dragon.job.silo.ingestor.loader.ImplAbstractSiloIngestorLoader;
 import ai.dragon.properties.loader.FileSystemIngestorLoaderSettings;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.loader.FileSystemDocumentLoader;
@@ -67,7 +66,7 @@ public class FileSystemIngestorLoader extends ImplAbstractSiloIngestorLoader {
     public void checkIngestorLoaderSettings() throws Exception {
         List<String> ingestorLoaderSettings = entity.getIngestorSettings();
         if (ingestorLoaderSettings == null) {
-            logger.warn("No 'ingestorLoaderSettings' provided for Silo {}", entity.getUuid());
+            logger.warn("No 'ingestorSettings' provided for Silo {}", entity.getUuid());
             return;
         }
         if (loaderSettings.getPaths() == null) {
