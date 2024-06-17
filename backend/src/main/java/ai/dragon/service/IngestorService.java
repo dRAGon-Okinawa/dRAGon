@@ -9,8 +9,9 @@ import org.springframework.stereotype.Service;
 import ai.dragon.entity.SiloEntity;
 import ai.dragon.enumeration.SiloIngestProgressMessageLevel;
 import ai.dragon.job.silo.ingestor.dto.loader.SiloIngestLoaderLogMessage;
+import ai.dragon.job.silo.ingestor.loader.FileSystemIngestorLoader;
 import ai.dragon.job.silo.ingestor.loader.ImplAbstractSiloIngestorLoader;
-import ai.dragon.job.silo.ingestor.loader.filesystem.FileSystemIngestorLoader;
+import ai.dragon.job.silo.ingestor.loader.NoneIngestorLoader;
 import ai.dragon.properties.embedding.EmbeddingSettings;
 import ai.dragon.properties.loader.FileSystemIngestorLoaderSettings;
 import ai.dragon.util.KVSettingUtil;
@@ -125,6 +126,9 @@ public class IngestorService {
 
     private ImplAbstractSiloIngestorLoader getIngestorLoaderFromEntity(SiloEntity siloEntity) throws Exception {
         switch (siloEntity.getIngestorLoader()) {
+            case None:
+                return new NoneIngestorLoader(siloEntity);
+
             case FileSystem:
                 FileSystemIngestorLoaderSettings settings = KVSettingUtil.kvSettingsToObject(
                         siloEntity.getIngestorSettings(),

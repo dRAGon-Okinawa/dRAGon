@@ -8,7 +8,6 @@
 | **vectorStore** | **String** | Type to be used for the Vector Store | [default to null] |
 | **embeddingModel** | **String** | Type to be used for the Embedding Model | [default to null] |
 | **ingestorLoader** | **String** | Type to be used for the Ingestor Loader | [default to null] |
-| **ingestorSchedule** | **String** | Cron Expression for the Silo&#39;s Ingestor Job | [default to null] |
 | **vectorStoreSettings** | **List** | Settings to be linked to the Silo&#39;s Vector Store in the form of &#x60;key &#x3D; value&#x60; pairs. | [optional] [default to null] |
 | **embeddingSettings** | **List** | Settings to be linked to the Silo&#39;s Embedding in the form of &#x60;key &#x3D; value&#x60; pairs. | [optional] [default to null] |
 | **ingestorSettings** | **List** | Settings to be linked to the Silo&#39;s Ingestor in the form of &#x60;key &#x3D; value&#x60; pairs. | [optional] [default to null] |

@@ -1,5 +1,6 @@
 package ai.dragon.service;
 
+import java.time.Duration;
 import java.util.Optional;
 
 import org.dizitart.no2.collection.events.CollectionEventInfo;
@@ -14,7 +15,9 @@ import ai.dragon.entity.SiloEntity;
 import ai.dragon.job.silo.ingestor.handler.loader.SiloIngestorJobHandler;
 import ai.dragon.job.silo.ingestor.handler.loader.SiloIngestorJobRequest;
 import ai.dragon.listener.EntityChangeListener;
+import ai.dragon.properties.loader.DefaultIngestorLoaderSettings;
 import ai.dragon.repository.SiloRepository;
+import ai.dragon.util.KVSettingUtil;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 
@@ -87,16 +90,27 @@ public class SiloJobService {
 
     public void createSiloIngestorJob(SiloEntity siloEntity) {
         logger.info(String.format("Creating Silo Ingestor Job : %s -> %s", siloEntity.getUuid(), siloEntity.getName()));
+        DefaultIngestorLoaderSettings loaderSettings = KVSettingUtil
+                .kvSettingsToObject(siloEntity.getIngestorSettings(), DefaultIngestorLoaderSettings.class);
         try {
             SiloIngestorJobRequest jobRequest = SiloIngestorJobRequest
                     .builder()
                     .uuid(siloEntity.getUuid())
                     .build();
-            jobRequestScheduler.scheduleRecurrently(
-                    siloEntity.getUuid().toString(),
-                    Optional.ofNullable(siloEntity.getIngestorSchedule()).orElse(SiloEntity.DEFAULT_CRON_EXPRESSION),
-                    java.time.ZoneId.of("UTC"), // TODO Move to configuration
-                    jobRequest);
+            if (loaderSettings.getSchedule() != null
+                    && !"manual".equalsIgnoreCase(loaderSettings.getSchedule().trim())) {
+                jobRequestScheduler.scheduleRecurrently(
+                        siloEntity.getUuid().toString(),
+                        loaderSettings.getSchedule(),
+                        java.time.ZoneId.of(Optional.ofNullable(loaderSettings.getTimezone())
+                                .orElse(DefaultIngestorLoaderSettings.DEFAULT_TIMEZONE)),
+                        jobRequest);
+            } else {
+                jobRequestScheduler.scheduleRecurrently(
+                        siloEntity.getUuid().toString(),
+                        Duration.ofDays(3650),
+                        jobRequest);
+            }
             RecurringJob job = jobService.getRecurringJob(siloEntity.getUuid().toString());
             job.setJobName(String.format("%s : %s", SiloIngestorJobHandler.JOB_NAME, siloEntity.getName()));
         } catch (Exception ex) {
