@@ -12,8 +12,10 @@ import ai.dragon.job.silo.ingestor.dto.loader.SiloIngestLoaderLogMessage;
 import ai.dragon.job.silo.ingestor.loader.FileSystemIngestorLoader;
 import ai.dragon.job.silo.ingestor.loader.ImplAbstractSiloIngestorLoader;
 import ai.dragon.job.silo.ingestor.loader.NoneIngestorLoader;
+import ai.dragon.job.silo.ingestor.loader.URLIngestorLoader;
 import ai.dragon.properties.embedding.EmbeddingSettings;
 import ai.dragon.properties.loader.FileSystemIngestorLoaderSettings;
+import ai.dragon.properties.loader.URLIngestorLoaderSettings;
 import ai.dragon.util.KVSettingUtil;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.Metadata;
@@ -128,12 +130,16 @@ public class IngestorService {
         switch (siloEntity.getIngestorLoader()) {
             case None:
                 return new NoneIngestorLoader(siloEntity);
-
             case FileSystem:
-                FileSystemIngestorLoaderSettings settings = KVSettingUtil.kvSettingsToObject(
+                FileSystemIngestorLoaderSettings fsSettings = KVSettingUtil.kvSettingsToObject(
                         siloEntity.getIngestorSettings(),
                         FileSystemIngestorLoaderSettings.class);
-                return new FileSystemIngestorLoader(siloEntity, settings);
+                return new FileSystemIngestorLoader(siloEntity, fsSettings);
+            case URL:
+                URLIngestorLoaderSettings urlSettings = KVSettingUtil.kvSettingsToObject(
+                        siloEntity.getIngestorSettings(),
+                        URLIngestorLoaderSettings.class);
+                return new URLIngestorLoader(siloEntity, urlSettings);
             default:
                 throw new UnsupportedDataTypeException("Ingestor type not supported");
         }
