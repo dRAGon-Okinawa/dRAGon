@@ -66,7 +66,7 @@ public class FileSystemIngestorLoader extends ImplAbstractSiloIngestorLoader {
     public void checkIngestorLoaderSettings() throws Exception {
         List<String> ingestorLoaderSettings = entity.getIngestorSettings();
         if (ingestorLoaderSettings == null) {
-            logger.warn("No 'ingestorLoaderSettings' provided for Silo {}", entity.getUuid());
+            logger.warn("No 'ingestorSettings' provided for Silo {}", entity.getUuid());
             return;
         }
         if (loaderSettings.getPaths() == null) {
