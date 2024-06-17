@@ -1,6 +1,7 @@
 package ai.dragon.enumeration;
 
 public enum IngestorLoaderType {
+    None("None"),
     FileSystem("FileSystem");
 
     private String value;

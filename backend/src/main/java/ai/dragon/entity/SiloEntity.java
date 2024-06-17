@@ -23,8 +23,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SiloEntity implements AbstractEntity {
-    public static final String DEFAULT_CRON_EXPRESSION = "*/15 * * * *";
-
     @Id
     @NotNull
     @Schema(description = "Identifier of the Silo")
@@ -46,10 +44,6 @@ public class SiloEntity implements AbstractEntity {
     @Schema(description = "Type to be used for the Ingestor Loader", example = "FileSystem")
     private IngestorLoaderType ingestorLoader;
 
-    @NotNull
-    @Schema(description = "Cron Expression for the Silo's Ingestor Job", example = "Launch the Silo Ingestor every 15 minutes : */15 * * * *")
-    private String ingestorSchedule;
-
     @Schema(description = "Settings to be linked to the Silo's Vector Store in the form of `key = value` pairs.")
     private List<String> vectorStoreSettings;
 
@@ -64,7 +58,6 @@ public class SiloEntity implements AbstractEntity {
         this.name = String.format("Silo %s", this.uuid.toString());
         this.vectorStore = VectorStoreType.InMemoryEmbeddingStore;
         this.embeddingModel = EmbeddingModelType.BgeSmallEnV15QuantizedEmbeddingModel;
-        this.ingestorLoader = IngestorLoaderType.FileSystem;
-        this.ingestorSchedule = DEFAULT_CRON_EXPRESSION;
+        this.ingestorLoader = IngestorLoaderType.None;
     }
 }
