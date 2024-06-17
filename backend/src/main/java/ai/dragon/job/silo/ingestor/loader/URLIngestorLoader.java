@@ -34,8 +34,11 @@ public class URLIngestorLoader extends ImplAbstractSiloIngestorLoader {
             try {
                 logger.info("Retrieving document for URL : {}...", urlToIngest);
                 Document document = UrlDocumentLoader.load(urlToIngest, new ApacheTikaDocumentParser());
-                // TODO allow automatically extract metadata (e.g. creator, last-author, created/modified timestamp, etc
-                // TODO langchain4j => src/main/java/dev/langchain4j/data/document/parser/apache/tika/ApacheTikaDocumentParser.java#L90
+                // TODO allow automatically extract metadata (e.g. creator, last-author,
+                // created/modified timestamp, etc
+                // TODO langchain4j =>
+                // src/main/java/dev/langchain4j/data/document/parser/apache/tika/ApacheTikaDocumentParser.java#L90
+                document.metadata().put("file_name", urlToIngest.getFile());
                 document.metadata().put("silo_uuid", entity.getUuid().toString());
                 document.metadata().put("document_date", System.currentTimeMillis()); // TODO
                 document.metadata().put("document_size", 0); // TODO
