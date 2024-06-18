@@ -21,7 +21,7 @@ const FeatureList: FeatureItem[] = [
     title: 'Focus on What Matters',
     description: (
       <>
-        dRAGon lets you focus on your RAG pipeline, and we&apos;ll do the chores. Go
+        It lets you focus on your RAG pipeline, and we&apos;ll do the chores. Go
         ahead and import your docs into the pipeline and let dRAGon do the rest.
       </>
     ),
@@ -30,7 +30,7 @@ const FeatureList: FeatureItem[] = [
     title: 'Powered by Spring Boot and Vue.js',
     description: (
       <>
-        dRAGon is built on top of Spring Boot and Vue.js, two of the most popular
+        Built on top of Spring Boot and Vue.js, two of the most popular
         open-source frameworks for building strong backends and frontends.
       </>
     ),
@@ -40,9 +40,6 @@ const FeatureList: FeatureItem[] = [
 function Feature({title, Svg, description}: FeatureItem) {
   return (
     <div className={clsx('col col--4')}>
-      <div className="text--center">
-        Image here
-      </div>
       <div className="text--center padding-horiz--md">
         <Heading as="h3">{title}</Heading>
         <p>{description}</p>
