@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import ai.dragon.entity.SiloEntity;
 import ai.dragon.properties.loader.FileSystemIngestorLoaderSettings;
+import ai.dragon.util.CommonMetadataHelper;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.loader.FileSystemDocumentLoader;
 import dev.langchain4j.data.document.parser.apache.tika.ApacheTikaDocumentParser;
@@ -49,10 +50,7 @@ public class FileSystemIngestorLoader extends ImplAbstractSiloIngestorLoader {
                 for (Document document : documents) {
                     File file = new File(document.metadata().getString("absolute_directory_path"),
                             document.metadata().getString("file_name"));
-                    document.metadata().put("silo_uuid", entity.getUuid().toString());
-                    document.metadata().put("document_date", file.lastModified());
-                    document.metadata().put("document_size", file.length());
-                    document.metadata().put("document_location", file.getAbsolutePath());
+                    CommonMetadataHelper.updateWithFile(document, file);
                 }
                 logger.info("Found {} documents for path : {}", documents.size(), pathToIngest);
                 allDocuments.addAll(documents);
