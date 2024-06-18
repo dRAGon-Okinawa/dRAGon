@@ -50,7 +50,7 @@ public class FarmEntity implements AbstractEntity {
     @Schema(description = "Settings to be linked to the Farm's Language Model in the form of `key = value` pairs.")
     private List<String> languageModelSettings;
 
-    @Schema(description = "Flag to enable/disable Query Rewriting. Improve RAG Performance. Uses Chat History.", defaultValue = "false")
+    @Schema(description = "Enable/disable Query Rewriting. Improve RAG Performance. Uses Chat History. Need LLM calls => Costs money.", defaultValue = "false")
     private Boolean rewriteQuery;
 
     public FarmEntity() {
