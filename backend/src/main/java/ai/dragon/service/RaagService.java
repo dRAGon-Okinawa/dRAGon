@@ -16,6 +16,7 @@ import ai.dragon.dto.openai.completion.OpenAiChatCompletionResponse;
 import ai.dragon.dto.openai.completion.OpenAiCompletionMessage;
 import ai.dragon.dto.openai.completion.OpenAiCompletionRequest;
 import ai.dragon.dto.openai.completion.OpenAiCompletionResponse;
+import ai.dragon.dto.openai.completion.OpenAiRequest;
 import ai.dragon.dto.openai.model.OpenAiModel;
 import ai.dragon.entity.FarmEntity;
 import ai.dragon.properties.embedding.LanguageModelSettings;
@@ -151,27 +152,31 @@ public class RaagService {
 
     private AiAssistant makeChatAssistant(FarmEntity farm, OpenAiChatCompletionRequest request, boolean stream)
             throws Exception {
-        AiServices<AiAssistant> assistantBuilder = AiServices.builder(AiAssistant.class)
-                .retrievalAugmentor(this.buildRetrievalAugmentor(farm))
-                .chatMemory(this.buildChatMemory(request));
+        AiServices<AiAssistant> assistantBuilder = this.makeAssistantBuilder(farm, request, stream);
+        assistantBuilder.chatMemory(this.buildChatMemory(request));
         if (stream) {
-            assistantBuilder.streamingChatLanguageModel(this.buildStreamingChatLanguageModel(farm));
+            assistantBuilder.streamingChatLanguageModel(this.buildStreamingChatLanguageModel(farm, request));
         } else {
-            assistantBuilder.chatLanguageModel(this.buildChatLanguageModel(farm));
+            assistantBuilder.chatLanguageModel(this.buildChatLanguageModel(farm, request));
         }
         return assistantBuilder.build();
     }
 
     private AiAssistant makeCompletionAssistant(FarmEntity farm, OpenAiCompletionRequest request, boolean stream)
             throws Exception {
+        return this.makeAssistantBuilder(farm, request, stream).build();
+    }
+
+    private AiServices<AiAssistant> makeAssistantBuilder(FarmEntity farm, OpenAiRequest request, boolean stream)
+            throws Exception {
         AiServices<AiAssistant> assistantBuilder = AiServices.builder(AiAssistant.class)
                 .retrievalAugmentor(this.buildRetrievalAugmentor(farm));
         if (stream) {
-            assistantBuilder.streamingChatLanguageModel(this.buildStreamingChatLanguageModel(farm));
+            assistantBuilder.streamingChatLanguageModel(this.buildStreamingChatLanguageModel(farm, request));
         } else {
-            assistantBuilder.chatLanguageModel(this.buildChatLanguageModel(farm));
+            assistantBuilder.chatLanguageModel(this.buildChatLanguageModel(farm, request));
         }
-        return assistantBuilder.build();
+        return assistantBuilder;
     }
 
     private MessageWindowChatMemory buildChatMemory(OpenAiChatCompletionRequest request) {
@@ -183,24 +188,34 @@ public class RaagService {
         return memory;
     }
 
-    private StreamingChatLanguageModel buildStreamingChatLanguageModel(FarmEntity farm) throws Exception {
+    private StreamingChatLanguageModel buildStreamingChatLanguageModel(FarmEntity farm, OpenAiRequest request)
+            throws Exception {
         return farm
                 .getLanguageModel()
                 .getStreamingChatLanguageModel()
                 .getModelWithSettings()
-                .apply(KVSettingUtil
-                        .kvSettingsToObject(farm.getLanguageModelSettings(),
-                                LanguageModelSettings.class));
+                .apply(buildLanguageModelSettings(farm, request));
     }
 
-    private ChatLanguageModel buildChatLanguageModel(FarmEntity farm) throws Exception {
+    private ChatLanguageModel buildChatLanguageModel(FarmEntity farm, OpenAiRequest request) throws Exception {
         return farm
                 .getLanguageModel()
                 .getChatLanguageModel()
                 .getModelWithSettings()
-                .apply(KVSettingUtil
-                        .kvSettingsToObject(farm.getLanguageModelSettings(),
-                                LanguageModelSettings.class));
+                .apply(buildLanguageModelSettings(farm, request));
+    }
+
+    private LanguageModelSettings buildLanguageModelSettings(FarmEntity farm, OpenAiRequest request) {
+        LanguageModelSettings languageModelSettings = KVSettingUtil
+                .kvSettingsToObject(farm.getLanguageModelSettings(),
+                        LanguageModelSettings.class);
+        languageModelSettings.setMaxTokens(
+                Optional.ofNullable(request.getMax_tokens()).orElse(languageModelSettings.getMaxTokens()));
+        languageModelSettings.setTemperature(
+                Optional.ofNullable(request.getTemperature()).orElse(languageModelSettings.getTemperature()));
+        languageModelSettings.setUserIdentifier(
+                Optional.ofNullable(request.getUser()).orElse(languageModelSettings.getUserIdentifier()));
+        return languageModelSettings;
     }
 
     private RetrievalAugmentor buildRetrievalAugmentor(FarmEntity farm) {
