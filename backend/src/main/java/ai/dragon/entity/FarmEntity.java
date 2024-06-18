@@ -50,11 +50,15 @@ public class FarmEntity implements AbstractEntity {
     @Schema(description = "Settings to be linked to the Farm's Language Model in the form of `key = value` pairs.")
     private List<String> languageModelSettings;
 
+    @Schema(description = "Flag to enable/disable Query Rewriting. Improve RAG Performance. Uses Chat History.", defaultValue = "false")
+    private Boolean rewriteQuery;
+
     public FarmEntity() {
         this.uuid = UUID.randomUUID();
         this.name = String.format("Farm %s", this.uuid.toString());
         this.silos = new ArrayList<UUID>();
         this.raagIdentifier = UUID.randomUUID().toString();
         this.languageModel = LanguageModelType.OpenAiModel;
+        this.rewriteQuery = false;
     }
 }
