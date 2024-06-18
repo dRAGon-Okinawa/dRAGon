@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import ai.dragon.entity.SiloEntity;
 import ai.dragon.properties.loader.URLIngestorLoaderSettings;
+import ai.dragon.util.CommonMetadataHelper;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.loader.UrlDocumentLoader;
 import dev.langchain4j.data.document.parser.apache.tika.ApacheTikaDocumentParser;
@@ -34,15 +35,7 @@ public class URLIngestorLoader extends ImplAbstractSiloIngestorLoader {
             try {
                 logger.info("Retrieving document for URL : {}...", urlToIngest);
                 Document document = UrlDocumentLoader.load(urlToIngest, new ApacheTikaDocumentParser());
-                // TODO allow automatically extract metadata (e.g. creator, last-author,
-                // created/modified timestamp, etc
-                // TODO langchain4j =>
-                // src/main/java/dev/langchain4j/data/document/parser/apache/tika/ApacheTikaDocumentParser.java#L90
-                document.metadata().put("file_name", urlToIngest.getFile());
-                document.metadata().put("silo_uuid", entity.getUuid().toString());
-                document.metadata().put("document_date", System.currentTimeMillis()); // TODO
-                document.metadata().put("document_size", 0); // TODO
-                document.metadata().put("document_location", urlToIngest.toString());
+                CommonMetadataHelper.updateWithURL(document, urlToIngest);
                 allDocuments.add(document);
             } catch (Exception e) {
                 logger.error("Error retrieveing document for URL '{}' : {}", urlToIngest, e);
