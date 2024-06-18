@@ -9,4 +9,7 @@ import lombok.Data;
 public class LanguageModelSettings {
     private String apiKey;
     private String modelName;
+    private String userIdentifier;
+    private Double temperature;
+    private Integer maxTokens;
 }

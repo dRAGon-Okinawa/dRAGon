@@ -1,6 +1,7 @@
 package ai.dragon.enumeration;
 
 import java.time.Duration;
+import java.util.Optional;
 
 import ai.dragon.dto.llm.ChatLanguageModelDefinition;
 import ai.dragon.dto.llm.StreamingChatLanguageModelDefinition;
@@ -41,6 +42,9 @@ public enum LanguageModelType {
                                     .builder()
                                     .apiKey(parameters.getApiKey())
                                     .modelName(parameters.getModelName())
+                                    .user(parameters.getUserIdentifier())
+                                    .temperature(Optional.ofNullable(parameters.getTemperature()).orElse(0.7))
+                                    .maxTokens(parameters.getMaxTokens())
                                     .timeout(Duration.ofSeconds(SseService.DEFAULT_TIMEOUT))
                                     .build();
                         })
@@ -61,6 +65,9 @@ public enum LanguageModelType {
                                     .builder()
                                     .apiKey(parameters.getApiKey())
                                     .modelName(parameters.getModelName())
+                                    .user(parameters.getUserIdentifier())
+                                    .temperature(Optional.ofNullable(parameters.getTemperature()).orElse(0.7))
+                                    .maxTokens(parameters.getMaxTokens())
                                     .timeout(Duration.ofSeconds(SseService.DEFAULT_TIMEOUT))
                                     .build();
                         })
