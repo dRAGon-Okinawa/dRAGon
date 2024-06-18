@@ -30,10 +30,12 @@ import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.chat.StreamingChatLanguageModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.rag.DefaultRetrievalAugmentor;
+import dev.langchain4j.rag.DefaultRetrievalAugmentor.DefaultRetrievalAugmentorBuilder;
 import dev.langchain4j.rag.RetrievalAugmentor;
 import dev.langchain4j.rag.content.retriever.ContentRetriever;
 import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
 import dev.langchain4j.rag.query.router.DefaultQueryRouter;
+import dev.langchain4j.rag.query.transformer.CompressingQueryTransformer;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.Result;
 import dev.langchain4j.service.TokenStream;
@@ -170,7 +172,7 @@ public class RaagService {
     private AiServices<AiAssistant> makeAssistantBuilder(FarmEntity farm, OpenAiRequest request, boolean stream)
             throws Exception {
         AiServices<AiAssistant> assistantBuilder = AiServices.builder(AiAssistant.class)
-                .retrievalAugmentor(this.buildRetrievalAugmentor(farm));
+                .retrievalAugmentor(this.buildRetrievalAugmentor(farm, request));
         if (stream) {
             assistantBuilder.streamingChatLanguageModel(this.buildStreamingChatLanguageModel(farm, request));
         } else {
@@ -218,11 +220,16 @@ public class RaagService {
         return languageModelSettings;
     }
 
-    private RetrievalAugmentor buildRetrievalAugmentor(FarmEntity farm) {
+    private RetrievalAugmentor buildRetrievalAugmentor(FarmEntity farm, OpenAiRequest request) throws Exception {
         // TODO Enhanced Query Router : langchain4j => LanguageModelQueryRouter
-        return DefaultRetrievalAugmentor.builder()
-                .queryRouter(new DefaultQueryRouter(this.buildRetrieverList(farm)))
-                .build();
+        DefaultRetrievalAugmentorBuilder retrievalAugmentorBuilder = DefaultRetrievalAugmentor.builder()
+                .queryRouter(new DefaultQueryRouter(this.buildRetrieverList(farm)));
+        if (Boolean.TRUE.equals(farm.getRewriteQuery())) {
+            // Query Rewriting. Improve RAG Performance. Uses Chat History.
+            retrievalAugmentorBuilder.queryTransformer(CompressingQueryTransformer.builder()
+                    .chatLanguageModel(this.buildChatLanguageModel(farm, request)).build());
+        }
+        return retrievalAugmentorBuilder.build();
     }
 
     public List<ContentRetriever> buildRetrieverList(FarmEntity farm) {
