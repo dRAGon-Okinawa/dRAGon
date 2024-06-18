@@ -29,7 +29,9 @@ jobs:
         run: gradle issueReportInfo
 
       - name: Create Release
-        if: github.ref == 'refs/heads/main'
+        if: |
+          github.ref == 'refs/heads/main' &&
+          github.repository == 'dragon-okinawa/dragon'
         run: gradle createRelease
 
       - name: Set Frontend Version
@@ -75,12 +77,16 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Push Release
-        if: github.ref == 'refs/heads/main'
+        if: |
+          github.ref == 'refs/heads/main' &&
+          github.repository == 'dragon-okinawa/dragon'
         run: gradle pushRelease
 
       - name: Deploy Documentation
         uses: JamesIves/github-pages-deploy-action@releases/v3
-        if: github.ref == 'refs/heads/main'
+        if: |
+          github.ref == 'refs/heads/main' &&
+          github.repository == 'dragon-okinawa/dragon'
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
