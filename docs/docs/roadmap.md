@@ -3,17 +3,17 @@
 - [ ] Multi-Modal Input Sources
   - [ ] Vector Ingestors
     - [X] Local Files
-    - [ ] Web URLs
+    - [X] Web URLs
     - [ ] SQL Database
     - [ ] NFS Mount
     - [ ] S3 Bucket
     - [ ] SMB / CIFS Mount
     - [ ] Git
   - [ ] Live / Direct Ingestors
-    - [ ] Web Search
-    - [ ] API Endpoints
-    - [ ] SQL Query
-    - [ ] SQL Query Generator
+    - [ ] Web Search
+    - [ ] API Endpoints
+    - [ ] SQL Query
+    - [ ] SQL Query Generator
 - [ ] Documents Types
   - [X] Text : Plain / PDF / Word
   - [X] Presentations : PowerPoint
