@@ -7,7 +7,7 @@ import WIPS from '../src/components/Admonitions/_wip_section.mdx';
 
 Let's discover **dRAGon in less than 5 minutes**.
 
-## Launching dRAGon
+## dRAGon Startup Guide
 :::danger
     dRAGon lacks of authentication and authorization mechanisms. It is not recommended to expose it to the internet or unsafe networks.
     These mechanisms will be implemented in a near future.
@@ -19,12 +19,24 @@ Let's discover **dRAGon in less than 5 minutes**.
     Can be broken at any time.
 :::
 
-<WIPS />
+### 1. Launch
+:::note
+    The best way to run dRAGon is to use Docker.
+    If you want to run it without Docker, you can use Gradle and follow [dRAGon Development Mode](/docs/contributing/launch-dragon-dev).
+:::
 
-### Docker
 ```shell
-docker run --rm -p 1985:1985 -v $(pwd)/data:/data --name dragon ghcr.io/dragon-okinawa/dragon:latest
+docker run --rm -p 1985:1985 -v $(pwd)/data:/data -v $(pwd)/documents:/documents --name dRAGon ghcr.io/dragon-okinawa/dragon:latest
 ```
 
-### Gradle
-See [dRAGon Development Mode](/docs/contributing/launch-dragon-dev) for more information.
+:::info
+    `/data` and `/documents` are optional volumes to mount. You can mount any directory you want!
+    * `/data` is used to store the dRAGon databas and settings. If you want to keep your data between reboots, you should mount this volume.
+    * `/documents` is used here to store the documents to be indexed inside the vector store (eg. by using FileSystem Ingestor).
+:::
+
+### 2. Access
+Open your browser and go to [http://localhost:1985](http://localhost:1985).
+
+### 3. Configure
+<WIPS />
