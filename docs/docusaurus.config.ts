@@ -88,7 +88,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} dRAGon. Built with Docusaurus.`,
+      copyright: `&copy; ${new Date().getFullYear()} All dRAGon Contributors`,
     },
     prism: {
       theme: prismThemes.github,
