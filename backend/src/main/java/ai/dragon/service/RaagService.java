@@ -20,12 +20,13 @@ import ai.dragon.dto.openai.completion.OpenAiRequest;
 import ai.dragon.dto.openai.model.OpenAiModel;
 import ai.dragon.entity.FarmEntity;
 import ai.dragon.properties.embedding.LanguageModelSettings;
+import ai.dragon.properties.raag.RetrievalAugmentorSettings;
 import ai.dragon.repository.FarmRepository;
 import ai.dragon.util.KVSettingUtil;
 import ai.dragon.util.ai.AiAssistant;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.segment.TextSegment;
-import dev.langchain4j.memory.chat.MessageWindowChatMemory;
+import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.chat.StreamingChatLanguageModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
@@ -87,6 +88,41 @@ public class RaagService {
     public Object makeChatCompletionResponse(FarmEntity farm, OpenAiChatCompletionRequest request) throws Exception {
         return Boolean.TRUE.equals(request.getStream()) ? this.streamChatCompletionResponse(farm, request)
                 : this.chatCompletionResponse(farm, request);
+    }
+
+    public List<ContentRetriever> buildRetrieverList(FarmEntity farm) {
+        List<ContentRetriever> retrievers = new ArrayList<>();
+        if (farm.getSilos() == null || farm.getSilos().isEmpty()) {
+            logger.warn("No Silos found for Farm '{}' (RaaG Identifier '{}'), no content retrieve will be made",
+                    farm.getUuid(), farm.getRaagIdentifier());
+            return retrievers;
+        }
+        farm.getSilos().forEach(siloUuid -> {
+            try {
+                this.buildRetriever(siloUuid).ifPresent(retrievers::add);
+            } catch (Exception ex) {
+                logger.error("Error building Content Retriever for Silo '{}'", siloUuid, ex);
+            }
+        });
+        return retrievers;
+    }
+
+    public Optional<ContentRetriever> buildRetriever(UUID siloUuid) throws Exception {
+        EmbeddingModel embeddingModel = embeddingModelService.modelForSilo(siloUuid);
+        EmbeddingStore<TextSegment> embeddingStore = embeddingStoreService.retrieveEmbeddingStore(siloUuid);
+        return Optional.of(EmbeddingStoreContentRetriever.builder()
+                .embeddingStore(embeddingStore)
+                .embeddingModel(embeddingModel)
+                .dynamicMaxResults(query -> {
+                    return 10; // TODO SiloEntity or FarmEntity settings
+                })
+                .dynamicMinScore(query -> {
+                    return 0.8; // TODO SiloEntity or FarmEntity settings
+                })
+                .dynamicFilter(query -> {
+                    return null; // TODO SiloEntity or FarmEntity settings
+                })
+                .build());
     }
 
     private OpenAiCompletionResponse completionResponse(FarmEntity farm, OpenAiCompletionRequest request)
@@ -155,7 +191,7 @@ public class RaagService {
     private AiAssistant makeChatAssistant(FarmEntity farm, OpenAiChatCompletionRequest request, boolean stream)
             throws Exception {
         AiServices<AiAssistant> assistantBuilder = this.makeAssistantBuilder(farm, request, stream);
-        assistantBuilder.chatMemory(this.buildChatMemory(request));
+        assistantBuilder.chatMemory(this.buildChatMemory(farm, request));
         if (stream) {
             assistantBuilder.streamingChatLanguageModel(this.buildStreamingChatLanguageModel(farm, request));
         } else {
@@ -181,8 +217,14 @@ public class RaagService {
         return assistantBuilder;
     }
 
-    private MessageWindowChatMemory buildChatMemory(OpenAiChatCompletionRequest request) {
-        MessageWindowChatMemory memory = MessageWindowChatMemory.withMaxMessages(10); // TODO maxMessages
+    private ChatMemory buildChatMemory(FarmEntity farm, OpenAiChatCompletionRequest request) throws Exception {
+        RetrievalAugmentorSettings retrievalSettings = KVSettingUtil.kvSettingsToObject(
+                farm.getRetrievalAugmentorSettings(),
+                RetrievalAugmentorSettings.class);
+        ChatMemory memory = farm.getChatMemoryStrategy()
+                .getChatMemoryStrategyDefinition()
+                .getStrategyWithSettings()
+                .apply(retrievalSettings);
         for (int i = 0; i < request.getMessages().size(); i++) {
             OpenAiCompletionMessage requestMessage = request.getMessages().get(i);
             chatMessageService.convertToChatMessage(requestMessage).ifPresent(memory::add);
@@ -221,49 +263,18 @@ public class RaagService {
     }
 
     private RetrievalAugmentor buildRetrievalAugmentor(FarmEntity farm, OpenAiRequest request) throws Exception {
+        RetrievalAugmentorSettings retrievalSettings = KVSettingUtil.kvSettingsToObject(
+                farm.getRetrievalAugmentorSettings(),
+                RetrievalAugmentorSettings.class);
         // TODO Enhanced Query Router : langchain4j => LanguageModelQueryRouter
         DefaultRetrievalAugmentorBuilder retrievalAugmentorBuilder = DefaultRetrievalAugmentor.builder()
                 .queryRouter(new DefaultQueryRouter(this.buildRetrieverList(farm)));
-        if (Boolean.TRUE.equals(farm.getRewriteQuery())) {
-            // Query Rewriting. Improve RAG Performance. Uses Chat History.
+        if (Boolean.TRUE.equals(retrievalSettings.getRewriteQuery())) {
+            // Query Rewriting => Improve RAG Performance and Accuracy
+            // => Uses Chat History.
             retrievalAugmentorBuilder.queryTransformer(CompressingQueryTransformer.builder()
                     .chatLanguageModel(this.buildChatLanguageModel(farm, request)).build());
         }
         return retrievalAugmentorBuilder.build();
-    }
-
-    public List<ContentRetriever> buildRetrieverList(FarmEntity farm) {
-        List<ContentRetriever> retrievers = new ArrayList<>();
-        if (farm.getSilos() == null || farm.getSilos().isEmpty()) {
-            logger.warn("No Silos found for Farm '{}' (RaaG Identifier '{}'), no content retrieve will be made",
-                    farm.getUuid(), farm.getRaagIdentifier());
-            return retrievers;
-        }
-        farm.getSilos().forEach(siloUuid -> {
-            try {
-                this.buildRetriever(siloUuid).ifPresent(retrievers::add);
-            } catch (Exception ex) {
-                logger.error("Error building Content Retriever for Silo '{}'", siloUuid, ex);
-            }
-        });
-        return retrievers;
-    }
-
-    public Optional<ContentRetriever> buildRetriever(UUID siloUuid) throws Exception {
-        EmbeddingModel embeddingModel = embeddingModelService.modelForSilo(siloUuid);
-        EmbeddingStore<TextSegment> embeddingStore = embeddingStoreService.retrieveEmbeddingStore(siloUuid);
-        return Optional.of(EmbeddingStoreContentRetriever.builder()
-                .embeddingStore(embeddingStore)
-                .embeddingModel(embeddingModel)
-                .dynamicMaxResults(query -> {
-                    return 10; // TODO SiloEntity or FarmEntity settings
-                })
-                .dynamicMinScore(query -> {
-                    return 0.8; // TODO SiloEntity or FarmEntity settings
-                })
-                .dynamicFilter(query -> {
-                    return null; // TODO SiloEntity or FarmEntity settings
-                })
-                .build());
     }
 }

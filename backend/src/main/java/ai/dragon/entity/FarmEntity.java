@@ -10,6 +10,7 @@ import org.dizitart.no2.repository.annotations.Id;
 import org.dizitart.no2.repository.annotations.Index;
 import org.dizitart.no2.repository.annotations.Indices;
 
+import ai.dragon.enumeration.ChatMemoryStrategy;
 import ai.dragon.enumeration.LanguageModelType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
@@ -50,8 +51,11 @@ public class FarmEntity implements AbstractEntity {
     @Schema(description = "Settings to be linked to the Farm's Language Model in the form of `key = value` pairs.")
     private List<String> languageModelSettings;
 
-    @Schema(description = "Enable/disable Query Rewriting. Improve RAG Performance. Uses Chat History. Need LLM calls => Costs money.", defaultValue = "false")
-    private Boolean rewriteQuery;
+    @Schema(description = "Chat Memory Strategy to be used by the RaaG", example = "MaxMessages")
+    private ChatMemoryStrategy chatMemoryStrategy;
+
+    @Schema(description = "Settings to be linked to the Farm's Retrieval Augmentor in the form of `key = value` pairs.")
+    private List<String> retrievalAugmentorSettings;
 
     public FarmEntity() {
         this.uuid = UUID.randomUUID();
@@ -59,6 +63,6 @@ public class FarmEntity implements AbstractEntity {
         this.silos = new ArrayList<UUID>();
         this.raagIdentifier = UUID.randomUUID().toString();
         this.languageModel = LanguageModelType.OpenAiModel;
-        this.rewriteQuery = false;
+        this.chatMemoryStrategy = ChatMemoryStrategy.MaxMessages;
     }
 }
