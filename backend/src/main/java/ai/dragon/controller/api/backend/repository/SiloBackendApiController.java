@@ -60,7 +60,7 @@ public class SiloBackendApiController extends AbstractCrudBackendApiController<S
     }
 
     @PatchMapping("/{uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}")
-    @ApiResponse(responseCode = "200", description = "Silo has been successfully created.")
+    @ApiResponse(responseCode = "200", description = "Silo has been successfully updated.")
     @ApiResponse(responseCode = "404", description = "Silo not found.", content = @Content)
     @Operation(summary = "Update a Silo", description = "Updates one Silo entity in the database.")
     public SiloEntity updateSilo(
