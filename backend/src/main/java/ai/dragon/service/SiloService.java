@@ -11,15 +11,13 @@ import ai.dragon.entity.SiloEntity;
 import ai.dragon.listener.EntityChangeListener;
 import ai.dragon.repository.FarmRepository;
 import ai.dragon.repository.SiloRepository;
+import ai.dragon.util.fluenttry.Try;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 
 @Service
 public class SiloService {
     private EntityChangeListener<SiloEntity> entityChangeListener;
-
-    @Autowired
-    private EmbeddingStoreService embeddingStoreService;
 
     @Autowired
     private SiloRepository siloRepository;
@@ -30,6 +28,9 @@ public class SiloService {
     @Autowired
     private SiloJobService siloJobService;
 
+    @Autowired
+    private DocumentService documentService;
+
     @PostConstruct
     private void init() {
         entityChangeListener = siloRepository.subscribe(new EntityChangeListener<SiloEntity>() {
@@ -38,6 +39,9 @@ public class SiloService {
                 switch (collectionEventInfo.getEventType()) {
                     case Remove:
                         removeFarmLinks(entity);
+                        Try.create().run(() -> {
+                            removeAllDocuments(entity);
+                        });
                         break;
                     default:
                         break;
@@ -56,9 +60,8 @@ public class SiloService {
         siloJobService.startSiloIngestorJobNow(entity);
     }
 
-    public void removeEmbeddings(UUID uuid) throws Exception {
-        SiloEntity entity = siloRepository.getByUuid(uuid).orElseThrow();
-        embeddingStoreService.clearEmbeddingStore(entity.getUuid());
+    public void removeAllDocuments(SiloEntity entity) throws Exception {
+        documentService.removeDocumentsOfSilo(entity);
     }
 
     private void removeFarmLinks(SiloEntity entity) {

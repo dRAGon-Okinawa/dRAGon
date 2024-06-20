@@ -75,7 +75,6 @@ public class SiloBackendApiController extends AbstractCrudBackendApiController<S
     @Operation(summary = "Delete a Silo", description = "Deletes one Silo entity from its UUID stored in the database.")
     public void deleteSilo(@PathVariable("uuid") @Parameter(description = "Identifier of the Silo") UUID uuid)
             throws Exception {
-        siloService.removeEmbeddings(uuid);
         super.delete(uuid, siloRepository);
     }
 }

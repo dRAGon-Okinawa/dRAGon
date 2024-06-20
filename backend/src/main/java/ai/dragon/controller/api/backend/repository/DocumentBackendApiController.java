@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -41,10 +42,11 @@ public class DocumentBackendApiController extends AbstractCrudBackendApiControll
     @Operation(summary = "List Documents of a Silo", description = "Returns Documents entities about a Silo.")
     public List<DocumentEntity> listDocumentsOfSilo(
             @PathVariable("uuid") @Parameter(description = "Identifier of the Silo") String uuid,
-            FindOptions findOptions) {
+            @RequestParam(name = "limit", required = false, defaultValue = "10") @Parameter(description = "Limit number of results") int limit,
+            @RequestParam(name = "offset", required = false, defaultValue = "0") @Parameter(description = "Skip x results") int offset) {
         return super.findWithFilter(documentRepository,
                 FluentFilter.where("siloIdentifier").eq(uuid),
-                findOptions)
+                FindOptions.limitBy(limit).skip(offset))
                 .toList();
     }
 
@@ -64,17 +66,28 @@ public class DocumentBackendApiController extends AbstractCrudBackendApiControll
     public DocumentEntity updateSilo(
             @PathVariable("uuid") @Parameter(description = "Identifier of the Document", required = true) String uuid,
             @RequestBody Map<String, Object> fields) throws JsonMappingException {
-        // TODO Prevent from updating the Silo of the Document
+        // TODO Prevent from updating :
+        // TODO siloIdentifier
+        // TODO location
+        // Only allow "allowIndexing"?
         return super.update(uuid, fields, documentRepository);
     }
 
     @DeleteMapping("/{uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}")
     @ApiResponse(responseCode = "200", description = "Document has been successfully deleted.")
     @ApiResponse(responseCode = "404", description = "Document not found.", content = @Content)
-    @Operation(summary = "Delete a Silo", description = "Deletes one Document entity from its UUID stored in the database.")
+    @Operation(summary = "Delete a Document", description = "Deletes one Document entity from its UUID stored in the database.")
     public void deleteSilo(@PathVariable("uuid") @Parameter(description = "Identifier of the Document") UUID uuid)
             throws Exception {
         // TODO siloService.removeEmbeddings(uuid);
         super.delete(uuid, documentRepository);
+    }
+
+    @DeleteMapping("/silo/{uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}")
+    @ApiResponse(responseCode = "200", description = "Documents has been successfully deleted.")
+    @Operation(summary = "Delete all Documents from a Silo", description = "Deletes all Document entities from a Silo.")
+    public void deleteSiloDocuments(@PathVariable("uuid") @Parameter(description = "Identifier of the Silo") UUID uuid)
+            throws Exception {
+        // TODO siloService.removeAllDocumentsOfSilo(uuid);
     }
 }

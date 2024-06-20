@@ -1,25 +1,32 @@
 package ai.dragon.entity;
 
-import java.util.List;
+import java.util.Date;
 import java.util.UUID;
 
+import org.dizitart.no2.index.IndexType;
 import org.dizitart.no2.repository.annotations.Entity;
 import org.dizitart.no2.repository.annotations.Id;
+import org.dizitart.no2.repository.annotations.Index;
+import org.dizitart.no2.repository.annotations.Indices;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 
 @Entity(value = "document")
 @Schema(name = "Document", description = "Document Entity")
-@Getter
-@Setter
+@Indices(@Index(fields = { "siloIdentifier", "location" }, type = IndexType.UNIQUE))
+@Data
+@Builder
+@AllArgsConstructor
 public class DocumentEntity implements AbstractEntity {
     @Id
     @NotNull
     @Schema(description = "Identifier of the Document")
-    private UUID uuid;
+    @Builder.Default
+    private UUID uuid = UUID.randomUUID();
 
     @NotNull
     @Schema(description = "Identifier of the Silo")
@@ -30,9 +37,23 @@ public class DocumentEntity implements AbstractEntity {
     private String name;
 
     @NotNull
-    @Schema(description = "Flag to allow indexing of the Document")
-    private Boolean allowIndexing;
+    @Schema(description = "Location of the Document")
+    private String location;
 
-    @Schema(description = "Metdata to be linked to the Document in the form of `key = value` pairs.")
-    private List<String> metadata;
+    @NotNull
+    @Schema(description = "Flag to allow indexing of the Document")
+    @Builder.Default
+    private Boolean allowIndexing = true;
+
+    @Schema(description = "Date when the Document was last seen")
+    private Date lastSeen;
+
+    @Schema(description = "Date when the Document was last indexed")
+    private Date lastIndexed;
+
+    public DocumentEntity() {
+        this.uuid = UUID.randomUUID();
+        this.name = String.format("Document %s", this.uuid.toString());
+        this.allowIndexing = true;
+    }
 }

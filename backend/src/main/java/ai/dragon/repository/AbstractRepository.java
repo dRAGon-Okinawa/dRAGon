@@ -104,6 +104,18 @@ public abstract class AbstractRepository<T extends AbstractEntity> {
         return cursor.size() == 1 ? Optional.of(cursor.firstOrNull()) : Optional.empty();
     }
 
+    public Optional<T> findUniqueWithFilter(Filter filter) {
+        return findUniqueWithFilter(filter, null);
+    }
+
+    public Optional<T> findUniqueWithFilter(Filter filter, FindOptions findOptions) {
+        Cursor<T> cursor = this.findWithFilter(filter, findOptions);
+        if (cursor.size() > 1) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Multiple entities found");
+        }
+        return cursor.size() == 1 ? Optional.of(cursor.firstOrNull()) : Optional.empty();
+    }
+
     public void delete(String uuid) {
         delete(UUID.fromString(uuid));
     }

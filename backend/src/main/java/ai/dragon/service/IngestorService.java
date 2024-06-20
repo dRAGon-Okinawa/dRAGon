@@ -1,11 +1,15 @@
 package ai.dragon.service;
 
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
 
+import org.dizitart.no2.filters.FluentFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ai.dragon.entity.DocumentEntity;
 import ai.dragon.entity.SiloEntity;
 import ai.dragon.enumeration.SiloIngestProgressMessageLevel;
 import ai.dragon.job.silo.ingestor.dto.loader.SiloIngestLoaderLogMessage;
@@ -14,8 +18,10 @@ import ai.dragon.job.silo.ingestor.loader.ImplAbstractSiloIngestorLoader;
 import ai.dragon.job.silo.ingestor.loader.NoneIngestorLoader;
 import ai.dragon.job.silo.ingestor.loader.URLIngestorLoader;
 import ai.dragon.properties.embedding.EmbeddingSettings;
+import ai.dragon.properties.loader.DefaultIngestorLoaderSettings;
 import ai.dragon.properties.loader.FileSystemIngestorLoaderSettings;
 import ai.dragon.properties.loader.URLIngestorLoaderSettings;
+import ai.dragon.repository.DocumentRepository;
 import ai.dragon.util.KVSettingUtil;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.Metadata;
@@ -36,6 +42,9 @@ public class IngestorService {
 
     @Autowired
     private EmbeddingSegmentService embeddingSegmentService;
+
+    @Autowired
+    private DocumentRepository documentRepository;
 
     public void runSiloIngestion(SiloEntity siloEntity, Consumer<Integer> progressCallback,
             Consumer<SiloIngestLoaderLogMessage> logCallback)
@@ -76,7 +85,10 @@ public class IngestorService {
         EmbeddingStore<TextSegment> embeddingStore = embeddingStoreService
                 .retrieveEmbeddingStore(siloEntity.getUuid());
         EmbeddingModel embeddingModel = embeddingModelService.modelForSilo(siloEntity);
-        EmbeddingStoreIngestor ingestor = buildIngestor(embeddingStore, embeddingModel, siloEntity);
+        EmbeddingStoreIngestor embeddingStoreIngestor = buildIngestor(embeddingStore, embeddingModel, siloEntity);
+        DefaultIngestorLoaderSettings defaultIngestorSettings = KVSettingUtil.kvSettingsToObject(
+                siloEntity.getIngestorSettings(),
+                DefaultIngestorLoaderSettings.class);
         logCallback.accept(SiloIngestLoaderLogMessage.builder()
                 .message(String.format(
                         "Ingesting using '%s' Embedding Store and '%s' Embedding Model...",
@@ -87,21 +99,66 @@ public class IngestorService {
                 throw new InterruptedException();
             }
             progressCallback.accept((i * 100) / documents.size());
-            try {
-                Document document = documents.get(i);
-                logCallback.accept(SiloIngestLoaderLogMessage.builder()
-                        .message(document.metadata().toString()).build());
-                ingestor.ingest(document);
-            } catch (Exception ex) {
-                logCallback.accept(SiloIngestLoaderLogMessage.builder()
-                        .messageLevel(SiloIngestProgressMessageLevel.Error)
-                        .message(ex.getMessage())
-                        .build());
-            }
+            ingestDocumentToSilo(documents.get(i), siloEntity.getUuid(), defaultIngestorSettings,
+                    embeddingStoreIngestor, logCallback);
         }
         logCallback.accept(SiloIngestLoaderLogMessage.builder()
                 .message("End of ingestion.").build());
         progressCallback.accept(100);
+    }
+
+    private void ingestDocumentToSilo(Document document,
+            UUID siloUuid,
+            DefaultIngestorLoaderSettings ingestorSettings,
+            EmbeddingStoreIngestor embeddingStoreIngestor,
+            Consumer<SiloIngestLoaderLogMessage> logCallback) {
+        Metadata metadata = document.metadata();
+        String documentLocation = metadata.getString("document_location");
+        try {
+            DocumentEntity documentEntity = documentRepository
+                    .findUniqueWithFilter(FluentFilter.where("siloIdentifier").eq(siloUuid.toString())
+                            .and(FluentFilter.where("location").eq(documentLocation)))
+                    .orElse(DocumentEntity
+                            .builder()
+                            .siloIdentifier(siloUuid)
+                            .location(documentLocation)
+                            .name(metadata.getString("document_name"))
+                            .build());
+            documentEntity.setLastSeen(new Date(System.currentTimeMillis()));
+
+            // Save Document to the database
+            documentRepository.save(documentEntity);
+
+            // Check if the document should be indexed
+            if (!Boolean.TRUE.equals(ingestorSettings.getIndexNewDiscoveredDocuments())) {
+                logCallback.accept(SiloIngestLoaderLogMessage.builder()
+                        .message(String.format(
+                                "Skipping Indexing of Document (indexNewDiscoveredDocuments == false) : %s",
+                                documentLocation))
+                        .build());
+                return;
+            }
+            if (!Boolean.TRUE.equals(documentEntity.getAllowIndexing())) {
+                logCallback.accept(SiloIngestLoaderLogMessage.builder()
+                        .message(String.format(
+                                "Skipping Indexing of Document (allowIndexing == false) : %s",
+                                documentLocation))
+                        .build());
+                return;
+            }
+
+            // Ingest the document to the embedding store
+            embeddingStoreIngestor.ingest(document);
+
+            // Update the last indexed date
+            documentEntity.setLastIndexed(new Date(System.currentTimeMillis()));
+            documentRepository.save(documentEntity);
+        } catch (Exception ex) {
+            logCallback.accept(SiloIngestLoaderLogMessage.builder()
+                    .messageLevel(SiloIngestProgressMessageLevel.Error)
+                    .message(String.format("Unable to ingest '%s' : %s", documentLocation, ex.getMessage()))
+                    .build());
+        }
     }
 
     private EmbeddingStoreIngestor buildIngestor(EmbeddingStore<TextSegment> embeddingStore,
