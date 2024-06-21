@@ -49,6 +49,7 @@ public class IngestorService {
     public void runSiloIngestion(SiloEntity siloEntity, Consumer<Integer> progressCallback,
             Consumer<SiloIngestLoaderLogMessage> logCallback)
             throws Exception {
+        long ingestionStartTime = System.currentTimeMillis();
         ImplAbstractSiloIngestorLoader ingestorLoader = getIngestorLoaderFromEntity(siloEntity);
         logCallback.accept(SiloIngestLoaderLogMessage.builder()
                 .message(String.format("Listing documents using '%s' Ingestor Loader...",
@@ -63,20 +64,17 @@ public class IngestorService {
                     .build());
             return;
         }
-        // TODO Don't clean all embeddings, just the ones that are not linked to any
-        // document ->
-        logCallback.accept(SiloIngestLoaderLogMessage.builder()
-                .message(String.format("Cleaning all current embeddings of Silo '%s'...",
-                        siloEntity.getUuid()))
-                .build());
-        embeddingStoreService.clearEmbeddingStore(siloEntity);
-        // <- TODO Don't clean all embeddings, just the ones that are not linked to any
-        // document
+        // Ingesting documents :
         logCallback.accept(SiloIngestLoaderLogMessage.builder()
                 .message(String.format("Will ingest %d documents to Silo...", documents.size()))
                 .build());
         ingestDocumentsToSilo(documents, siloEntity, progressCallback, logCallback);
-        // TODO Need to clean embeddings unlinked to documents listing
+
+        // Delete documents not seen since the start of the ingestion :
+        logCallback.accept(SiloIngestLoaderLogMessage.builder()
+                .message("Cleaning unseen documents in Silo...")
+                .build());
+        deleteDocumentsInSiloNotSeenSince(siloEntity, ingestionStartTime);
     }
 
     private void ingestDocumentsToSilo(List<Document> documents, SiloEntity siloEntity,
@@ -85,7 +83,8 @@ public class IngestorService {
         EmbeddingStore<TextSegment> embeddingStore = embeddingStoreService
                 .retrieveEmbeddingStore(siloEntity.getUuid());
         EmbeddingModel embeddingModel = embeddingModelService.modelForSilo(siloEntity);
-        EmbeddingStoreIngestor embeddingStoreIngestor = buildIngestor(embeddingStore, embeddingModel, siloEntity);
+        EmbeddingStoreIngestor embeddingStoreIngestor = buildIngestor(embeddingStore, embeddingModel,
+                siloEntity);
         DefaultIngestorLoaderSettings defaultIngestorSettings = KVSettingUtil.kvSettingsToObject(
                 siloEntity.getIngestorSettings(),
                 DefaultIngestorLoaderSettings.class);
@@ -116,28 +115,23 @@ public class IngestorService {
         String documentLocation = metadata.getString("document_location");
         try {
             DocumentEntity documentEntity = documentRepository
-                    .findUniqueWithFilter(FluentFilter.where("siloIdentifier").eq(siloUuid.toString())
-                            .and(FluentFilter.where("location").eq(documentLocation)))
+                    .findUniqueWithFilter(
+                            FluentFilter.where("siloIdentifier").eq(siloUuid.toString())
+                                    .and(FluentFilter.where("location")
+                                            .eq(documentLocation)))
                     .orElse(DocumentEntity
                             .builder()
                             .siloIdentifier(siloUuid)
                             .location(documentLocation)
                             .name(metadata.getString("document_name"))
+                            .allowIndexing(Boolean.TRUE.equals(ingestorSettings.getIndexNewDiscoveredDocuments()))
                             .build());
             documentEntity.setLastSeen(new Date(System.currentTimeMillis()));
 
             // Save Document to the database
             documentRepository.save(documentEntity);
 
-            // Check if the document should be indexed
-            if (!Boolean.TRUE.equals(ingestorSettings.getIndexNewDiscoveredDocuments())) {
-                logCallback.accept(SiloIngestLoaderLogMessage.builder()
-                        .message(String.format(
-                                "Skipping Indexing of Document (indexNewDiscoveredDocuments == false) : %s",
-                                documentLocation))
-                        .build());
-                return;
-            }
+            // Check if the Document should be indexed
             if (!Boolean.TRUE.equals(documentEntity.getAllowIndexing())) {
                 logCallback.accept(SiloIngestLoaderLogMessage.builder()
                         .message(String.format(
@@ -156,7 +150,8 @@ public class IngestorService {
         } catch (Exception ex) {
             logCallback.accept(SiloIngestLoaderLogMessage.builder()
                     .messageLevel(SiloIngestProgressMessageLevel.Error)
-                    .message(String.format("Unable to ingest '%s' : %s", documentLocation, ex.getMessage()))
+                    .message(String.format("Unable to ingest '%s' : %s", documentLocation,
+                            ex.getMessage()))
                     .build());
         }
     }
@@ -200,5 +195,12 @@ public class IngestorService {
             default:
                 throw new UnsupportedDataTypeException("Ingestor type not supported");
         }
+    }
+
+    private void deleteDocumentsInSiloNotSeenSince(SiloEntity siloEntity, long since) {
+        documentRepository.findWithFilter(
+                FluentFilter.where("siloIdentifier").eq(siloEntity.getUuid().toString())
+                        .and(FluentFilter.where("lastSeen").lt(new Date(since))))
+                .forEach(documentRepository::delete);
     }
 }
