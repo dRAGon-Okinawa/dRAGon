@@ -169,6 +169,7 @@ public class IngestorService {
             // Update the last indexed date :
             documentEntity.setLastIndexed(new Date(System.currentTimeMillis()));
             documentRepository.save(documentEntity);
+            logger.debug("Document has been (re)indexed : {}", documentLocation);
 
             return true;
         } catch (Exception ex) {
