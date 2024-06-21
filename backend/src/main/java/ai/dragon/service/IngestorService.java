@@ -128,7 +128,7 @@ public class IngestorService {
                             .build());
             documentEntity.setLastSeen(new Date(System.currentTimeMillis()));
 
-            // Save Document to the database
+            // Save Document to the database :
             documentRepository.save(documentEntity);
 
             // Check if the Document should be indexed
@@ -141,10 +141,13 @@ public class IngestorService {
                 return;
             }
 
-            // Ingest the document to the embedding store
+            // Cleaning chunks of the document :
+            embeddingStoreService.removeEmbeddingsForDocument(documentEntity);
+
+            // Ingest the document to the embedding store :
             embeddingStoreIngestor.ingest(document);
 
-            // Update the last indexed date
+            // Update the last indexed date :
             documentEntity.setLastIndexed(new Date(System.currentTimeMillis()));
             documentRepository.save(documentEntity);
         } catch (Exception ex) {
