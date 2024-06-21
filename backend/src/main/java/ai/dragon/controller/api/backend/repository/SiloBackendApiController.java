@@ -18,7 +18,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import ai.dragon.entity.SiloEntity;
 import ai.dragon.repository.SiloRepository;
-import ai.dragon.service.SiloService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -31,9 +30,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class SiloBackendApiController extends AbstractCrudBackendApiController<SiloEntity> {
     @Autowired
     private SiloRepository siloRepository;
-
-    @Autowired
-    private SiloService siloService;
 
     @GetMapping("/")
     @ApiResponse(responseCode = "200", description = "List has been successfully retrieved.")

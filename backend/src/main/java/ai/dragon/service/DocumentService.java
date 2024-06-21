@@ -34,6 +34,13 @@ public class DocumentService {
                             removeDocumentEmbeddings(entity);
                         });
                         break;
+                    case Update:
+                        Try.thisBlock(() -> {
+                            if (Boolean.FALSE.equals(entity.getAllowIndexing())) {
+                                removeDocumentEmbeddings(entity);
+                            }
+                        });
+                        break;
                     default:
                         break;
                 }
@@ -54,11 +61,11 @@ public class DocumentService {
         clearEmbeddingsOfSilo(entity);
     }
 
-    private void clearEmbeddingsOfSilo(SiloEntity entity) throws Exception {
-        embeddingStoreService.clearEmbeddingStore(entity);
-    }
-
     private void removeDocumentEmbeddings(DocumentEntity entity) throws Exception {
         embeddingStoreService.removeEmbeddingsForDocument(entity);
+    }
+
+    private void clearEmbeddingsOfSilo(SiloEntity entity) throws Exception {
+        embeddingStoreService.clearEmbeddingStore(entity);
     }
 }
