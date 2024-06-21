@@ -39,7 +39,7 @@ public class SiloService {
                 switch (collectionEventInfo.getEventType()) {
                     case Remove:
                         removeFarmLinks(entity);
-                        Try.create().run(() -> {
+                        Try.thisBlock(() -> {
                             removeAllDocuments(entity);
                         });
                         break;

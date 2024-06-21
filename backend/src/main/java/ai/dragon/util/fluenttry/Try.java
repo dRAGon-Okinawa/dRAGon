@@ -24,34 +24,52 @@ public class Try {
         logLevel = Level.ERROR;
     }
 
-    public static Try create() {
-        return new Try();
+    public static Try withLogLevel(Level logLevel) {
+        return new Try().logLevel(logLevel);
     }
 
-    public Try withLogLevel(Level logLevel) {
+    public Try logLevel(Level logLevel) {
         this.logLevel = logLevel;
-
         return this;
     }
 
-    public Try withTimeout(Integer timeout, TimeUnit timeUnit) {
+    public static Try withTimeout(Integer timeout, TimeUnit timeUnit) {
+        return new Try().timeout(timeout, timeUnit);
+    }
+
+    public Try timeout(Integer timeout, TimeUnit timeUnit) {
         this.timeout = timeout;
         this.timeUnit = timeUnit;
 
         return this;
     }
 
-    public Try withRethrow(Boolean rethrow) {
+    public static Try withRethrow(Boolean rethrow) {
+        return new Try().rethrow(rethrow);
+    }
+
+    public Try rethrow(Boolean rethrow) {
         this.rethrow = rethrow;
 
         return this;
     }
 
+    public static void thisBlock(ExceptionalRunnable runnable) {
+        new Try().run(runnable);
+    }
+
+    // Accept a Runnable and return void
+    // If an exception is thrown, log it
+    // If timeout occurs, log it
     public void run(ExceptionalRunnable runnable) {
         run(() -> {
             runnable.run();
             return null;
         });
+    }
+
+    public static <T> T thisBlock(Callable<T> callable) {
+        return new Try().run(callable);
     }
 
     // Accept a Callable and return the result of the Callable
