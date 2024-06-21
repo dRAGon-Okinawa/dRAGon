@@ -6,7 +6,10 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.UUID;
 
+import org.dizitart.no2.collection.FindOptions;
 import org.dizitart.no2.exceptions.UniqueConstraintException;
+import org.dizitart.no2.filters.Filter;
+import org.dizitart.no2.repository.Cursor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -17,7 +20,7 @@ import ai.dragon.entity.AbstractEntity;
 import ai.dragon.repository.AbstractRepository;
 
 abstract class AbstractCrudBackendApiController<T extends AbstractEntity> {
-    public T update(String uuid, Map<String, Object> fields, AbstractRepository<T> repository) {
+    protected T update(String uuid, Map<String, Object> fields, AbstractRepository<T> repository) {
         T entityToUpdate = repository.getByUuid(uuid)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found"));
         try {
@@ -35,15 +38,19 @@ abstract class AbstractCrudBackendApiController<T extends AbstractEntity> {
         return entityToUpdate;
     }
 
-    public List<T> list(AbstractRepository<T> repository) {
+    protected Cursor<T> findWithFilter(AbstractRepository<T> repository, Filter filter, FindOptions findOptions) {
+        return repository.findWithFilter(filter, findOptions);
+    }
+
+    protected List<T> list(AbstractRepository<T> repository) {
         return repository.find().toList();
     }
 
-    public T create(AbstractRepository<T> repository) throws Exception {
+    protected T create(AbstractRepository<T> repository) throws Exception {
         return create(repository, null);
     }
 
-    public T create(AbstractRepository<T> repository, Function<T, T> beforeSaveCallback) throws Exception {
+    protected T create(AbstractRepository<T> repository, Function<T, T> beforeSaveCallback) throws Exception {
         Class<T> clazz = repository.getGenericSuperclass();
         Constructor<T> cons = clazz.getConstructor();
         T entity = cons.newInstance();
@@ -58,20 +65,20 @@ abstract class AbstractCrudBackendApiController<T extends AbstractEntity> {
         return entity;
     }
 
-    public T get(UUID uuid, AbstractRepository<T> repository) {
+    protected T get(UUID uuid, AbstractRepository<T> repository) {
         return get(uuid.toString(), repository);
     }
 
-    public T get(String uuid, AbstractRepository<T> repository) {
+    protected T get(String uuid, AbstractRepository<T> repository) {
         return repository.getByUuid(uuid)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found."));
     }
 
-    public void delete(UUID uuid, AbstractRepository<T> repository) {
+    protected void delete(UUID uuid, AbstractRepository<T> repository) {
         delete(uuid.toString(), repository);
     }
 
-    public void delete(String uuid, AbstractRepository<T> repository) {
+    protected void delete(String uuid, AbstractRepository<T> repository) {
         if (!repository.exists(uuid)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found.");
         }

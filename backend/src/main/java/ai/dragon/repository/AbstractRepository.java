@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.dizitart.no2.Nitrite;
+import org.dizitart.no2.collection.FindOptions;
 import org.dizitart.no2.collection.events.CollectionEventInfo;
 import org.dizitart.no2.collection.events.EventType;
 import org.dizitart.no2.filters.Filter;
@@ -78,17 +79,37 @@ public abstract class AbstractRepository<T extends AbstractEntity> {
     }
 
     public Cursor<T> findWithFilter(Filter filter) {
+        return findWithFilter(filter, null);
+    }
+
+    public Cursor<T> findWithFilter(Filter filter, FindOptions findOptions) {
         Nitrite db = databaseService.getNitriteDB();
         ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
-        return repository.find(filter);
+        return repository.find(filter, findOptions);
     }
 
     public Cursor<T> findByFieldValue(String fieldName, Object fieldValue) {
-        return this.findWithFilter(FluentFilter.where(fieldName).eq(fieldValue));
+        return this.findByFieldValue(fieldName, fieldValue, null);
+    }
+
+    public Cursor<T> findByFieldValue(String fieldName, Object fieldValue, FindOptions findOptions) {
+        return this.findWithFilter(FluentFilter.where(fieldName).eq(fieldValue), findOptions);
     }
 
     public Optional<T> findUniqueByFieldValue(String fieldName, Object fieldValue) {
         Cursor<T> cursor = this.findByFieldValue(fieldName, fieldValue);
+        if (cursor.size() > 1) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Multiple entities found");
+        }
+        return cursor.size() == 1 ? Optional.of(cursor.firstOrNull()) : Optional.empty();
+    }
+
+    public Optional<T> findUniqueWithFilter(Filter filter) {
+        return findUniqueWithFilter(filter, null);
+    }
+
+    public Optional<T> findUniqueWithFilter(Filter filter, FindOptions findOptions) {
+        Cursor<T> cursor = this.findWithFilter(filter, findOptions);
         if (cursor.size() > 1) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Multiple entities found");
         }

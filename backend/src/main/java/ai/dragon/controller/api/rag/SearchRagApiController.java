@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import ai.dragon.entity.SiloEntity;
 import ai.dragon.repository.SiloRepository;
 import ai.dragon.service.EmbeddingStoreService;
 import ai.dragon.util.embedding.search.EmbeddingMatchResponse;
@@ -44,11 +45,10 @@ public class SearchRagApiController {
             @RequestParam(name = "maxResults", required = false, defaultValue = "10") @Parameter(description = "Max results to return") Integer maxResults,
             @RequestBody String query)
             throws Exception {
-        siloRepository.getByUuid(uuid)
+        SiloEntity silo = siloRepository.getByUuid(uuid)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found"));
         List<EmbeddingMatchResponse> searchResults = new ArrayList<>();
-        // TODO : Builder query
-        EmbeddingSearchResult<TextSegment> embeddingSearchResult = embeddingStoreService.query(uuid, query, maxResults);
+        EmbeddingSearchResult<TextSegment> embeddingSearchResult = embeddingStoreService.query(silo, query, maxResults);
         for (EmbeddingMatch<TextSegment> embeddingMatch : embeddingSearchResult.matches()) {
             searchResults.add(EmbeddingMatchResponse.builder()
                     .score(embeddingMatch.score())

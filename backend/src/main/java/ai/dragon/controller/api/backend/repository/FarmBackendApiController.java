@@ -54,7 +54,7 @@ public class FarmBackendApiController extends AbstractCrudBackendApiController<F
     }
 
     @PatchMapping("/{uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}")
-    @ApiResponse(responseCode = "200", description = "Farm has been successfully created.")
+    @ApiResponse(responseCode = "200", description = "Farm has been successfully updated.")
     @ApiResponse(responseCode = "404", description = "Farm not found.", content = @Content)
     @Operation(summary = "Update a Farm", description = "Updates one Farm entity in the database.")
     public FarmEntity updateFarm(

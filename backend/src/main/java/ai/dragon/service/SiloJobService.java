@@ -98,7 +98,8 @@ public class SiloJobService {
                     .uuid(siloEntity.getUuid())
                     .build();
             if (loaderSettings.getSchedule() != null
-                    && !"manual".equalsIgnoreCase(loaderSettings.getSchedule().trim())) {
+                    && !DefaultIngestorLoaderSettings.SCHEDULE_MANUAL
+                            .equalsIgnoreCase(loaderSettings.getSchedule().trim())) {
                 jobRequestScheduler.scheduleRecurrently(
                         siloEntity.getUuid().toString(),
                         loaderSettings.getSchedule(),
