@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ai.dragon.component.DirectoryStructureComponent;
+import ai.dragon.entity.DocumentEntity;
 import ai.dragon.entity.SiloEntity;
 import ai.dragon.listener.EntityChangeListener;
 import ai.dragon.properties.store.PGVectorEmbeddingStoreSettings;
@@ -23,6 +24,8 @@ import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.store.embedding.EmbeddingSearchRequest;
 import dev.langchain4j.store.embedding.EmbeddingSearchResult;
 import dev.langchain4j.store.embedding.EmbeddingStore;
+import dev.langchain4j.store.embedding.filter.Filter;
+import dev.langchain4j.store.embedding.filter.MetadataFilterBuilder;
 import dev.langchain4j.store.embedding.pgvector.PgVectorEmbeddingStore;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -75,22 +78,22 @@ public class EmbeddingStoreService {
         return embeddingStore;
     }
 
-    public void closeEmbeddingStore(UUID siloUuid) {
-        EmbeddingStore<TextSegment> embeddingStore = embeddingStores.get(siloUuid);
-        if (embeddingStore != null) {
-            embeddingStores.remove(siloUuid);
-        }
-    }
-
     public void closeAllEmbeddingStores() {
         for (UUID siloUuid : embeddingStores.keySet()) {
             closeEmbeddingStore(siloUuid);
         }
     }
 
-    public void clearEmbeddingStore(UUID siloUuid) throws Exception {
-        EmbeddingStore<TextSegment> embeddingStore = retrieveEmbeddingStore(siloUuid);
+    public void clearEmbeddingStore(SiloEntity silo) throws Exception {
+        EmbeddingStore<TextSegment> embeddingStore = retrieveEmbeddingStore(silo.getUuid());
         embeddingStore.removeAll();
+    }
+
+    public void removeEmbeddingsForDocument(DocumentEntity documentEntity) throws Exception {
+        EmbeddingStore<TextSegment> embeddingStore = retrieveEmbeddingStore(documentEntity.getSiloIdentifier());
+        Filter documentFilter = MetadataFilterBuilder.metadataKey("document_location")
+                .isEqualTo(documentEntity.getLocation());
+        embeddingStore.removeAll(documentFilter);
     }
 
     public EmbeddingSearchResult<TextSegment> query(UUID siloUuid, String query, Integer maxResults) throws Exception {
@@ -105,6 +108,13 @@ public class EmbeddingStoreService {
                 .maxResults(maxResults)
                 .build();
         return embeddingStore.search(embeddingSearchRequest1);
+    }
+
+    private void closeEmbeddingStore(UUID siloUuid) {
+        EmbeddingStore<TextSegment> embeddingStore = embeddingStores.get(siloUuid);
+        if (embeddingStore != null) {
+            embeddingStores.remove(siloUuid);
+        }
     }
 
     private EmbeddingStore<TextSegment> buildEmbeddingStore(SiloEntity siloEntity) throws Exception {

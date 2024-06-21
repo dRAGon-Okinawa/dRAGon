@@ -61,7 +61,7 @@ public class SiloService {
     }
 
     public void removeAllDocuments(SiloEntity entity) throws Exception {
-        documentService.removeDocumentsOfSilo(entity);
+        documentService.removeAllDocumentsOfSilo(entity);
     }
 
     private void removeFarmLinks(SiloEntity entity) {

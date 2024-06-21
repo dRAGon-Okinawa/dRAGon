@@ -69,7 +69,7 @@ public class IngestorService {
                 .message(String.format("Cleaning all current embeddings of Silo '%s'...",
                         siloEntity.getUuid()))
                 .build());
-        embeddingStoreService.clearEmbeddingStore(siloEntity.getUuid());
+        embeddingStoreService.clearEmbeddingStore(siloEntity);
         // <- TODO Don't clean all embeddings, just the ones that are not linked to any
         // document
         logCallback.accept(SiloIngestLoaderLogMessage.builder()

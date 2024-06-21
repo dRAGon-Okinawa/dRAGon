@@ -9,6 +9,7 @@ import ai.dragon.entity.DocumentEntity;
 import ai.dragon.entity.SiloEntity;
 import ai.dragon.listener.EntityChangeListener;
 import ai.dragon.repository.DocumentRepository;
+import ai.dragon.util.fluenttry.Try;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 
@@ -29,7 +30,9 @@ public class DocumentService {
             public void onChangeEvent(CollectionEventInfo<?> collectionEventInfo, DocumentEntity entity) {
                 switch (collectionEventInfo.getEventType()) {
                     case Remove:
-                        // TODO Remove embedding
+                        Try.thisBlock(() -> {
+                            removeDocumentEmbeddings(entity);
+                        });
                         break;
                     default:
                         break;
@@ -43,7 +46,7 @@ public class DocumentService {
         documentRepository.unsubscribe(entityChangeListener);
     }
 
-    public void removeDocumentsOfSilo(SiloEntity entity) throws Exception {
+    public void removeAllDocumentsOfSilo(SiloEntity entity) throws Exception {
         documentRepository.findWithFilter(FluentFilter.where("siloIdentifier").eq(entity.getUuid()))
                 .forEach(document -> {
                     documentRepository.delete(document);
@@ -52,6 +55,10 @@ public class DocumentService {
     }
 
     private void clearEmbeddingsOfSilo(SiloEntity entity) throws Exception {
-        embeddingStoreService.clearEmbeddingStore(entity.getUuid());
+        embeddingStoreService.clearEmbeddingStore(entity);
+    }
+
+    private void removeDocumentEmbeddings(DocumentEntity entity) throws Exception {
+        embeddingStoreService.removeEmbeddingsForDocument(entity);
     }
 }
