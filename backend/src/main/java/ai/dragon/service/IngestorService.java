@@ -6,6 +6,8 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import org.dizitart.no2.filters.FluentFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +36,8 @@ import jakarta.activation.UnsupportedDataTypeException;
 
 @Service
 public class IngestorService {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     private EmbeddingStoreService embeddingStoreService;
 
@@ -93,20 +97,25 @@ public class IngestorService {
                         "Ingesting using '%s' Embedding Store and '%s' Embedding Model...",
                         embeddingStore.getClass(), embeddingModel.getClass()))
                 .build());
+        int nbIndexedDocuments = 0;
         for (int i = 0; i < documents.size(); i++) {
             if (Thread.currentThread().isInterrupted()) {
                 throw new InterruptedException();
             }
             progressCallback.accept((i * 100) / documents.size());
-            ingestDocumentToSilo(documents.get(i), siloEntity.getUuid(), defaultIngestorSettings,
+            boolean hasBeenIndexed = ingestDocumentToSilo(documents.get(i), siloEntity.getUuid(),
+                    defaultIngestorSettings,
                     embeddingStoreIngestor, logCallback);
+            if (hasBeenIndexed) {
+                nbIndexedDocuments++;
+            }
         }
         logCallback.accept(SiloIngestLoaderLogMessage.builder()
-                .message("End of ingestion.").build());
+                .message(String.format("End of ingestion. Documents (re)indexed : %d", nbIndexedDocuments)).build());
         progressCallback.accept(100);
     }
 
-    private void ingestDocumentToSilo(Document document,
+    private boolean ingestDocumentToSilo(Document document,
             UUID siloUuid,
             DefaultIngestorLoaderSettings ingestorSettings,
             EmbeddingStoreIngestor embeddingStoreIngestor,
@@ -131,14 +140,24 @@ public class IngestorService {
             // Save Document to the database :
             documentRepository.save(documentEntity);
 
-            // Check if the Document should be indexed
+            // Check if the Document could be indexed :
             if (!Boolean.TRUE.equals(documentEntity.getAllowIndexing())) {
-                logCallback.accept(SiloIngestLoaderLogMessage.builder()
-                        .message(String.format(
-                                "Skipping Indexing of Document (allowIndexing == false) : %s",
-                                documentLocation))
-                        .build());
-                return;
+                logger.debug(String.format(
+                        "Skipping Indexing of Document (allowIndexing == false) : %s",
+                        documentLocation));
+                return false;
+            }
+
+            // Check if the Document should be indexed (date change) :
+            long documentTime = metadata.getLong("document_date");
+            Date documentDate = new Date(documentTime);
+            Date lastIndexed = documentEntity.getLastIndexed();
+            boolean newDocumentAvailable = lastIndexed == null || documentDate.after(lastIndexed);
+            if (!newDocumentAvailable) {
+                logger.debug(String.format(
+                        "Skipping Indexing of Document (no change) : %s",
+                        documentLocation));
+                return false;
             }
 
             // Cleaning chunks of the document :
@@ -150,12 +169,15 @@ public class IngestorService {
             // Update the last indexed date :
             documentEntity.setLastIndexed(new Date(System.currentTimeMillis()));
             documentRepository.save(documentEntity);
+
+            return true;
         } catch (Exception ex) {
             logCallback.accept(SiloIngestLoaderLogMessage.builder()
                     .messageLevel(SiloIngestProgressMessageLevel.Error)
                     .message(String.format("Unable to ingest '%s' : %s", documentLocation,
                             ex.getMessage()))
                     .build());
+            return false;
         }
     }
 
