@@ -3,6 +3,7 @@ package ai.dragon.service;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import org.dizitart.no2.filters.FluentFilter;
@@ -76,9 +77,13 @@ public class IngestorService {
 
         // Delete documents not seen since the start of the ingestion :
         logCallback.accept(SiloIngestLoaderLogMessage.builder()
-                .message("Cleaning unseen documents in Silo...")
+                .message(String.format("Cleaning unseen documents (since %s) in Silo '%s'...",
+                        new Date(ingestionStartTime), siloEntity.getUuid()))
                 .build());
-        deleteDocumentsInSiloNotSeenSince(siloEntity, ingestionStartTime);
+        int nbDeletedDocuments = deleteDocumentsInSiloNotSeenSince(siloEntity, ingestionStartTime);
+        logCallback.accept(SiloIngestLoaderLogMessage.builder()
+                .message(String.format("End of cleaning. Documents deleted : %d", nbDeletedDocuments))
+                .build());
     }
 
     private void ingestDocumentsToSilo(List<Document> documents, SiloEntity siloEntity,
@@ -223,10 +228,15 @@ public class IngestorService {
         }
     }
 
-    private void deleteDocumentsInSiloNotSeenSince(SiloEntity siloEntity, long since) {
+    private int deleteDocumentsInSiloNotSeenSince(SiloEntity siloEntity, long since) {
+        AtomicInteger deleteCount = new AtomicInteger(0);
         documentRepository.findWithFilter(
                 FluentFilter.where("siloIdentifier").eq(siloEntity.getUuid().toString())
                         .and(FluentFilter.where("lastSeen").lt(new Date(since))))
-                .forEach(documentRepository::delete);
+                .forEach(document -> {
+                    deleteCount.incrementAndGet();
+                    documentRepository.delete(document);
+                });
+        return deleteCount.get();
     }
 }
