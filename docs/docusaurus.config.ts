@@ -13,6 +13,10 @@ const config: Config = {
   deploymentBranch: 'gh-pages',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'throw',
+  markdown: {
+    mermaid: true,
+  },
+  themes: ['@docusaurus/theme-mermaid'],
   i18n: {
     defaultLocale: 'en',
     locales: ['en'],
@@ -96,7 +100,9 @@ const config: Config = {
     },
   } satisfies Preset.ThemeConfig,
   plugins: [
-    'docusaurus-lunr-search'
+    ['docusaurus-lunr-search', {
+      excludeRoutes: ['/docs/api/specification/**'],
+    }]
   ]
 };
 
