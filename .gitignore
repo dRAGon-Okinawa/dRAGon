@@ -4,3 +4,4 @@ bin
 .vscode
 .DS_Store
 *.class
+.pnpm-store
