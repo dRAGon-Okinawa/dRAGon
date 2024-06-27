@@ -46,9 +46,7 @@ jobs:
         run: gradle pnpmInstall pnpmLint checkstyleMain checkstyleTest test --stacktrace
 
       - name: Build Documentation
-        run: |
-          mkdir -p /tmp/pnpm && pnpm config set store-dir /tmp/pnpm/
-          pnpm install --dir docs -f && pnpm run --dir docs build
+        run: pnpm install --dir docs -f && pnpm run --dir docs build
 
       - name: Build dRAGon
         run: gradle bootJar -Pversion=$(gradle cV -q -Prelease.quiet)
