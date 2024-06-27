@@ -17,6 +17,7 @@ jar {
 		from 'dist'
 		include '**'
 	}
+	destinationDirectory.set(file("$rootDir/backend/build/libs"))
 }
 
 jar.dependsOn('pnpmBuild')
