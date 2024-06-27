@@ -1,4 +1,4 @@
 #!/bin/bash
 
 echo "Building the project..."
-gradle npmInstall build
+gradle pnpmInstall build

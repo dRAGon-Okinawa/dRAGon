@@ -40,7 +40,7 @@ jobs:
         run: npm version from-git --no-git-tag-version --prefix docs
 
       - name: Test dRAGon
-        run: gradle npmInstall npmLint checkstyleMain checkstyleTest test
+        run: gradle pnpmInstall pnpmLint checkstyleMain checkstyleTest test
 
       - name: Build Documentation
         run: npm install --prefix docs && npm run build --prefix docs

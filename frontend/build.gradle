@@ -4,22 +4,12 @@ plugins {
 
 apply plugin: 'java'
 
-task npmLint(type: NpmTask) {
+task pnpmLint(type: PnpmTask) {
 	args = ['run', 'lint']
 }
 
-task npmBuild(type: NpmTask) {
-	inputs.dir("src")
-	outputs.dir("dist")
+task pnpmBuild(type: PnpmTask) {
 	args = ['run', 'build']
-}
-
-task npmClean(type: NpmTask) {
-	args = ['run', 'clean']
-}
-
-task npmServe(type: NpmTask) {
-	args = ['run', 'serve']
 }
 
 jar {
@@ -30,4 +20,3 @@ jar {
 }
 
 jar.dependsOn('npmBuild')
-clean.dependsOn('npmClean')
