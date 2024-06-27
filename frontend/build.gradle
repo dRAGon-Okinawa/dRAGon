@@ -19,4 +19,4 @@ jar {
 	}
 }
 
-jar.dependsOn('npmBuild')
+jar.dependsOn('pnpmBuild')
