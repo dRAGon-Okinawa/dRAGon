@@ -38,15 +38,17 @@ jobs:
         run: gradle createRelease
 
       - name: Set Frontend Version
-        run: npm version from-git --no-git-tag-version --prefix frontend
+        run: pnpm version from-git --no-git-tag-version --prefix frontend
       - name: Set Docs Version
-        run: npm version from-git --no-git-tag-version --prefix docs
+        run: pnpm version from-git --no-git-tag-version --prefix docs
 
       - name: Test dRAGon
         run: gradle pnpmInstall pnpmLint checkstyleMain checkstyleTest test --stacktrace
 
       - name: Build Documentation
-        run: npm install --prefix docs && npm run build --prefix docs
+        run: |
+          mkdir -p /tmp/pnpm && pnpm config set store-dir /tmp/pnpm/
+          pnpm install --dir docs -f && pnpm run --dir docs build
 
       - name: Build dRAGon
         run: gradle bootJar -Pversion=$(gradle cV -q -Prelease.quiet)
