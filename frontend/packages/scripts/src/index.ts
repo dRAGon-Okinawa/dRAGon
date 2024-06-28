@@ -30,20 +30,10 @@ interface CommandArg {
 export async function setupCli() {
   const cliOptions = await loadCliOptions();
 
-  const cli = cac(blue('dragon-admin'));
+  const cli = cac(blue('dragon-frontend'));
 
   cli
     .version(lightGreen(version))
-    .option(
-      '-e, --execute [command]',
-      "Execute additional command after bumping and before git commit. Defaults to 'npx soy changelog'"
-    )
-    .option('-p, --push', 'Indicates whether to push the git commit and tag')
-    .option('-t, --total', 'Generate changelog by total tags')
-    .option(
-      '-c, --cleanupDir <dir>',
-      'The glob pattern of dirs to cleanup, If not set, it will use the default value, Multiple values use "," to separate them'
-    )
     .help();
 
   const commands: CommandWithAction<CommandArg> = {
