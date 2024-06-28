@@ -2,7 +2,7 @@
 import { getRgb } from '@sa/color';
 import { $t } from '@/locales';
 import { localStg } from '@/utils/storage';
-import systemLogo from '@/assets/svg-icon/logo.svg?raw';
+import dragonLogoUrl from '@/assets/imgs/dragon_okinawa_icon.png';
 
 export function setupLoading() {
   const themeColor = localStg.get('themeColor') || '#646cff';
@@ -17,9 +17,6 @@ export function setupLoading() {
     'right-0 top-0 animate-delay-1000',
     'right-0 bottom-0 animate-delay-1500'
   ];
-
-  const logoWithClass = systemLogo.replace('<svg', `<svg class="size-128px text-primary"`);
-
   const dot = loadingClasses
     .map(item => {
       return `<div class="absolute w-16px h-16px bg-primary rounded-8px animate-pulse ${item}"></div>`;
@@ -28,7 +25,7 @@ export function setupLoading() {
 
   const loading = `
 <div class="fixed-center flex-col" style="${primaryColor}">
-  ${logoWithClass}
+  <img src="${dragonLogoUrl}" class="size-180px" />
   <div class="w-56px h-56px my-36px">
     <div class="relative h-full animate-spin">
       ${dot}

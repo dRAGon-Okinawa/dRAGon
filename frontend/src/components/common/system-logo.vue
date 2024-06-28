@@ -3,7 +3,7 @@ defineOptions({ name: 'SystemLogo' });
 </script>
 
 <template>
-  <icon-local-logo />
+  <img src="@/assets/imgs/dragon_okinawa_icon.png" class="size-36px" />
 </template>
 
 <style scoped></style>
