@@ -8,6 +8,6 @@ export function createDocumentTitleGuard(router: Router) {
 
     const documentTitle = i18nKey ? $t(i18nKey) : title;
 
-    useTitle(documentTitle);
+    useTitle(`${documentTitle} • dRAGon`);
   });
 }
