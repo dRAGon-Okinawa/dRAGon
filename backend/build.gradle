@@ -100,17 +100,6 @@ jar {
     }
 }
 
-tasks.register("bootProdRun") {
-    group = "application"
-    description = "Runs this project as a Spring Boot application with the PROD profile"
-    doFirst {
-        tasks.bootRun.configure {
-            systemProperty("spring.profiles.active", "prod")
-        }
-    }
-    finalizedBy("bootRun")
-}
-
 tasks.register('copyWebApp', Copy) {
 	dependsOn(':frontend:pnpmBuild')
 	from "$rootDir/frontend/dist"
