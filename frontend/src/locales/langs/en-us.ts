@@ -238,8 +238,8 @@ const local: App.I18n.Schema = {
         title: 'Project Info',
         version: 'Version',
         latestBuildTime: 'Latest Build Time',
-        githubLink: 'Github Link',
-        previewLink: 'Preview Link'
+        repositoryLink: 'Repository',
+        documentationLink: 'Documentation'
       },
       prdDep: 'Production Dependency',
       devDep: 'Development Dependency'

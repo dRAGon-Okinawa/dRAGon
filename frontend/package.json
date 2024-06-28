@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "description": "Dynamic Retrieval Augmented Generation for Optimized Nimble",
   "license": "MIT",
-  "homepage": "https://dragon.okinawa",
+  "homepage": "https://github.com/dRAGon-Okinawa/dRAGon",
   "repository": {
-    "url": "https://github.com/dRAGon-Okinawa/dRAGon"
+    "url": "https://github.com/dRAGon-Okinawa/dRAGon.git"
   },
   "bugs": {
     "url": "https://github.com/dRAGon-Okinawa/dRAGon/issues"
