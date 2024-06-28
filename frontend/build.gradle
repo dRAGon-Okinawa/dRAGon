@@ -11,13 +11,3 @@ task pnpmLint(type: PnpmTask) {
 task pnpmBuild(type: PnpmTask) {
 	args = ['run', 'build']
 }
-
-jar {
-	into '/static', {
-		from 'dist'
-		include '**'
-	}
-	destinationDirectory.set(file("$rootDir/backend/build/libs"))
-}
-
-jar.dependsOn('pnpmBuild')
