@@ -237,12 +237,12 @@ const local: App.I18n.Schema = {
       projectInfo: {
         title: 'Project Info',
         version: 'Version',
-        latestBuildTime: 'Latest Build Time',
-        repositoryLink: 'Repository',
-        documentationLink: 'Documentation'
+        buildTime: 'Build Time',
+        repository: 'Repository',
+        documentation: 'Documentation'
       },
-      prdDep: 'Production Dependency',
-      devDep: 'Development Dependency'
+      prdDep: 'Production Dependencies',
+      devDep: 'Development Dependencies'
     },
     home: {
       greeting: 'Good morning, {userName}, today is another day full of vitality!',

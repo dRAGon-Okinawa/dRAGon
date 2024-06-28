@@ -50,15 +50,15 @@ const latestBuildTime = BUILD_TIME;
         <NDescriptionsItem :label="$t('page.about.projectInfo.version')">
           <NTag type="primary">{{ pkgJson.version }}</NTag>
         </NDescriptionsItem>
-        <NDescriptionsItem :label="$t('page.about.projectInfo.latestBuildTime')">
+        <NDescriptionsItem :label="$t('page.about.projectInfo.buildTime')">
           <NTag type="primary">{{ latestBuildTime }}</NTag>
         </NDescriptionsItem>
-        <NDescriptionsItem :label="$t('page.about.projectInfo.repositoryLink')">
+        <NDescriptionsItem :label="$t('page.about.projectInfo.repository')">
           <a class="text-primary" :href="pkg.homepage" target="_blank" rel="noopener noreferrer">
             {{ pkg.homepage }}
           </a>
         </NDescriptionsItem>
-        <NDescriptionsItem :label="$t('page.about.projectInfo.documentationLink')">
+        <NDescriptionsItem :label="$t('page.about.projectInfo.documentation')">
           <a class="text-primary" :href="pkg.website" target="_blank" rel="noopener noreferrer">
             {{ pkg.website }}
           </a>

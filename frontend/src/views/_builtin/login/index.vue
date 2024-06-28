@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import type { Component } from 'vue';
-import { getPaletteColorByNumber, mixColor } from '@sa/color';
+import { mixColor } from '@sa/color';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
 import { useThemeStore } from '@/store/modules/theme';
@@ -37,10 +37,6 @@ const moduleMap: Record<UnionKey.LoginModule, LoginModule> = {
 
 const activeModule = computed(() => moduleMap[props.module || 'pwd-login']);
 
-const bgThemeColor = computed(() =>
-  themeStore.darkMode ? getPaletteColorByNumber(themeStore.themeColor, 600) : themeStore.themeColor
-);
-
 const bgColor = computed(() => {
   const COLOR_WHITE = '#ffffff';
 
@@ -52,7 +48,7 @@ const bgColor = computed(() => {
 
 <template>
   <div class="relative size-full flex-center overflow-hidden" :style="{ backgroundColor: bgColor }">
-    <WaveBg :theme-color="bgThemeColor" />
+    <MountainsBg />
     <NCard :bordered="false" class="relative z-4 w-auto rd-12px">
       <div class="w-400px lt-sm:w-300px">
         <header class="flex-y-center justify-between">

@@ -412,9 +412,9 @@ declare namespace App {
           projectInfo: {
             title: string;
             version: string;
-            latestBuildTime: string;
-            repositoryLink: string;
-            documentationLink: string;
+            buildTime: string;
+            repository: string;
+            documentation: string;
           };
           prdDep: string;
           devDep: string;
