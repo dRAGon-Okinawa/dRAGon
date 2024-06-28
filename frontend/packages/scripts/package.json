@@ -1,8 +1,8 @@
 {
-  "name": "@sa/scripts",
+  "name": "@dragon/scripts",
   "version": "1.2.6",
   "bin": {
-    "sa": "./bin.ts"
+    "dragon-admin": "./bin.ts"
   },
   "exports": {
     ".": "./src/index.ts"

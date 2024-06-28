@@ -28,16 +28,16 @@
   "scripts": {
     "build": "vite build --mode prod",
     "build:test": "vite build --mode test",
-    "cleanup": "sa cleanup",
-    "commit": "sa git-commit",
+    "cleanup": "dRAGon cleanup",
+    "commit": "dRAGon git-commit",
     "dev": "vite --mode test",
     "dev:prod": "vite --mode prod",
-    "gen-route": "sa gen-route",
+    "gen-route": "dRAGon gen-route",
     "lint": "eslint . --fix",
     "preview": "vite preview",
-    "release": "sa release",
+    "release": "dRAGon release",
     "typecheck": "vue-tsc --noEmit --skipLibCheck",
-    "update-pkg": "sa update-pkg"
+    "update-pkg": "dRAGon update-pkg"
   },
   "dependencies": {
     "@better-scroll/core": "2.5.1",
@@ -64,7 +64,7 @@
   "devDependencies": {
     "@elegant-router/vue": "0.3.7",
     "@iconify/json": "2.2.223",
-    "@sa/scripts": "workspace:*",
+    "@dragon/scripts": "workspace:*",
     "@sa/uno-preset": "workspace:*",
     "@soybeanjs/eslint-config": "1.3.7",
     "@types/lodash-es": "4.17.12",

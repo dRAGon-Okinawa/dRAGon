@@ -1,10 +1,10 @@
 import cac from 'cac';
 import { blue, lightGreen } from 'kolorist';
 import { version } from '../package.json';
-import { cleanup, genChangelog, generateRoute, gitCommit, gitCommitVerify, release, updatePkg } from './commands';
+import { cleanup, generateRoute, updatePkg } from './commands';
 import { loadCliOptions } from './config';
 
-type Command = 'cleanup' | 'update-pkg' | 'git-commit' | 'git-commit-verify' | 'changelog' | 'release' | 'gen-route';
+type Command = 'cleanup' | 'update-pkg' | 'gen-route';
 
 type CommandAction<A extends object> = (args?: A) => Promise<void> | void;
 
@@ -30,7 +30,7 @@ interface CommandArg {
 export async function setupCli() {
   const cliOptions = await loadCliOptions();
 
-  const cli = cac(blue('soybean-admin'));
+  const cli = cac(blue('dragon-admin'));
 
   cli
     .version(lightGreen(version))
@@ -57,30 +57,6 @@ export async function setupCli() {
       desc: 'update package.json dependencies versions',
       action: async () => {
         await updatePkg(cliOptions.ncuCommandArgs);
-      }
-    },
-    'git-commit': {
-      desc: 'git commit, generate commit message which match Conventional Commits standard',
-      action: async () => {
-        await gitCommit(cliOptions.gitCommitTypes, cliOptions.gitCommitScopes);
-      }
-    },
-    'git-commit-verify': {
-      desc: 'verify git commit message, make sure it match Conventional Commits standard',
-      action: async () => {
-        await gitCommitVerify();
-      }
-    },
-    changelog: {
-      desc: 'generate changelog',
-      action: async args => {
-        await genChangelog(cliOptions.changelogOptions, args?.total);
-      }
-    },
-    release: {
-      desc: 'release: update version, generate changelog, commit code',
-      action: async args => {
-        await release(args?.execute, args?.push);
       }
     },
     'gen-route': {
