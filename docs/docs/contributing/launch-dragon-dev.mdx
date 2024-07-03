@@ -28,17 +28,39 @@ gradle pnpmInstall build
 ```
 
 ## Launching dRAGon 
-### (Backend + Frontend)
+### Backend + Frontend
 ```shell
+# Launch full dRAGon app :
 gradle bootRun
+
+# Open your browser at http://localhost:1985 to access the dRAGon app
 ```
 
-### (Backend Only)
+### Backend Only
 ```shell
+# Launch only the Backend API server and the Job Server :
 gradle bootRun -x :frontend:pnpmBuild -x :backend:copyWebApp
+
+# Open your browser at http://localhost:1985/api/swagger-ui.html to access the Backend API server
 ```
 
-### (Frontend Only)
+### Frontend Only
 ```shell
-cd frontend && pnpm dev
+# Go to the frontend directory
+cd frontend
+
+# 1. Launch the frontend
+# 1.1. Inside one terminal launch the Frontend
+pnpm dev
+
+# 1.2. Open your browser at http://localhost:9527 to access the Frontend
+
+# 2. To use the Frontend you need to launch the Backend or the Mock API server
+# 2.A. Launch the Mockoon API server inside another terminal
+npx @mockoon/cli start --data mockoon_dRAGon.json
+
+# OR
+
+# 2.B. Launch the Backend (Only) inside another terminal
+# See the (Backend Only) section above
 ```
