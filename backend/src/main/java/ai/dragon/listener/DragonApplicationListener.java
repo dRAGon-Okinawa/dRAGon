@@ -38,7 +38,7 @@ public class DragonApplicationListener implements ApplicationListener<ContextRef
         System.out.println("================================================");
         System.out.println(String.format("APP URL\t\t : %s://%s:%d/", scheme, host, port));
         System.out.println(String.format("Swagger UI\t : %s://%s:%d/api/swagger-ui.html", scheme, host, port));
-        System.out.println(String.format("JobRunr\t\t : %s://%s:%d/", scheme, host, 1984));
+        System.out.println(String.format("JobRunr\t\t : %s://%s:%d/", scheme, host, 8519));
         System.out.println("================================================");
     }
 }

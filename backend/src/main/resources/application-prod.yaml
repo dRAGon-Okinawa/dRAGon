@@ -22,7 +22,7 @@ org:
       enabled: true
     dashboard:
       enabled: true
-      port: 1984
+      port: 8519
     jobs:
       default-number-of-retries: 10 # Number of retries for a failing job
       retry-back-off-time-seed: 3 # Time seed for the exponential back-off policy
