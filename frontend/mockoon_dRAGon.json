@@ -33,29 +33,35 @@
       "children": [
         {
           "type": "route",
-          "uuid": "bbf7fb17-5d7b-431d-a080-1726d9e2321a"
+          "uuid": "7cecfea6-ae8b-4eee-bfd9-06ab89e63e0c"
+        }
+      ]
+    },
+    {
+      "uuid": "583c3361-0cfc-46a5-8352-f80705f04797",
+      "name": "auth",
+      "children": [
+        {
+          "type": "route",
+          "uuid": "f99db58b-e0b9-4142-9d81-bcc23f1f640e"
         },
         {
           "type": "route",
-          "uuid": "8081c077-40bf-45f1-86cb-af75e11f5846"
-        },
-        {
-          "type": "route",
-          "uuid": "55bc14b6-8cf0-4122-bda2-e5412cc9fdd2"
+          "uuid": "cd0e8e0b-c130-4d4a-87f7-673246e250d2"
         }
       ]
     }
   ],
   "routes": [
     {
-      "uuid": "bbf7fb17-5d7b-431d-a080-1726d9e2321a",
-      "type": "http",
-      "documentation": "Returns all Silo entities stored in the database.",
-      "method": "get",
-      "endpoint": "api/backend/repository/silo/",
+      "uuid": "7cecfea6-ae8b-4eee-bfd9-06ab89e63e0c",
+      "type": "crud",
+      "documentation": "Silo Repository Management API Endpoints",
+      "method": "",
+      "endpoint": "api/backend/repository/silo",
       "responses": [
         {
-          "uuid": "f538f4be-5542-4e48-bbf9-765ca1f5478f",
+          "uuid": "498f2b58-6986-464d-a922-a93fd0175d5b",
           "body": "{}",
           "latency": 0,
           "statusCode": 200,
@@ -70,29 +76,29 @@
           "disableTemplating": false,
           "fallbackTo404": false,
           "default": true,
-          "crudKey": "id",
+          "crudKey": "uuid",
           "callbacks": []
         }
       ],
       "responseMode": null
     },
     {
-      "uuid": "55bc14b6-8cf0-4122-bda2-e5412cc9fdd2",
+      "uuid": "f99db58b-e0b9-4142-9d81-bcc23f1f640e",
       "type": "http",
-      "documentation": "Creates one Silo entity in the database.",
+      "documentation": "Login Endpoint",
       "method": "post",
-      "endpoint": "api/backend/repository/silo/",
+      "endpoint": "auth/login",
       "responses": [
         {
-          "uuid": "a891b8ab-03ac-49c5-9cde-5af58199853b",
-          "body": "{}",
+          "uuid": "0f069a2b-d27d-4e3f-b343-fe3ed06e08a4",
+          "body": "{\n    \"data\": {\n        \"token\": \"token-is-here\",\n        \"refreshToken\": \"refresh-token-is-here\"\n    },\n    \"code\": \"0000\",\n    \"msg\": \"OK\"\n}",
           "latency": 0,
           "statusCode": 200,
           "label": "",
           "headers": [],
-          "bodyType": "DATABUCKET",
+          "bodyType": "INLINE",
           "filePath": "",
-          "databucketID": "h8cn",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -106,22 +112,22 @@
       "responseMode": null
     },
     {
-      "uuid": "8081c077-40bf-45f1-86cb-af75e11f5846",
+      "uuid": "cd0e8e0b-c130-4d4a-87f7-673246e250d2",
       "type": "http",
-      "documentation": "Returns one Silo entity from its UUID stored in the database.",
+      "documentation": "",
       "method": "get",
-      "endpoint": "api/backend/repository/silo/:uuid",
+      "endpoint": "auth/getUserInfo",
       "responses": [
         {
-          "uuid": "0c16fee4-93aa-42e1-bab9-aff03d05d954",
-          "body": "{}",
+          "uuid": "a2b7f8de-998e-4e33-9302-f0bd0f1c84d4",
+          "body": "{\n    \"data\": {\n        \"userId\": \"0\",\n        \"userName\": \"dRAGon\",\n        \"roles\": [\n            \"R_SUPER\"\n        ],\n        \"buttons\": [\n            \"B_CODE1\",\n            \"B_CODE2\",\n            \"B_CODE3\"\n        ]\n    },\n    \"code\": \"0000\",\n    \"msg\": \"OK\"\n}",
           "latency": 0,
           "statusCode": 200,
           "label": "",
           "headers": [],
-          "bodyType": "DATABUCKET",
+          "bodyType": "INLINE",
           "filePath": "",
-          "databucketID": "h8cn",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -139,6 +145,10 @@
     {
       "type": "folder",
       "uuid": "c98e1298-8e19-4747-9184-0f9311de3443"
+    },
+    {
+      "type": "folder",
+      "uuid": "583c3361-0cfc-46a5-8352-f80705f04797"
     }
   ],
   "proxyMode": false,
@@ -169,7 +179,7 @@
     },
     {
       "key": "Access-Control-Allow-Headers",
-      "value": "Content-Type, Origin, Accept, Authorization, Content-Length, X-Requested-With"
+      "value": "*"
     }
   ],
   "proxyReqHeaders": [
@@ -188,16 +198,9 @@
     {
       "uuid": "84af632d-89e3-4158-b897-34aaef993b3d",
       "id": "3ay2",
-      "name": "Silos",
+      "name": "SILO_REPOSITORY",
       "documentation": "",
-      "value": "[\n  {\n    \"uuid\":\n    {{#switch (urlParam 'uuid')}}\n      {{#case undefined}}\"a994ff93-971e-4651-aa15-9ef747f16f6c\"{{/case}}\n      {{#default}}\"{{urlParam 'uuid'}}\"{{/default}}\n    {{/switch}},\n    \"name\": \"FileSystem Silo\",\n    \"vectorStore\": \"PersistInMemoryEmbeddingStore\",\n    \"embeddingModel\": \"BgeSmallEnV15QuantizedEmbeddingModel\",\n    \"ingestorLoader\": \"FileSystem\",\n    \"vectorStoreSettings\": [\n      \"flushSecs=30\"\n    ],\n    \"embeddingSettings\": [\n      \"chunkSize=1000\",\n      \"chunkOverlap=100\"\n    ],\n    \"ingestorSettings\": [\n      \"schedule=00 08 * * MON-FRI\",\n      \"recursive=true\",\n      \"pathMatcher=glob:**.{pdf,doc,docx,ppt,pptx}\",\n      \"paths[]=/tmp/folder\"\n    ]\n  }\n]"
-    },
-    {
-      "uuid": "c1b9569e-09d8-47d0-a05b-05928d212fa5",
-      "id": "h8cn",
-      "name": "Silo",
-      "documentation": "",
-      "value": "{\n  \"uuid\": \"{{urlParam 'uuid'}}\",\n  \"name\": \"FileSystem Silo\",\n  \"vectorStore\": \"PersistInMemoryEmbeddingStore\",\n  \"embeddingModel\": \"BgeSmallEnV15QuantizedEmbeddingModel\",\n  \"ingestorLoader\": \"FileSystem\",\n  \"vectorStoreSettings\": [\n    \"flushSecs=30\"\n  ],\n  \"embeddingSettings\": [\n    \"chunkSize=1000\",\n    \"chunkOverlap=100\"\n  ],\n  \"ingestorSettings\": [\n    \"schedule=00 08 * * MON-FRI\",\n    \"recursive=true\",\n    \"pathMatcher=glob:**.{pdf,doc,docx,ppt,pptx}\",\n    \"paths[]=/tmp/folder\"\n  ]\n}"
+      "value": "[\n  {\n    \"uuid\": \"a994ff93-971e-4651-aa15-9ef747f16f6c\",\n    \"name\": \"FileSystem Silo\",\n    \"vectorStore\": \"PersistInMemoryEmbeddingStore\",\n    \"embeddingModel\": \"BgeSmallEnV15QuantizedEmbeddingModel\",\n    \"ingestorLoader\": \"FileSystem\",\n    \"vectorStoreSettings\": [\n      \"flushSecs=30\"\n    ],\n    \"embeddingSettings\": [\n      \"chunkSize=1000\",\n      \"chunkOverlap=100\"\n    ],\n    \"ingestorSettings\": [\n      \"schedule=00 08 * * MON-FRI\",\n      \"recursive=true\",\n      \"pathMatcher=glob:**.{pdf,doc,docx,ppt,pptx}\",\n      \"paths[]=/tmp/folder\"\n    ]\n  }\n]"
     }
   ],
   "callbacks": []
