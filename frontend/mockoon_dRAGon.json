@@ -1,0 +1,204 @@
+{
+  "uuid": "e4a84b25-cf32-4184-9259-bee079384320",
+  "lastMigration": 32,
+  "name": "dRAGon",
+  "endpointPrefix": "",
+  "latency": 0,
+  "port": 1985,
+  "hostname": "",
+  "folders": [
+    {
+      "uuid": "c98e1298-8e19-4747-9184-0f9311de3443",
+      "name": "api",
+      "children": [
+        {
+          "type": "folder",
+          "uuid": "059be112-aa2e-4e68-872f-c863fc1fd972"
+        }
+      ]
+    },
+    {
+      "uuid": "059be112-aa2e-4e68-872f-c863fc1fd972",
+      "name": "backend",
+      "children": [
+        {
+          "type": "folder",
+          "uuid": "eaf38f31-0ad8-4bd8-92fa-6c6714bbcc69"
+        }
+      ]
+    },
+    {
+      "uuid": "eaf38f31-0ad8-4bd8-92fa-6c6714bbcc69",
+      "name": "repository",
+      "children": [
+        {
+          "type": "route",
+          "uuid": "bbf7fb17-5d7b-431d-a080-1726d9e2321a"
+        },
+        {
+          "type": "route",
+          "uuid": "8081c077-40bf-45f1-86cb-af75e11f5846"
+        },
+        {
+          "type": "route",
+          "uuid": "55bc14b6-8cf0-4122-bda2-e5412cc9fdd2"
+        }
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "uuid": "bbf7fb17-5d7b-431d-a080-1726d9e2321a",
+      "type": "http",
+      "documentation": "Returns all Silo entities stored in the database.",
+      "method": "get",
+      "endpoint": "api/backend/repository/silo/",
+      "responses": [
+        {
+          "uuid": "f538f4be-5542-4e48-bbf9-765ca1f5478f",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "DATABUCKET",
+          "filePath": "",
+          "databucketID": "3ay2",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "55bc14b6-8cf0-4122-bda2-e5412cc9fdd2",
+      "type": "http",
+      "documentation": "Creates one Silo entity in the database.",
+      "method": "post",
+      "endpoint": "api/backend/repository/silo/",
+      "responses": [
+        {
+          "uuid": "a891b8ab-03ac-49c5-9cde-5af58199853b",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "DATABUCKET",
+          "filePath": "",
+          "databucketID": "h8cn",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "8081c077-40bf-45f1-86cb-af75e11f5846",
+      "type": "http",
+      "documentation": "Returns one Silo entity from its UUID stored in the database.",
+      "method": "get",
+      "endpoint": "api/backend/repository/silo/:uuid",
+      "responses": [
+        {
+          "uuid": "0c16fee4-93aa-42e1-bab9-aff03d05d954",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "DATABUCKET",
+          "filePath": "",
+          "databucketID": "h8cn",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    }
+  ],
+  "rootChildren": [
+    {
+      "type": "folder",
+      "uuid": "c98e1298-8e19-4747-9184-0f9311de3443"
+    }
+  ],
+  "proxyMode": false,
+  "proxyHost": "",
+  "proxyRemovePrefix": false,
+  "tlsOptions": {
+    "enabled": false,
+    "type": "CERT",
+    "pfxPath": "",
+    "certPath": "",
+    "keyPath": "",
+    "caPath": "",
+    "passphrase": ""
+  },
+  "cors": true,
+  "headers": [
+    {
+      "key": "Content-Type",
+      "value": "application/json"
+    },
+    {
+      "key": "Access-Control-Allow-Origin",
+      "value": "*"
+    },
+    {
+      "key": "Access-Control-Allow-Methods",
+      "value": "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS"
+    },
+    {
+      "key": "Access-Control-Allow-Headers",
+      "value": "Content-Type, Origin, Accept, Authorization, Content-Length, X-Requested-With"
+    }
+  ],
+  "proxyReqHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ],
+  "proxyResHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ],
+  "data": [
+    {
+      "uuid": "84af632d-89e3-4158-b897-34aaef993b3d",
+      "id": "3ay2",
+      "name": "Silos",
+      "documentation": "",
+      "value": "[\n  {\n    \"uuid\":\n    {{#switch (urlParam 'uuid')}}\n      {{#case undefined}}\"a994ff93-971e-4651-aa15-9ef747f16f6c\"{{/case}}\n      {{#default}}\"{{urlParam 'uuid'}}\"{{/default}}\n    {{/switch}},\n    \"name\": \"FileSystem Silo\",\n    \"vectorStore\": \"PersistInMemoryEmbeddingStore\",\n    \"embeddingModel\": \"BgeSmallEnV15QuantizedEmbeddingModel\",\n    \"ingestorLoader\": \"FileSystem\",\n    \"vectorStoreSettings\": [\n      \"flushSecs=30\"\n    ],\n    \"embeddingSettings\": [\n      \"chunkSize=1000\",\n      \"chunkOverlap=100\"\n    ],\n    \"ingestorSettings\": [\n      \"schedule=00 08 * * MON-FRI\",\n      \"recursive=true\",\n      \"pathMatcher=glob:**.{pdf,doc,docx,ppt,pptx}\",\n      \"paths[]=/tmp/folder\"\n    ]\n  }\n]"
+    },
+    {
+      "uuid": "c1b9569e-09d8-47d0-a05b-05928d212fa5",
+      "id": "h8cn",
+      "name": "Silo",
+      "documentation": "",
+      "value": "{\n  \"uuid\": \"{{urlParam 'uuid'}}\",\n  \"name\": \"FileSystem Silo\",\n  \"vectorStore\": \"PersistInMemoryEmbeddingStore\",\n  \"embeddingModel\": \"BgeSmallEnV15QuantizedEmbeddingModel\",\n  \"ingestorLoader\": \"FileSystem\",\n  \"vectorStoreSettings\": [\n    \"flushSecs=30\"\n  ],\n  \"embeddingSettings\": [\n    \"chunkSize=1000\",\n    \"chunkOverlap=100\"\n  ],\n  \"ingestorSettings\": [\n    \"schedule=00 08 * * MON-FRI\",\n    \"recursive=true\",\n    \"pathMatcher=glob:**.{pdf,doc,docx,ppt,pptx}\",\n    \"paths[]=/tmp/folder\"\n  ]\n}"
+    }
+  ],
+  "callbacks": []
+}
