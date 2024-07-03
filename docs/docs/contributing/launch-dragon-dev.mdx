@@ -27,7 +27,18 @@ git clone https://github.com/dRAGon-Okinawa/dRAGon
 gradle pnpmInstall build
 ```
 
-## Launching dRAGon
+## Launching dRAGon 
+### (Backend + Frontend)
 ```shell
 gradle bootRun
+```
+
+### (Backend Only)
+```shell
+gradle bootRun -x :frontend:pnpmBuild -x :backend:copyWebApp
+```
+
+### (Frontend Only)
+```shell
+pnpm dev
 ```
