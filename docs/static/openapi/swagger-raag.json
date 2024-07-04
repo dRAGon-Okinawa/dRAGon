@@ -126,9 +126,6 @@
             "type": "string",
             "description": "Name of the Farm \u0027Raag Model\u0027 to be used."
           },
-          "prompt": {
-            "type": "object"
-          },
           "max_tokens": {
             "type": "integer",
             "format": "int32"
@@ -142,6 +139,9 @@
           },
           "user": {
             "type": "string"
+          },
+          "prompt": {
+            "type": "object"
           }
         }
       },
@@ -215,12 +215,6 @@
             "type": "string",
             "description": "Name of the Farm \u0027Raag Model\u0027 to be used."
           },
-          "messages": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/OpenAiCompletionMessage"
-            }
-          },
           "max_tokens": {
             "type": "integer",
             "format": "int32"
@@ -234,6 +228,12 @@
           },
           "user": {
             "type": "string"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OpenAiCompletionMessage"
+            }
           }
         }
       },
