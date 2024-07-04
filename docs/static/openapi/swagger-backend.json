@@ -35,6 +35,10 @@
     {
       "name": "Silo Command",
       "description": "Silo Command API Endpoints"
+    },
+    {
+      "name": "Document Repository",
+      "description": "Document Repository Management API Endpoints"
     }
   ],
   "paths": {
@@ -70,9 +74,6 @@
         "description": "Creates one Silo entity in the database.",
         "operationId": "createSilo",
         "responses": {
-          "409": {
-            "description": "Constraint violation."
-          },
           "200": {
             "description": "Silo has been successfully created.",
             "content": {
@@ -82,6 +83,9 @@
                 }
               }
             }
+          },
+          "409": {
+            "description": "Constraint violation."
           }
         }
       }
@@ -118,9 +122,6 @@
         "description": "Creates one Farm entity in the database.",
         "operationId": "createFarm",
         "responses": {
-          "409": {
-            "description": "Constraint violation."
-          },
           "200": {
             "description": "Farm has been successfully created.",
             "content": {
@@ -130,6 +131,9 @@
                 }
               }
             }
+          },
+          "409": {
+            "description": "Constraint violation."
           }
         }
       }
@@ -140,7 +144,7 @@
           "Silo Command"
         ],
         "summary": "Rebuild Silo",
-        "description": "This will recompute the embeddings of the Silo.",
+        "description": "This will erase all embeddings of the Silo and re-ingest all documents.",
         "operationId": "rebuildSilo",
         "parameters": [
           {
@@ -157,6 +161,33 @@
         "responses": {
           "200": {
             "description": "Silo is being rebuilt."
+          }
+        }
+      }
+    },
+    "/api/backend/command/silo/ingest/{uuid}": {
+      "post": {
+        "tags": [
+          "Silo Command"
+        ],
+        "summary": "Start Silo Ingestor",
+        "description": "This will re-ingest the documents of the Silo.",
+        "operationId": "startSiloIngestor",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "Identifier of the Silo",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Silo Ingestor is now running."
           }
         }
       }
@@ -231,11 +262,11 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Silo has been successfully deleted."
-          },
           "404": {
             "description": "Silo not found."
+          },
+          "200": {
+            "description": "Silo has been successfully deleted."
           }
         }
       },
@@ -271,8 +302,11 @@
           "required": true
         },
         "responses": {
+          "404": {
+            "description": "Silo not found."
+          },
           "200": {
-            "description": "Silo has been successfully created.",
+            "description": "Silo has been successfully updated.",
             "content": {
               "*/*": {
                 "schema": {
@@ -280,9 +314,6 @@
                 }
               }
             }
-          },
-          "404": {
-            "description": "Silo not found."
           }
         }
       }
@@ -341,11 +372,11 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Farm has been successfully deleted."
-          },
           "404": {
             "description": "Farm not found."
+          },
+          "200": {
+            "description": "Farm has been successfully deleted."
           }
         }
       },
@@ -382,7 +413,7 @@
         },
         "responses": {
           "200": {
-            "description": "Farm has been successfully created.",
+            "description": "Farm has been successfully updated.",
             "content": {
               "*/*": {
                 "schema": {
@@ -393,6 +424,200 @@
           },
           "404": {
             "description": "Farm not found."
+          }
+        }
+      }
+    },
+    "/api/backend/repository/document/{uuid}": {
+      "get": {
+        "tags": [
+          "Document Repository"
+        ],
+        "summary": "Retrieve one Document",
+        "description": "Returns one Document entity from its UUID stored in the database.",
+        "operationId": "getDocument",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "Identifier of the Document",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Document has been successfully retrieved.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Document not found."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Document Repository"
+        ],
+        "summary": "Delete a Document",
+        "description": "Deletes one Document entity from its UUID stored in the database.",
+        "operationId": "deleteDocument",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "Identifier of the Document",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Document not found."
+          },
+          "200": {
+            "description": "Document has been successfully deleted."
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Document Repository"
+        ],
+        "summary": "Update a Document",
+        "description": "Updates one Document entity in the database. Only the field \u0027allowIndexing\u0027 can be updated.",
+        "operationId": "updateDocument",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "Identifier of the Document",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Document has been successfully updated.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Document not found."
+          }
+        }
+      }
+    },
+    "/api/backend/repository/document/silo/{uuid}": {
+      "get": {
+        "tags": [
+          "Document Repository"
+        ],
+        "summary": "List Documents of a Silo",
+        "description": "Returns Documents entities about a Silo.",
+        "operationId": "listDocumentsOfSilo",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "Identifier of the Silo",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Limit number of results",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Skip x results",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List has been successfully retrieved.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Document"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Document Repository"
+        ],
+        "summary": "Delete all Documents from a Silo",
+        "description": "Deletes all Document entities from a Silo.",
+        "operationId": "deleteSiloDocuments",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "Identifier of the Silo",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Documents has been successfully deleted."
           }
         }
       }
@@ -446,7 +671,8 @@
             "example": "FileSystem",
             "enum": [
               "None",
-              "FileSystem"
+              "FileSystem",
+              "URL"
             ]
           },
           "vectorStoreSettings": {
@@ -520,9 +746,71 @@
               "type": "string",
               "description": "Settings to be linked to the Farm\u0027s Language Model in the form of `key \u003d value` pairs."
             }
+          },
+          "chatMemoryStrategy": {
+            "type": "string",
+            "description": "Chat Memory Strategy to be used by the RaaG",
+            "example": "MaxMessages",
+            "enum": [
+              "MaxMessages",
+              "MaxTokens"
+            ]
+          },
+          "retrievalAugmentorSettings": {
+            "type": "array",
+            "description": "Settings to be linked to the Farm\u0027s Retrieval Augmentor in the form of `key \u003d value` pairs.",
+            "items": {
+              "type": "string",
+              "description": "Settings to be linked to the Farm\u0027s Retrieval Augmentor in the form of `key \u003d value` pairs."
+            }
           }
         },
         "description": "Farm Entity"
+      },
+      "Document": {
+        "required": [
+          "allowIndexing",
+          "location",
+          "name",
+          "siloIdentifier",
+          "uuid"
+        ],
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "description": "Identifier of the Document",
+            "format": "uuid"
+          },
+          "siloIdentifier": {
+            "type": "string",
+            "description": "Identifier of the Silo",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the Document"
+          },
+          "location": {
+            "type": "string",
+            "description": "Location of the Document"
+          },
+          "allowIndexing": {
+            "type": "boolean",
+            "description": "Flag to allow indexing of the Document"
+          },
+          "lastSeen": {
+            "type": "string",
+            "description": "Date when the Document was last seen",
+            "format": "date-time"
+          },
+          "lastIndexed": {
+            "type": "string",
+            "description": "Date when the Document was last indexed",
+            "format": "date-time"
+          }
+        },
+        "description": "Document Entity"
       }
     }
   }

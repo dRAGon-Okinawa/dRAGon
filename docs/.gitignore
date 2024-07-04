@@ -4,7 +4,7 @@ package-lock.json
 pnpm-lock.yaml
 
 # Production
-/build
+build
 dist
 
 # Generated files

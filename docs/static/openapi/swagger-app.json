@@ -23,10 +23,36 @@
     {
       "name": "Health",
       "description": "Health Check API Endpoints"
+    },
+    {
+      "name": "App Information",
+      "description": "Information about the dRAGon app."
     }
   ],
   "paths": {
-    "/api/app/health/status": {
+    "/api/app/info/version": {
+      "get": {
+        "tags": [
+          "App Information"
+        ],
+        "summary": "Get dRAGon app version",
+        "description": "Returns the version of the dRAGon app.",
+        "operationId": "version",
+        "responses": {
+          "200": {
+            "description": "dRAGon app version.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/app/health": {
       "get": {
         "tags": [
           "Health"

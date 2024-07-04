@@ -1,0 +1,207 @@
+{
+  "uuid": "e4a84b25-cf32-4184-9259-bee079384320",
+  "lastMigration": 32,
+  "name": "dRAGon",
+  "endpointPrefix": "",
+  "latency": 0,
+  "port": 1985,
+  "hostname": "",
+  "folders": [
+    {
+      "uuid": "c98e1298-8e19-4747-9184-0f9311de3443",
+      "name": "api",
+      "children": [
+        {
+          "type": "folder",
+          "uuid": "059be112-aa2e-4e68-872f-c863fc1fd972"
+        }
+      ]
+    },
+    {
+      "uuid": "059be112-aa2e-4e68-872f-c863fc1fd972",
+      "name": "backend",
+      "children": [
+        {
+          "type": "folder",
+          "uuid": "eaf38f31-0ad8-4bd8-92fa-6c6714bbcc69"
+        }
+      ]
+    },
+    {
+      "uuid": "eaf38f31-0ad8-4bd8-92fa-6c6714bbcc69",
+      "name": "repository",
+      "children": [
+        {
+          "type": "route",
+          "uuid": "7cecfea6-ae8b-4eee-bfd9-06ab89e63e0c"
+        }
+      ]
+    },
+    {
+      "uuid": "583c3361-0cfc-46a5-8352-f80705f04797",
+      "name": "auth",
+      "children": [
+        {
+          "type": "route",
+          "uuid": "f99db58b-e0b9-4142-9d81-bcc23f1f640e"
+        },
+        {
+          "type": "route",
+          "uuid": "cd0e8e0b-c130-4d4a-87f7-673246e250d2"
+        }
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "uuid": "7cecfea6-ae8b-4eee-bfd9-06ab89e63e0c",
+      "type": "crud",
+      "documentation": "Silo Repository Management API Endpoints",
+      "method": "",
+      "endpoint": "api/backend/repository/silo",
+      "responses": [
+        {
+          "uuid": "498f2b58-6986-464d-a922-a93fd0175d5b",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "DATABUCKET",
+          "filePath": "",
+          "databucketID": "3ay2",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "uuid",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "f99db58b-e0b9-4142-9d81-bcc23f1f640e",
+      "type": "http",
+      "documentation": "Login Endpoint",
+      "method": "post",
+      "endpoint": "auth/login",
+      "responses": [
+        {
+          "uuid": "0f069a2b-d27d-4e3f-b343-fe3ed06e08a4",
+          "body": "{\n    \"data\": {\n        \"token\": \"token-is-here\",\n        \"refreshToken\": \"refresh-token-is-here\"\n    },\n    \"code\": \"0000\",\n    \"msg\": \"OK\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "cd0e8e0b-c130-4d4a-87f7-673246e250d2",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "auth/getUserInfo",
+      "responses": [
+        {
+          "uuid": "a2b7f8de-998e-4e33-9302-f0bd0f1c84d4",
+          "body": "{\n    \"data\": {\n        \"userId\": \"0\",\n        \"userName\": \"dRAGon\",\n        \"roles\": [\n            \"R_SUPER\"\n        ],\n        \"buttons\": [\n            \"B_CODE1\",\n            \"B_CODE2\",\n            \"B_CODE3\"\n        ]\n    },\n    \"code\": \"0000\",\n    \"msg\": \"OK\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    }
+  ],
+  "rootChildren": [
+    {
+      "type": "folder",
+      "uuid": "c98e1298-8e19-4747-9184-0f9311de3443"
+    },
+    {
+      "type": "folder",
+      "uuid": "583c3361-0cfc-46a5-8352-f80705f04797"
+    }
+  ],
+  "proxyMode": false,
+  "proxyHost": "",
+  "proxyRemovePrefix": false,
+  "tlsOptions": {
+    "enabled": false,
+    "type": "CERT",
+    "pfxPath": "",
+    "certPath": "",
+    "keyPath": "",
+    "caPath": "",
+    "passphrase": ""
+  },
+  "cors": true,
+  "headers": [
+    {
+      "key": "Content-Type",
+      "value": "application/json"
+    },
+    {
+      "key": "Access-Control-Allow-Origin",
+      "value": "*"
+    },
+    {
+      "key": "Access-Control-Allow-Methods",
+      "value": "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS"
+    },
+    {
+      "key": "Access-Control-Allow-Headers",
+      "value": "*"
+    }
+  ],
+  "proxyReqHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ],
+  "proxyResHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ],
+  "data": [
+    {
+      "uuid": "84af632d-89e3-4158-b897-34aaef993b3d",
+      "id": "3ay2",
+      "name": "SILO_REPOSITORY",
+      "documentation": "",
+      "value": "[\n  {\n    \"uuid\": \"a994ff93-971e-4651-aa15-9ef747f16f6c\",\n    \"name\": \"FileSystem Silo\",\n    \"vectorStore\": \"PersistInMemoryEmbeddingStore\",\n    \"embeddingModel\": \"BgeSmallEnV15QuantizedEmbeddingModel\",\n    \"ingestorLoader\": \"FileSystem\",\n    \"vectorStoreSettings\": [\n      \"flushSecs=30\"\n    ],\n    \"embeddingSettings\": [\n      \"chunkSize=1000\",\n      \"chunkOverlap=100\"\n    ],\n    \"ingestorSettings\": [\n      \"schedule=00 08 * * MON-FRI\",\n      \"recursive=true\",\n      \"pathMatcher=glob:**.{pdf,doc,docx,ppt,pptx}\",\n      \"paths[]=/tmp/folder\"\n    ]\n  }\n]"
+    }
+  ],
+  "callbacks": []
+}

@@ -4,7 +4,7 @@ All URIs are relative to *http://localhost:1985*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**health**](HealthApi.md#health) | **GET** /api/app/health/status | Check dRAGon app health |
+| [**health**](HealthApi.md#health) | **GET** /api/app/health | Check dRAGon app health |
 
 
 <a name="health"></a>
