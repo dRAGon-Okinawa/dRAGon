@@ -43,6 +43,9 @@ public enum EmbeddingModelType {
                                 "dev.langchain4j.model.embedding.bge.small.en.v15.BgeSmallEnV15QuantizedEmbeddingModel")
                         .embeddingModelName("BgeSmallEnV15QuantizedEmbeddingModel")
                         .embeddingModelWithSettings(parameters -> {
+                            // TODO : Ability to specify a different Thread Pool Size :
+                            // Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()))
+                            // => different than CPU cores
                             return new BgeSmallEnV15QuantizedEmbeddingModel();
                         })
                         .providerType(ProviderType.ONNX)
@@ -61,7 +64,7 @@ public enum EmbeddingModelType {
                                     .apiKey(parameters.getApiKey()).build();
                         })
                         .providerType(ProviderType.OpenAI)
-                        .dimensions(1536)
+                        .dimensions(OpenAiEmbeddingModelName.TEXT_EMBEDDING_ADA_002.dimension())
                         .maxTokens(8191)
                         .build();
             case OpenAiEmbedding3SmallModel:
@@ -76,7 +79,7 @@ public enum EmbeddingModelType {
                                     .apiKey(parameters.getApiKey()).build();
                         })
                         .providerType(ProviderType.OpenAI)
-                        .dimensions(1536)
+                        .dimensions(OpenAiEmbeddingModelName.TEXT_EMBEDDING_3_SMALL.dimension())
                         .maxTokens(8191)
                         .build();
             case OpenAiEmbedding3LargeModel:
@@ -91,7 +94,7 @@ public enum EmbeddingModelType {
                                     .apiKey(parameters.getApiKey()).build();
                         })
                         .providerType(ProviderType.OpenAI)
-                        .dimensions(3072)
+                        .dimensions(OpenAiEmbeddingModelName.TEXT_EMBEDDING_3_LARGE.dimension())
                         .maxTokens(8191)
                         .build();
             default:
