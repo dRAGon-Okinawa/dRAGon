@@ -9,10 +9,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/app/health")
+@RequestMapping("/api/app")
 @Tag(name = "Health", description = "Health Check API Endpoints")
-public class HealthOpenApiController {
-    @GetMapping("/status")
+public class HealthAppApiController {
+    @GetMapping("/health")
     @ApiResponse(responseCode = "200", description = "dRAGon app is alive.")
     @Operation(summary = "Check dRAGon app health", description = "Returns a simple message to confirm that the app is alive.")
     public String health() {
