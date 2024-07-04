@@ -241,8 +241,8 @@ const local: App.I18n.Schema = {
         repository: 'Repository',
         documentation: 'Documentation'
       },
-      prdDep: 'Production Dependencies',
-      devDep: 'Development Dependencies'
+      prdDep: 'Frontend Production Dependencies',
+      devDep: 'Frontend Development Dependencies'
     },
     home: {
       greeting: 'Good morning, {userName}, today is another day full of vitality!',

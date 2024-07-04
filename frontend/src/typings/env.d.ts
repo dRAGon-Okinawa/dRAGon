@@ -60,12 +60,6 @@ declare namespace Env {
     /** when the route mode is static, the defined super role */
     readonly VITE_STATIC_SUPER_ROLE: string;
     /**
-     * other backend service base url
-     *
-     * the value is a json
-     */
-    readonly VITE_OTHER_SERVICE_BASE_URL: string;
-    /**
      * Whether to enable the http proxy
      *
      * Only valid in the development environment
