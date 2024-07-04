@@ -24,6 +24,8 @@ declare namespace App {
       recommendColor: boolean;
       /** Theme color */
       themeColor: string;
+      /** Dark theme color */
+      themeColorDark: string;
       /** Other color */
       otherColor: OtherColor;
       /** Whether info color is followed by the primary color */

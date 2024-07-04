@@ -41,10 +41,10 @@ interface MixMenuItemProps {
 const [DefineMixMenuItem, MixMenuItem] = createReusableTemplate<MixMenuItemProps>();
 
 const selectedBgColor = computed(() => {
-  const { darkMode, themeColor } = themeStore;
+  const { darkMode, themeColor, themeColorDark } = themeStore;
 
   const light = transformColorWithOpacity(themeColor, 0.1, '#ffffff');
-  const dark = transformColorWithOpacity(themeColor, 0.3, '#000000');
+  const dark = transformColorWithOpacity(themeColorDark, 0.1, '#ffffff');
 
   return darkMode ? dark : light;
 });

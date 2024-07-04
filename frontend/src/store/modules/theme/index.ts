@@ -35,11 +35,12 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
 
   /** Theme colors */
   const themeColors = computed(() => {
-    const { themeColor, otherColor, isInfoFollowPrimary } = settings.value;
+    const { themeColor, themeColorDark, otherColor, isInfoFollowPrimary } = settings.value;
+    const themeColorForMode = settings.value.themeScheme === 'dark' ? themeColorDark : themeColor;
     const colors: App.Theme.ThemeColor = {
-      primary: themeColor,
+      primary: themeColorForMode,
       ...otherColor,
-      info: isInfoFollowPrimary ? themeColor : otherColor.info
+      info: isInfoFollowPrimary ? themeColorForMode : otherColor.info
     };
     return colors;
   });

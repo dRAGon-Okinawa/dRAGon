@@ -5,7 +5,7 @@ import { localStg } from '@/utils/storage';
 import dragonLogoUrl from '@/assets/imgs/dragon_okinawa_icon.png';
 
 export function setupLoading() {
-  const themeColor = localStg.get('themeColor') || '#646cff';
+  const themeColor = localStg.get('themeColor') || '#580bfe';
 
   const { r, g, b } = getRgb(themeColor);
 
