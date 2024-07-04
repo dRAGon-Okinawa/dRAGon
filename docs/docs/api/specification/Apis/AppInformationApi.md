@@ -1,19 +1,19 @@
-# HealthApi
+# AppInformationApi
 
 All URIs are relative to *http://localhost:1985*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**health**](HealthApi.md#health) | **GET** /api/app/health | Check dRAGon app health |
+| [**version**](AppInformationApi.md#version) | **GET** /api/app/info/version | Get dRAGon app version |
 
 
-<a name="health"></a>
-# **health**
-> String health()
+<a name="version"></a>
+# **version**
+> String version()
 
-Check dRAGon app health
+Get dRAGon app version
 
-    Returns a simple message to confirm that the app is alive.
+    Returns the version of the dRAGon app.
 
 ### Parameters
 This endpoint does not need any parameter.
