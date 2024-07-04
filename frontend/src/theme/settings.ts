@@ -17,7 +17,7 @@ export const themeSettings: App.Theme.ThemeSetting = {
   },
   page: {
     animate: true,
-    animateMode: 'fade-slide'
+    animateMode: 'fade'
   },
   header: {
     height: 56,

@@ -5,9 +5,13 @@
  */
 export function createServiceConfig(env: Env.ImportMeta) {
   const { VITE_SERVICE_BASE_URL } = env;
+  const baseBackendURL = VITE_SERVICE_BASE_URL.replace('__HOSTNAME__', location.hostname).replace(
+    '__SCHEME__',
+    location.protocol.replace(':', '')
+  );
 
   const httpConfig: App.Service.SimpleServiceConfig = {
-    baseURL: VITE_SERVICE_BASE_URL
+    baseURL: baseBackendURL
   };
 
   const config: App.Service.ServiceConfig = {
