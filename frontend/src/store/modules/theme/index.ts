@@ -30,13 +30,19 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
     return settings.value.themeScheme === 'dark';
   });
 
+  function themeMode() {
+    return settings.value.themeScheme === 'dark' || (settings.value.themeScheme === 'auto' && osTheme.value === 'dark')
+      ? 'dark'
+      : 'light';
+  }
+
   /** grayscale mode */
   const grayscaleMode = computed(() => settings.value.grayscale);
 
   /** Theme colors */
   const themeColors = computed(() => {
     const { themeColor, themeColorDark, otherColor, isInfoFollowPrimary } = settings.value;
-    const themeColorForMode = settings.value.themeScheme === 'dark' ? themeColorDark : themeColor;
+    const themeColorForMode = themeMode() === 'dark' ? themeColorDark : themeColor;
     const colors: App.Theme.ThemeColor = {
       primary: themeColorForMode,
       ...otherColor,
