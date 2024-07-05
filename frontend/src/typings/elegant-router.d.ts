@@ -21,8 +21,8 @@ declare module "@elegant-router/types" {
     "exception_403": "/exception/403";
     "exception_404": "/exception/404";
     "exception_500": "/exception/500";
+    "help": "/help";
     "document": "/document";
-    "document_project": "/document/project";
     "document_project-link": "/document/project-link";
     "document_vue": "/document/vue";
     "document_vite": "/document/vite";
@@ -81,8 +81,8 @@ declare module "@elegant-router/types" {
     | "exception_403"
     | "exception_404"
     | "exception_500"
+    | "help"
     | "document"
-    | "document_project"
     | "document_project-link"
     | "document_vue"
     | "document_vite"
@@ -108,6 +108,7 @@ declare module "@elegant-router/types" {
     | "function"
     | "home"
     | "iframe-page"
+    | "help"
     | "login"
     | "manage"
     | "multi-menu"
@@ -122,6 +123,7 @@ declare module "@elegant-router/types" {
     | "root"
     | "not-found"
     | "exception"
+    | "help"
     | "document"
   >;
 
@@ -136,6 +138,7 @@ declare module "@elegant-router/types" {
     | "iframe-page"
     | "login"
     | "about"
+    | "help"
     | "function_hide-child_one"
     | "function_hide-child_three"
     | "function_hide-child_two"
@@ -164,7 +167,7 @@ declare module "@elegant-router/types" {
     | "exception_403"
     | "exception_404"
     | "exception_500"
-    | "document_project"
+    | "help"
     | "document_project-link"
     | "document_vue"
     | "document_vite"

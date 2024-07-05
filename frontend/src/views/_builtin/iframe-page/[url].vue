@@ -22,4 +22,8 @@ onActivated(() => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+iframe {
+  border-radius: 10px;
+}
+</style>

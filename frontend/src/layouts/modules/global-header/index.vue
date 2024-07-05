@@ -10,6 +10,7 @@ import GlobalBreadcrumb from '../global-breadcrumb/index.vue';
 import GlobalSearch from '../global-search/index.vue';
 import { useMixMenuContext } from '../../context';
 import ThemeButton from './components/theme-button.vue';
+import HelpButton from './components/help-button.vue';
 import UserAvatar from './components/user-avatar.vue';
 
 defineOptions({
@@ -64,6 +65,7 @@ const headerMenus = computed(() => {
         @switch="themeStore.toggleThemeScheme"
       />
       <ThemeButton />
+      <HelpButton />
       <UserAvatar />
     </div>
   </DarkModeContainer>

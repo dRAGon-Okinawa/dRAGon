@@ -13,7 +13,7 @@ export function setupElegantRouter() {
         'exception_403',
         'exception_404',
         'exception_500',
-        'document_project',
+        'help',
         'document_project-link',
         'document_vue',
         'document_vite',

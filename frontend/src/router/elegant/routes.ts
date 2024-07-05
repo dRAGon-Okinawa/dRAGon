@@ -51,6 +51,20 @@ export const generatedRoutes: GeneratedRoute[] = [
     }
   },
   {
+    name: 'help',
+    path: '/help',
+    component: 'layout.base$view.help',
+    props: {
+      url: 'https://dragon.okinawa'
+    },
+    meta: {
+      title: 'help',
+      i18nKey: 'route.help',
+      order: 99,
+      icon: 'majesticons:question-circle-line'
+    }
+  },
+  {
     name: 'function',
     path: '/function',
     component: 'layout.base',

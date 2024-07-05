@@ -92,20 +92,6 @@ const customRoutes: CustomRoute[] = [
         }
       },
       {
-        name: 'document_project',
-        path: '/document/project',
-        component: 'view.iframe-page',
-        props: {
-          url: 'https://dragon.okinawa'
-        },
-        meta: {
-          title: 'document_project',
-          i18nKey: 'route.document_project',
-          order: 1,
-          localIcon: 'logo'
-        }
-      },
-      {
         name: 'document_project-link',
         path: '/document/project-link',
         component: 'view.iframe-page',

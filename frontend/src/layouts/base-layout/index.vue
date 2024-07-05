@@ -26,6 +26,15 @@ const layoutMode = computed(() => {
   return themeStore.layout.mode.includes(vertical) ? vertical : horizontal;
 });
 
+interface Props {
+  /** Show padding for content */
+  showContentPadding?: boolean;
+}
+
+withDefaults(defineProps<Props>(), {
+  showContentPadding: true
+});
+
 const headerPropsConfig: Record<UnionKey.ThemeLayoutMode, App.Global.HeaderProps> = {
   vertical: {
     showLogo: false,
@@ -116,7 +125,7 @@ function getSiderCollapsedWidth() {
     <template #sider>
       <GlobalSider />
     </template>
-    <GlobalContent />
+    <GlobalContent :show-padding="showContentPadding" />
     <ThemeDrawer />
     <template #footer>
       <GlobalFooter />
