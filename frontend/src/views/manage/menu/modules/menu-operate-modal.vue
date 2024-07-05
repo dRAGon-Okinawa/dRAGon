@@ -63,7 +63,7 @@ type Model = Pick<
   | 'component'
   | 'order'
   | 'i18nKey'
-  | 'icon'
+  | 'localIcon'
   | 'iconType'
   | 'status'
   | 'parentId'

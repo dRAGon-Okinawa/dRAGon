@@ -61,18 +61,16 @@ const { columns, columnChecks, data, loading, pagination, getData, getDataByPage
       }
     },
     {
-      key: 'icon',
+      key: 'localIcon',
       title: $t('page.manage.menu.icon'),
       align: 'center',
       width: 60,
       render: row => {
-        const icon = row.iconType === '1' ? row.icon : undefined;
-
-        const localIcon = row.iconType === '2' ? row.icon : undefined;
+        const localIcon = row.localIcon;
 
         return (
           <div class="flex-center">
-            <SvgIcon icon={icon} localIcon={localIcon} class="text-icon" />
+            <SvgIcon localIcon={localIcon} class="text-icon" />
           </div>
         );
       }

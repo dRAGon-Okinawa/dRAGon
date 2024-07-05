@@ -199,6 +199,8 @@ declare namespace Api {
       component?: string;
       /** icon type */
       iconType: IconType;
+      /** icon */
+      localIcon?: string;
       /** buttons */
       buttons?: MenuButton[] | null;
       /** children menu */

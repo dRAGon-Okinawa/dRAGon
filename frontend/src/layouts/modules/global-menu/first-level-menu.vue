@@ -83,7 +83,7 @@ function handleClickMixMenu(menu: App.Global.Menu) {
         v-for="menu in routeStore.menus"
         :key="menu.key"
         :label="menu.label"
-        :local-icon="menu.localIcon"
+        :local-icon="menu.icon"
         :active="menu.key === activeMenuKey"
         :is-mini="appStore.siderCollapse"
         @click="handleClickMixMenu(menu)"

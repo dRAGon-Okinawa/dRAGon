@@ -36,7 +36,7 @@ const options = computed(() => {
     {
       label: $t('common.userCenter'),
       key: 'user-center',
-      icon: SvgIconVNode({ icon: 'ph:user-circle', fontSize: 18 })
+      icon: SvgIconVNode({ localIcon: 'ph--user-circle', fontSize: 18 })
     },
     {
       type: 'divider',
@@ -45,7 +45,7 @@ const options = computed(() => {
     {
       label: $t('common.logout'),
       key: 'logout',
-      icon: SvgIconVNode({ icon: 'ph:sign-out', fontSize: 18 })
+      icon: SvgIconVNode({ localIcon: 'ph--sign-out', fontSize: 18 })
     }
   ];
 
