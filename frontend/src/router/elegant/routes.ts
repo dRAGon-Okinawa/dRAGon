@@ -177,7 +177,7 @@ export const generatedRoutes: GeneratedRoute[] = [
       i18nKey: 'route.help',
       order: 99,
       localIcon: 'majesticons--question-circle-line',
-      keepAlive: true
+      href: 'https://dragon.okinawa'
     }
   },
   {
