@@ -9,18 +9,7 @@ export function setupElegantRouter() {
       blank: 'src/layouts/blank-layout/index.vue'
     },
     customRoutes: {
-      names: [
-        'exception_403',
-        'exception_404',
-        'exception_500',
-        'help',
-        'document_project-link',
-        'document_vue',
-        'document_vite',
-        'document_unocss',
-        'document_naive',
-        'document_antd'
-      ]
+      names: ['exception_403', 'exception_404', 'exception_500', 'help']
     },
     routePathTransformer(routeName, routePath) {
       const key = routeName as RouteKey;

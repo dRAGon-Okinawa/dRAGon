@@ -165,13 +165,6 @@ const routeMap: RouteMap = {
   "exception_403": "/exception/403",
   "exception_404": "/exception/404",
   "exception_500": "/exception/500",
-  "document": "/document",
-  "document_project-link": "/document/project-link",
-  "document_vue": "/document/vue",
-  "document_vite": "/document/vite",
-  "document_unocss": "/document/unocss",
-  "document_naive": "/document/naive",
-  "document_antd": "/document/antd",
   "403": "/403",
   "404": "/404",
   "500": "/500",
@@ -195,12 +188,6 @@ const routeMap: RouteMap = {
   "manage_role": "/manage/role",
   "manage_user": "/manage/user",
   "manage_user-detail": "/manage/user-detail/:id",
-  "multi-menu": "/multi-menu",
-  "multi-menu_first": "/multi-menu/first",
-  "multi-menu_first_child": "/multi-menu/first/child",
-  "multi-menu_second": "/multi-menu/second",
-  "multi-menu_second_child": "/multi-menu/second/child",
-  "multi-menu_second_child_home": "/multi-menu/second/child/home",
   "user-center": "/user-center"
 };
 

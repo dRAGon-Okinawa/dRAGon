@@ -21,13 +21,6 @@ declare module "@elegant-router/types" {
     "exception_403": "/exception/403";
     "exception_404": "/exception/404";
     "exception_500": "/exception/500";
-    "document": "/document";
-    "document_project-link": "/document/project-link";
-    "document_vue": "/document/vue";
-    "document_vite": "/document/vite";
-    "document_unocss": "/document/unocss";
-    "document_naive": "/document/naive";
-    "document_antd": "/document/antd";
     "403": "/403";
     "404": "/404";
     "500": "/500";
@@ -51,12 +44,6 @@ declare module "@elegant-router/types" {
     "manage_role": "/manage/role";
     "manage_user": "/manage/user";
     "manage_user-detail": "/manage/user-detail/:id";
-    "multi-menu": "/multi-menu";
-    "multi-menu_first": "/multi-menu/first";
-    "multi-menu_first_child": "/multi-menu/first/child";
-    "multi-menu_second": "/multi-menu/second";
-    "multi-menu_second_child": "/multi-menu/second/child";
-    "multi-menu_second_child_home": "/multi-menu/second/child/home";
     "user-center": "/user-center";
   };
 
@@ -81,13 +68,6 @@ declare module "@elegant-router/types" {
     | "exception_403"
     | "exception_404"
     | "exception_500"
-    | "document"
-    | "document_project-link"
-    | "document_vue"
-    | "document_vite"
-    | "document_unocss"
-    | "document_naive"
-    | "document_antd"
   >;
 
   /**
@@ -110,7 +90,6 @@ declare module "@elegant-router/types" {
     | "iframe-page"
     | "login"
     | "manage"
-    | "multi-menu"
     | "user-center"
   >;
 
@@ -122,7 +101,6 @@ declare module "@elegant-router/types" {
     | "root"
     | "not-found"
     | "exception"
-    | "document"
   >;
 
   /**
@@ -150,8 +128,6 @@ declare module "@elegant-router/types" {
     | "manage_role"
     | "manage_user-detail"
     | "manage_user"
-    | "multi-menu_first_child"
-    | "multi-menu_second_child_home"
     | "user-center"
   >;
 
@@ -165,12 +141,6 @@ declare module "@elegant-router/types" {
     | "exception_403"
     | "exception_404"
     | "exception_500"
-    | "document_project-link"
-    | "document_vue"
-    | "document_vite"
-    | "document_unocss"
-    | "document_naive"
-    | "document_antd"
   >;
 
   /**

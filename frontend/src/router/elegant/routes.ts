@@ -282,68 +282,6 @@ export const generatedRoutes: GeneratedRoute[] = [
     ]
   },
   {
-    name: 'multi-menu',
-    path: '/multi-menu',
-    component: 'layout.base',
-    meta: {
-      title: 'multi-menu',
-      i18nKey: 'route.multi-menu',
-      order: 8
-    },
-    children: [
-      {
-        name: 'multi-menu_first',
-        path: '/multi-menu/first',
-        meta: {
-          title: 'multi-menu_first',
-          i18nKey: 'route.multi-menu_first',
-          order: 1
-        },
-        children: [
-          {
-            name: 'multi-menu_first_child',
-            path: '/multi-menu/first/child',
-            component: 'view.multi-menu_first_child',
-            meta: {
-              title: 'multi-menu_first_child',
-              i18nKey: 'route.multi-menu_first_child'
-            }
-          }
-        ]
-      },
-      {
-        name: 'multi-menu_second',
-        path: '/multi-menu/second',
-        meta: {
-          title: 'multi-menu_second',
-          i18nKey: 'route.multi-menu_second',
-          order: 2
-        },
-        children: [
-          {
-            name: 'multi-menu_second_child',
-            path: '/multi-menu/second/child',
-            meta: {
-              title: 'multi-menu_second_child',
-              i18nKey: 'route.multi-menu_second_child'
-            },
-            children: [
-              {
-                name: 'multi-menu_second_child_home',
-                path: '/multi-menu/second/child/home',
-                component: 'view.multi-menu_second_child_home',
-                meta: {
-                  title: 'multi-menu_second_child_home',
-                  i18nKey: 'route.multi-menu_second_child_home'
-                }
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  {
     name: 'user-center',
     path: '/user-center',
     component: 'layout.base$view.user-center',
