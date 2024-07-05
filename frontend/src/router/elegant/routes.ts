@@ -176,7 +176,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'help',
       i18nKey: 'route.help',
       order: 99,
-      localIcon: 'majesticons--question-circle-line'
+      localIcon: 'majesticons--question-circle-line',
+      keepAlive: true
     }
   },
   {
@@ -186,7 +187,7 @@ export const generatedRoutes: GeneratedRoute[] = [
     meta: {
       title: 'home',
       i18nKey: 'route.home',
-      icon: 'mdi:monitor-dashboard',
+      localIcon: 'mdi--monitor-dashboard',
       order: 1,
       keepAlive: true
     }

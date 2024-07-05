@@ -1,18 +1,24 @@
 <script setup lang="ts">
-import { onActivated, onMounted } from 'vue';
+import { onActivated, onBeforeUnmount, onMounted, ref } from 'vue';
+
+const helpFrameRef = ref();
 
 onMounted(() => {
-  // console.log('Help mounted');
+  // console.log('Help mounted', helpFrameRef.value);
 });
 
 onActivated(() => {
-  // console.log('Help activated');
+  // console.log('Help activated', helpFrameRef.value);
+});
+
+onBeforeUnmount(() => {
+  // console.log('Help unmounted', helpFrameRef.value);
 });
 </script>
 
 <template>
   <div class="h-full">
-    <iframe id="iframePage" class="size-full" src="https://dragon.okinawa"></iframe>
+    <iframe id="helpFrame" ref="helpFrameRef" class="size-full" src="https://dragon.okinawa"></iframe>
   </div>
 </template>
 

@@ -1,11 +1,9 @@
 <script setup lang="tsx">
 import { computed, reactive, ref, watch } from 'vue';
-import type { SelectOption } from 'naive-ui';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
 import { $t } from '@/locales';
 import { enableStatusOptions, menuIconTypeOptions, menuTypeOptions } from '@/constants/business';
 import SvgIcon from '@/components/custom/svg-icon.vue';
-import { getLocalIcons } from '@/utils/icon';
 import { fetchGetAllRoles } from '@/service/api';
 import {
   getLayoutAndPage,
@@ -95,8 +93,8 @@ function createDefaultModel(): Model {
     layout: '',
     page: '',
     i18nKey: null,
-    icon: '',
-    iconType: '1',
+    localIcon: '',
+    iconType: '2',
     parentId: 0,
     status: '1',
     keepAlive: false,
@@ -122,17 +120,6 @@ const rules: Record<RuleKey, App.Global.FormRule> = {
 };
 
 const disabledMenuType = computed(() => props.operateType === 'edit');
-
-const localIcons = getLocalIcons();
-const localIconOptions = localIcons.map<SelectOption>(item => ({
-  label: () => (
-    <div class="flex-y-center gap-16px">
-      <SvgIcon localIcon={item} class="text-icon" />
-      <span>{item}</span>
-    </div>
-  ),
-  value: item
-}));
 
 const showLayout = computed(() => model.parentId === 0);
 
@@ -332,19 +319,12 @@ watch(
             </NRadioGroup>
           </NFormItemGi>
           <NFormItemGi span="24 m:12" :label="$t('page.manage.menu.icon')" path="icon">
-            <template v-if="model.iconType === '1'">
-              <NInput v-model:value="model.icon" :placeholder="$t('page.manage.menu.form.icon')" class="flex-1">
+            <template v-if="model.iconType === '2'">
+              <NInput v-model:value="model.localIcon" :placeholder="$t('page.manage.menu.form.icon')" class="flex-1">
                 <template #suffix>
-                  <SvgIcon v-if="model.icon" :local-icon="model.icon" class="text-icon" />
+                  <SvgIcon v-if="model.localIcon" :local-icon="model.localIcon" class="text-icon" />
                 </template>
               </NInput>
-            </template>
-            <template v-if="model.iconType === '2'">
-              <NSelect
-                v-model:value="model.icon"
-                :placeholder="$t('page.manage.menu.form.localIcon')"
-                :options="localIconOptions"
-              />
             </template>
           </NFormItemGi>
           <NFormItemGi span="24 m:12" :label="$t('page.manage.menu.menuStatus')" path="status">
