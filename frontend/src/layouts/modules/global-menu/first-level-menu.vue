@@ -32,7 +32,7 @@ interface MixMenuItemProps {
   /** Menu item label */
   label: App.Global.Menu['label'];
   /** Menu item icon */
-  icon: App.Global.Menu['icon'];
+  localIcon: App.Global.Menu['icon'];
   /** Active menu item */
   active: boolean;
   /** Mini size */
@@ -56,7 +56,7 @@ function handleClickMixMenu(menu: App.Global.Menu) {
 
 <template>
   <!-- define component: MixMenuItem -->
-  <DefineMixMenuItem v-slot="{ label, icon, active, isMini }">
+  <DefineMixMenuItem v-slot="{ label, localIcon, active, isMini }">
     <div
       class="mx-4px mb-6px flex-col-center cursor-pointer rounded-8px bg-transparent px-4px py-8px transition-300 hover:bg-[rgb(0,0,0,0.08)]"
       :class="{
@@ -65,7 +65,7 @@ function handleClickMixMenu(menu: App.Global.Menu) {
         '!text-white !bg-primary': active && inverted
       }"
     >
-      <component :is="icon" :class="[isMini ? 'text-icon-small' : 'text-icon-large']" />
+      <component :is="localIcon" :class="[isMini ? 'text-icon-small' : 'text-icon-large']" />
       <p
         class="w-full ellipsis-text text-center text-12px transition-height-300"
         :class="[isMini ? 'h-0 pt-0' : 'h-20px pt-4px']"
@@ -83,7 +83,7 @@ function handleClickMixMenu(menu: App.Global.Menu) {
         v-for="menu in routeStore.menus"
         :key="menu.key"
         :label="menu.label"
-        :icon="menu.icon"
+        :local-icon="menu.localIcon"
         :active="menu.key === activeMenuKey"
         :is-mini="appStore.siderCollapse"
         @click="handleClickMixMenu(menu)"

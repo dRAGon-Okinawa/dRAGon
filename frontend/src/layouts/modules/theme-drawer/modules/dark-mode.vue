@@ -12,9 +12,9 @@ defineOptions({
 const themeStore = useThemeStore();
 
 const icons: Record<UnionKey.ThemeScheme, string> = {
-  light: 'material-symbols:sunny',
-  dark: 'material-symbols:nightlight-rounded',
-  auto: 'material-symbols:hdr-auto'
+  light: 'material-symbols--sunny',
+  dark: 'material-symbols--nightlight-rounded',
+  auto: 'material-symbols--hdr-auto'
 };
 
 function handleSegmentChange(value: string | number) {
@@ -41,7 +41,7 @@ const showSiderInverted = computed(() => !themeStore.darkMode && themeStore.layo
         @update:value="handleSegmentChange"
       >
         <NTab v-for="(_, key) in themeSchemaRecord" :key="key" :name="key">
-          <SvgIcon :icon="icons[key]" class="h-23px text-icon-small" />
+          <SvgIcon :local-icon="icons[key]" class="h-23px text-icon-small" />
         </NTab>
       </NTabs>
     </div>

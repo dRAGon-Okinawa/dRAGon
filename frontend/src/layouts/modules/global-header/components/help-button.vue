@@ -14,7 +14,7 @@ function showHelp() {
 </script>
 
 <template>
-  <ButtonIcon icon="majesticons:question-circle-line" :tooltip-content="$t('common.help')" @click="showHelp" />
+  <ButtonIcon local-icon="majesticons--question-circle-line" :tooltip-content="$t('common.help')" @click="showHelp" />
 </template>
 
 <style scoped></style>

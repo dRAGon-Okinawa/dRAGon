@@ -46,7 +46,7 @@ const icon = computed(() => {
     tooltip-placement="bottom-start"
     :z-index="zIndex"
   >
-    <SvgIcon :icon="icon" />
+    <SvgIcon :local-icon="icon" />
   </ButtonIcon>
 </template>
 

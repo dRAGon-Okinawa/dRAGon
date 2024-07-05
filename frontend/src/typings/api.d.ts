@@ -166,10 +166,9 @@ declare namespace Api {
     /**
      * icon type
      *
-     * - "1": iconify icon
      * - "2": local icon
      */
-    type IconType = '1' | '2';
+    type IconType = '2';
 
     type MenuPropsOfRoute = Pick<
       import('vue-router').RouteMeta,
@@ -198,8 +197,6 @@ declare namespace Api {
       routePath: string;
       /** component */
       component?: string;
-      /** iconify icon name or local icon name */
-      icon: string;
       /** icon type */
       iconType: IconType;
       /** buttons */

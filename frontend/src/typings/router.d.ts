@@ -31,12 +31,6 @@ declare module 'vue-router' {
      */
     constant?: boolean | null;
     /**
-     * Iconify icon
-     *
-     * It can be used in the menu or breadcrumb
-     */
-    icon?: string;
-    /**
      * Local icon
      *
      * In "src/assets/svg-icon", if it is set, the icon will be ignored

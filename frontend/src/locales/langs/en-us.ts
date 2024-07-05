@@ -399,7 +399,6 @@ const local: App.I18n.Schema = {
           page: 'Please select page component',
           layout: 'Please select layout component',
           i18nKey: 'Please enter i18n key',
-          icon: 'Please enter iconify name',
           localIcon: 'Please enter local icon name',
           order: 'Please enter order',
           keepAlive: 'Please select whether to cache route',
@@ -424,7 +423,6 @@ const local: App.I18n.Schema = {
           menu: 'Menu'
         },
         iconType: {
-          iconify: 'Iconify Icon',
           local: 'Local Icon'
         }
       }

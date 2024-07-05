@@ -19,7 +19,7 @@ const icon = computed(() => (props.pin ? 'mdi-pin-off' : 'mdi-pin'));
     tooltip-placement="bottom-start"
     :z-index="100"
   >
-    <SvgIcon :icon="icon" />
+    <SvgIcon :local-icon="icon" />
   </ButtonIcon>
 </template>
 

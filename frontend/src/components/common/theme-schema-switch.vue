@@ -30,9 +30,9 @@ function handleSwitch() {
 }
 
 const icons: Record<UnionKey.ThemeScheme, string> = {
-  light: 'material-symbols:sunny',
-  dark: 'material-symbols:nightlight-rounded',
-  auto: 'material-symbols:hdr-auto'
+  light: 'material-symbols--sunny',
+  dark: 'material-symbols--nightlight-rounded',
+  auto: 'material-symbols--hdr-auto'
 };
 
 const icon = computed(() => icons[props.themeSchema]);
@@ -46,7 +46,7 @@ const tooltipContent = computed(() => {
 
 <template>
   <ButtonIcon
-    :icon="icon"
+    :local-icon="icon"
     :tooltip-content="tooltipContent"
     :tooltip-placement="tooltipPlacement"
     @click="handleSwitch"

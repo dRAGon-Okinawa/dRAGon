@@ -166,7 +166,7 @@ declare namespace App {
       /** The route path */
       routePath: RoutePath;
       /** The menu icon */
-      icon?: () => VNode;
+      localIcon?: () => VNode;
       /** The menu children */
       children?: Menu[];
     }
@@ -205,12 +205,6 @@ declare namespace App {
       fullPath: string;
       /** The tab fixed index */
       fixedIndex?: number | null;
-      /**
-       * Tab icon
-       *
-       * Iconify icon
-       */
-      icon?: string;
       /**
        * Tab local icon
        *
@@ -576,7 +570,6 @@ declare namespace App {
               layout: string;
               page: string;
               i18nKey: string;
-              icon: string;
               localIcon: string;
               order: string;
               keepAlive: string;
@@ -601,7 +594,6 @@ declare namespace App {
               menu: string;
             };
             iconType: {
-              iconify: string;
               local: string;
             };
           };

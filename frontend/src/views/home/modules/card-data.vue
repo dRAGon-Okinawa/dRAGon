@@ -92,7 +92,7 @@ function getGradientColor(color: CardData['color']) {
         <GradientBg :gradient-color="getGradientColor(item.color)" class="flex-1">
           <h3 class="text-16px">{{ item.title }}</h3>
           <div class="flex justify-between pt-12px">
-            <SvgIcon :icon="item.icon" class="text-32px" />
+            <SvgIcon :local-icon="item.icon" class="text-32px" />
             <CountTo
               :prefix="item.unit"
               :start-value="1"

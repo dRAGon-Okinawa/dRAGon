@@ -335,7 +335,7 @@ watch(
             <template v-if="model.iconType === '1'">
               <NInput v-model:value="model.icon" :placeholder="$t('page.manage.menu.form.icon')" class="flex-1">
                 <template #suffix>
-                  <SvgIcon v-if="model.icon" :icon="model.icon" class="text-icon" />
+                  <SvgIcon v-if="model.icon" :local-icon="model.icon" class="text-icon" />
                 </template>
               </NInput>
             </template>

@@ -46,7 +46,7 @@ export const generatedRoutes: GeneratedRoute[] = [
     meta: {
       title: 'about',
       i18nKey: 'route.about',
-      icon: 'fluent:book-information-24-regular',
+      localIcon: 'fluent--book-information-24-regular',
       order: 10
     }
   },
@@ -57,7 +57,7 @@ export const generatedRoutes: GeneratedRoute[] = [
     meta: {
       title: 'function',
       i18nKey: 'route.function',
-      icon: 'icon-park-outline:all-application',
+      localIcon: 'icon-park-outline--all-application',
       order: 6
     },
     children: [
@@ -67,7 +67,7 @@ export const generatedRoutes: GeneratedRoute[] = [
         meta: {
           title: 'function_hide-child',
           i18nKey: 'route.function_hide-child',
-          icon: 'material-symbols:filter-list-off',
+          localIcon: 'material-symbols--filter-list-off',
           order: 2
         },
         redirect: '/function/hide-child/one',
@@ -176,7 +176,7 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'help',
       i18nKey: 'route.help',
       order: 99,
-      icon: 'majesticons:question-circle-line'
+      localIcon: 'majesticons--question-circle-line'
     }
   },
   {
