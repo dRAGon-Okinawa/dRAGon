@@ -12,11 +12,11 @@ public class EmbeddingSegmentService {
         return textSegment
                 // 1. compress all non-newline whitespaces to single space
                 .replaceAll("[\\s&&[^\\n]]+", " ")
-                // 2. remove spaces from begining or end of lines
+                // 2. remove spaces from beginning or end of lines
                 .replaceAll("(?m)^\\s|\\s$", "")
                 // 3. compress multiple newlines to single newlines
                 .replaceAll("\\n+", "\n")
-                // 4. remove newlines from begining or end of string
+                // 4. remove newlines from beginning or end of string
                 .replaceAll("^\n|\n$", "");
     }
 }
