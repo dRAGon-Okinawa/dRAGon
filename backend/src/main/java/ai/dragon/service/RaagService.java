@@ -92,7 +92,7 @@ public class RaagService {
     public List<ContentRetriever> buildRetrieverList(FarmEntity farm) {
         List<ContentRetriever> retrievers = new ArrayList<>();
         if (farm.getSilos() == null || farm.getSilos().isEmpty()) {
-            logger.warn("No Silos found for Farm '{}' (RaaG Identifier '{}'), no content retrieve will be made",
+            logger.info("No Silos found for Farm '{}' (RaaG Identifier '{}'), no content retrieve will be made",
                     farm.getUuid(), farm.getRaagIdentifier());
             return retrievers;
         }
