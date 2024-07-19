@@ -49,7 +49,7 @@ jobs:
         run: gradle bootJar -Pversion=$(gradle cV -q -Prelease.quiet)
 
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4.0.1
+        uses: codecov/codecov-action@v4.5.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
