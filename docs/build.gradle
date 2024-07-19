@@ -1,6 +1,6 @@
 plugins {
   id 'com.github.node-gradle.node' version '7.0.2'
-  id 'org.openapi.generator' version '7.5.0'
+  id 'org.openapi.generator' version '7.7.0'
 }
 
 ext {
