@@ -4,7 +4,7 @@ plugins {
 	id 'checkstyle' 
 	id 'application'
 	id 'org.springframework.boot' version '3.3.0'
-	id 'io.spring.dependency-management' version '1.1.4'
+	id 'io.spring.dependency-management' version '1.1.6'
 	id 'org.springdoc.openapi-gradle-plugin' version '1.8.0'
 }
 
@@ -44,7 +44,7 @@ dependencies {
 	implementation 'org.dizitart:nitrite-jackson-mapper'
 
 	implementation 'net.sourceforge.argparse4j:argparse4j:0.9.0'
-	implementation 'org.jobrunr:jobrunr-spring-boot-3-starter:7.2.0'
+	implementation 'org.jobrunr:jobrunr-spring-boot-3-starter:7.2.2'
 	
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testImplementation 'org.awaitility:awaitility:4.2.1'
@@ -53,10 +53,10 @@ dependencies {
 	testImplementation 'io.github.lambdua:client:0.20.9'
 	testImplementation 'io.github.lambdua:service:0.20.9'
 
-	compileOnly 'org.projectlombok:lombok:1.18.32'
-	annotationProcessor 'org.projectlombok:lombok:1.18.32'
-	testCompileOnly 'org.projectlombok:lombok:1.18.32'
-	testAnnotationProcessor 'org.projectlombok:lombok:1.18.32'
+	compileOnly 'org.projectlombok:lombok:1.18.34'
+	annotationProcessor 'org.projectlombok:lombok:1.18.34'
+	testCompileOnly 'org.projectlombok:lombok:1.18.34'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
 }
 
 application {
