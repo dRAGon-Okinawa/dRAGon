@@ -27,7 +27,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.hibernate.validator:hibernate-validator'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
 
 	implementation 'dev.langchain4j:langchain4j-open-ai:0.32.0'
 	implementation 'dev.langchain4j:langchain4j:0.32.0'
