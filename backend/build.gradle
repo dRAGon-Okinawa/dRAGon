@@ -51,7 +51,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'io.github.lambdua:client:0.20.9'
-	testImplementation 'io.github.lambdua:service:0.20.9'
+	testImplementation 'io.github.lambdua:service:0.21.2'
 
 	compileOnly 'org.projectlombok:lombok:1.18.34'
 	annotationProcessor 'org.projectlombok:lombok:1.18.34'
