@@ -1,6 +1,7 @@
 plugins {
 	id 'java'
 	id 'java-library'
+	id 'jacoco'
 	id 'checkstyle' 
 	id 'application'
 	id 'org.springframework.boot' version '3.3.0'
@@ -98,6 +99,18 @@ jar {
             'Implementation-Version': version
         )
     }
+}
+
+test {
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+}
+
+jacoco {
+    toolVersion = "0.8.12"
 }
 
 tasks.register("bootProdRun") {
