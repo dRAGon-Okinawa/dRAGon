@@ -102,11 +102,17 @@ jar {
 }
 
 test {
+	useJUnitPlatform()
     finalizedBy jacocoTestReport
 }
 
 jacocoTestReport {
     dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = true
+    }
 }
 
 jacoco {
@@ -136,8 +142,4 @@ tasks.named('compileJava') {
 
 tasks.named('processResources') {
 	dependsOn('copyWebApp')
-}
-
-tasks.named('test') {
-	useJUnitPlatform()
 }
