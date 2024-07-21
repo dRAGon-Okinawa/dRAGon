@@ -1,6 +1,7 @@
 plugins {
 	id 'java'
 	id 'java-library'
+	id 'jacoco'
 	id 'checkstyle' 
 	id 'application'
 	id 'org.springframework.boot' version '3.3.0'
@@ -100,6 +101,24 @@ jar {
     }
 }
 
+test {
+	useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = true
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.12"
+}
+
 tasks.register("bootProdRun") {
     group = "application"
     description = "Runs this project as a Spring Boot application with the PROD profile"
@@ -123,8 +142,4 @@ tasks.named('compileJava') {
 
 tasks.named('processResources') {
 	dependsOn('copyWebApp')
-}
-
-tasks.named('test') {
-	useJUnitPlatform()
 }
