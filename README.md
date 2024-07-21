@@ -15,5 +15,8 @@ dRAGon is a multi-modal RAG engine which can search over multiple kind of docume
 * [Snyk](https://snyk.io)
 * [SonarCloud](https://sonarcloud.io)
 
+## Contributors ❤️
+[![dRAGon Contributors](https://contrib.rocks/image?columns=12&max=100&repo=dRAGon-Okinawa/dRAGon)](https://github.com/dRAGon-Okinawa/dRAGon/graphs/contributors)
+
 ## Star History
-[![Star History Chart](https://api.star-history.com/svg?repos=dragon-okinawa/dragon&type=Date)](https://star-history.com/#dragon-okinawa/dragon&Date)
+[![dRAGon Star History Chart](https://api.star-history.com/svg?repos=dragon-okinawa/dragon&type=Date)](https://star-history.com/#dragon-okinawa/dragon&Date)
