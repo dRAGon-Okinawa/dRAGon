@@ -8,11 +8,11 @@ dRAGon is a multi-modal RAG engine which can search over multiple kind of docume
 ![dRAGon](https://dragon.okinawa/img/dragon_okinawa.jpg)
 
 ## dRAGon is all of us
-As an open-source project, dRAGon encourages community participation, allowing users to fork, extend, and contribute to its development. 
+dRAGon is an open-source project that thrives on community participation. We invite you to fork, extend, and contribute to its development.
 
-This collaborative approach ensures continuous improvement and widespread access to cutting-edge information retrieval technology. 
+By collaborating with us, you help ensure continuous improvement and make cutting-edge information retrieval technology accessible to everyone.
 
-Join us in building a smarter, more connected world through dRAGon.
+Let's build a smarter, more connected world together with dRAGon.
 
 ### Code Contributors
 [![dRAGon Code Contributors](https://opencollective.com/dragon-okinawa/contributors.svg?width=600)](https://github.com/dRAGon-Okinawa/dRAGon/graphs/contributors)
