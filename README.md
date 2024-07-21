@@ -3,11 +3,17 @@
 
 dRAGon is a multi-modal RAG engine which can search over multiple kind of documents to generate good quality answers for LLMs.
 
-[Your journey to the dRAGon starts here!](https://dragon.okinawa)
+[Your journey to the dRAGon starts &gt; here &lt;](https://dragon.okinawa)
 
 ![dRAGon](https://dragon.okinawa/img/dragon_okinawa.jpg)
 
 ## dRAGon is all of us
+As an open-source project, dRAGon encourages community participation, allowing users to fork, extend, and contribute to its development. 
+
+This collaborative approach ensures continuous improvement and widespread access to cutting-edge information retrieval technology. 
+
+Join us in building a smarter, more connected world through dRAGon.
+
 ### Code Contributors
 [![dRAGon Code Contributors](https://opencollective.com/dragon-okinawa/contributors.svg?width=600)](https://github.com/dRAGon-Okinawa/dRAGon/graphs/contributors)
 
@@ -25,4 +31,6 @@ dRAGon is helped by these awesome companies which provide a free plan for their 
 * [SonarCloud](https://sonarcloud.io)
 
 ## Star History
+Want to share your love about dRAGon? Add a star to this repository 🌟
+
 [![dRAGon Star History Chart](https://api.star-history.com/svg?repos=dragon-okinawa/dragon&type=Date)](https://star-history.com/#dragon-okinawa/dragon&Date)
