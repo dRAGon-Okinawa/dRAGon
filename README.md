@@ -21,7 +21,7 @@ Join us in building a smarter, more connected world through dRAGon.
 [![dRAGon Sponsors](https://opencollective.com/dragon-okinawa/backers.svg?width=600)](http://opencollective.com/dragon-okinawa)
 
 ### Companies supporting dRAGon
-dRAGon is helped by these awesome companies which provide a free plan for their product or service :
+dRAGon is supported by these generous companies which provide a free plan for their product or service:
 
 * [GitBook](https://www.gitbook.com)
 * [Codecov](https://codecov.io)
