@@ -43,14 +43,9 @@ jobs:
 
       - name: Set Frontend Version
         run: pnpm version from-git --no-git-tag-version --prefix frontend
-      - name: Set Docs Version
-        run: pnpm version from-git --no-git-tag-version --prefix docs
 
       - name: Test dRAGon
         run: gradle pnpmInstall pnpmLint checkstyleMain checkstyleTest test --stacktrace
-
-      - name: Build Documentation
-        run: pnpm install --dir docs -f && pnpm run --dir docs build
 
       - name: Build dRAGon
         run: gradle bootJar -Pversion=$(gradle cV -q -Prelease.quiet)
@@ -93,13 +88,3 @@ jobs:
           github.ref == 'refs/heads/main' &&
           github.repository == 'dragon-okinawa/dragon'
         run: gradle pushRelease
-
-      - name: Deploy Documentation
-        uses: JamesIves/github-pages-deploy-action@releases/v3
-        if: |
-          github.ref == 'refs/heads/main' &&
-          github.repository == 'dragon-okinawa/dragon'
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: gh-pages
-          FOLDER: docs/build
