@@ -24,6 +24,7 @@ Let's build a smarter, more connected world together with dRAGon.
 dRAGon is supported by these generous companies which provide a free plan for their product or service:
 
 * [GitBook](https://www.gitbook.com)
+* [POEditor](https://poeditor.com)
 * [Codecov](https://codecov.io)
 * [CodeRabbit](https://coderabbit.ai)
 * [GitGuardian](https://www.gitguardian.com)
