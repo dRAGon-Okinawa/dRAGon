@@ -32,9 +32,7 @@ export async function setupCli() {
 
   const cli = cac(blue('dragon-frontend'));
 
-  cli
-    .version(lightGreen(version))
-    .help();
+  cli.version(lightGreen(version)).help();
 
   const commands: CommandWithAction<CommandArg> = {
     cleanup: {

@@ -8,9 +8,9 @@ import { fetchGetAllRoles } from '@/service/api';
 import {
   getLayoutAndPage,
   getPathParamFromRoutePath,
-  getRoutePathByRouteName,
-  getRoutePathWithParam,
-  transformLayoutAndPageToComponent
+  getRoutePathByRouteName
+  // getRoutePathWithParam,
+  // transformLayoutAndPageToComponent
 } from './shared';
 
 defineOptions({
@@ -224,6 +224,7 @@ function handleCreateButton() {
   return buttonItem;
 }
 
+/*
 function getSubmitParams() {
   const { layout, page, pathParam, ...params } = model;
 
@@ -235,6 +236,7 @@ function getSubmitParams() {
 
   return params;
 }
+*/
 
 async function handleSubmit() {
   await validate();

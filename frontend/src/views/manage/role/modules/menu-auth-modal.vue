@@ -7,12 +7,14 @@ defineOptions({
   name: 'MenuAuthModal'
 });
 
+/*
 interface Props {
-  /** the roleId */
+  // The roleId
   roleId: number;
 }
+*/
 
-const props = defineProps<Props>();
+// const props = defineProps<Props>();
 
 const visible = defineModel<boolean>('visible', {
   default: false

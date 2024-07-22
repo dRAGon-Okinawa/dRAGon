@@ -1,7 +1,7 @@
 <script lang="ts" setup></script>
 
 <template>
-  <div class="absolute-lt z-1 size-full overflow-hidden mountains-bg"></div>
+  <div class="mountains-bg absolute-lt z-1 size-full overflow-hidden"></div>
 </template>
 
 <style scoped>

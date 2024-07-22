@@ -3,10 +3,7 @@ import { computed, useAttrs } from 'vue';
 
 defineOptions({ name: 'SvgIcon', inheritAttrs: false });
 
-/**
- * Props
- *
- */
+/** Props */
 interface Props {
   /** Local svg icon name */
   localIcon?: string;
