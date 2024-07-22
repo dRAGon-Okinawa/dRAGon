@@ -50,13 +50,13 @@ async function getAllButtons() {
 const checks = shallowRef<number[]>([]);
 
 async function getChecks() {
-  console.log(props.roleId);
+  // console.log(props.roleId);
   // request
   checks.value = [1, 2, 3, 4, 5];
 }
 
 function handleSubmit() {
-  console.log(checks.value, props.roleId);
+  // console.log(checks.value, props.roleId);
   // request
 
   window.$message?.success?.($t('common.modifySuccess'));

@@ -241,7 +241,7 @@ async function handleSubmit() {
 
   const params = getSubmitParams();
 
-  console.log('params: ', params);
+  // console.log('params: ', params);
 
   // request
   window.$message?.success($t('common.updateSuccess'));
