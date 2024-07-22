@@ -32,7 +32,6 @@ import dev.langchain4j.model.chat.StreamingChatLanguageModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.rag.DefaultRetrievalAugmentor;
 import dev.langchain4j.rag.DefaultRetrievalAugmentor.DefaultRetrievalAugmentorBuilder;
-import dev.langchain4j.rag.RetrievalAugmentor;
 import dev.langchain4j.rag.content.retriever.ContentRetriever;
 import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
 import dev.langchain4j.rag.query.router.DefaultQueryRouter;
@@ -93,7 +92,7 @@ public class RaagService {
     public List<ContentRetriever> buildRetrieverList(FarmEntity farm) {
         List<ContentRetriever> retrievers = new ArrayList<>();
         if (farm.getSilos() == null || farm.getSilos().isEmpty()) {
-            logger.warn("No Silos found for Farm '{}' (RaaG Identifier '{}'), no content retrieve will be made",
+            logger.info("No Silos found for Farm '{}' (RaaG Identifier '{}'), no content retrieve will be made",
                     farm.getUuid(), farm.getRaagIdentifier());
             return retrievers;
         }
@@ -207,8 +206,8 @@ public class RaagService {
 
     private AiServices<AiAssistant> makeAssistantBuilder(FarmEntity farm, OpenAiRequest request, boolean stream)
             throws Exception {
-        AiServices<AiAssistant> assistantBuilder = AiServices.builder(AiAssistant.class)
-                .retrievalAugmentor(this.buildRetrievalAugmentor(farm, request));
+        AiServices<AiAssistant> assistantBuilder = AiServices.builder(AiAssistant.class);
+        this.buildRetrievalAugmentor(assistantBuilder, farm, request);
         if (stream) {
             assistantBuilder.streamingChatLanguageModel(this.buildStreamingChatLanguageModel(farm, request));
         } else {
@@ -262,19 +261,23 @@ public class RaagService {
         return languageModelSettings;
     }
 
-    private RetrievalAugmentor buildRetrievalAugmentor(FarmEntity farm, OpenAiRequest request) throws Exception {
+    private void buildRetrievalAugmentor(AiServices<AiAssistant> assistantBuilder, FarmEntity farm,
+            OpenAiRequest request) throws Exception {
         RetrievalAugmentorSettings retrievalSettings = KVSettingUtil.kvSettingsToObject(
                 farm.getRetrievalAugmentorSettings(),
                 RetrievalAugmentorSettings.class);
         // TODO Enhanced Query Router : langchain4j => LanguageModelQueryRouter
-        DefaultRetrievalAugmentorBuilder retrievalAugmentorBuilder = DefaultRetrievalAugmentor.builder()
-                .queryRouter(new DefaultQueryRouter(this.buildRetrieverList(farm)));
-        if (Boolean.TRUE.equals(retrievalSettings.getRewriteQuery())) {
-            // Query Rewriting => Improve RAG Performance and Accuracy
-            // => Uses Chat History.
-            retrievalAugmentorBuilder.queryTransformer(CompressingQueryTransformer.builder()
-                    .chatLanguageModel(this.buildChatLanguageModel(farm, request)).build());
+        DefaultRetrievalAugmentorBuilder retrievalAugmentorBuilder = DefaultRetrievalAugmentor.builder();
+        List<ContentRetriever> retrievers = this.buildRetrieverList(farm);
+        if (retrievers != null && !retrievers.isEmpty()) {
+            retrievalAugmentorBuilder.queryRouter(new DefaultQueryRouter(retrievers));
+            if (Boolean.TRUE.equals(retrievalSettings.getRewriteQuery())) {
+                // Query Rewriting => Improve RAG Performance and Accuracy
+                // => Uses Chat History.
+                retrievalAugmentorBuilder.queryTransformer(CompressingQueryTransformer.builder()
+                        .chatLanguageModel(this.buildChatLanguageModel(farm, request)).build());
+            }
+            assistantBuilder.retrievalAugmentor(retrievalAugmentorBuilder.build());
         }
-        return retrievalAugmentorBuilder.build();
     }
 }

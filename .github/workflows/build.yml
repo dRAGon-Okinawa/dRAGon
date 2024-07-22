@@ -2,6 +2,9 @@ name: Build dRAGon Project
 on: 
   - push
   - workflow_dispatch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -51,6 +54,11 @@ jobs:
 
       - name: Build dRAGon
         run: gradle bootJar -Pversion=$(gradle cV -q -Prelease.quiet)
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.5.0
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
