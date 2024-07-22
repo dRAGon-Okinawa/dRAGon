@@ -156,7 +156,7 @@ async function handleBatchDelete() {
   onBatchDeleted();
 }
 
-function handleDelete(id: number) {
+function handleDelete(_id: number) {
   // request
   // console.log(id);
 
