@@ -1,0 +1,23 @@
+plugins {
+  id 'com.github.node-gradle.node' version '7.0.2'
+}
+
+ext {
+    backendBuildDir = project(':backend').buildDir
+}
+
+task npmBuild(type: NpmTask) {
+	inputs.dir("src")
+	outputs.dir("dist")
+	args = ['run', 'build']
+}
+
+task npmServe(type: NpmTask) {
+	args = ['run', 'serve']
+}
+
+task test(type: NpmTask) {
+	inputs.dir("src")
+	outputs.dir("dist")
+	args = ['run', 'build']
+}
