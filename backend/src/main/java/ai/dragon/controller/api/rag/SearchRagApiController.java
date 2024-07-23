@@ -1,8 +1,8 @@
 package ai.dragon.controller.api.rag;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,13 +14,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import ai.dragon.entity.FarmEntity;
 import ai.dragon.entity.SiloEntity;
+import ai.dragon.repository.FarmRepository;
 import ai.dragon.repository.SiloRepository;
 import ai.dragon.service.EmbeddingStoreService;
 import ai.dragon.util.embedding.search.EmbeddingMatchResponse;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.store.embedding.EmbeddingMatch;
-import dev.langchain4j.store.embedding.EmbeddingSearchResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -36,7 +37,9 @@ public class SearchRagApiController {
     @Autowired
     private SiloRepository siloRepository;
 
-    // TODO Silo OR Farm
+    @Autowired
+    private FarmRepository farmRepository;
+
     @PostMapping("/documents/silo/{uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}")
     @ApiResponse(responseCode = "200", description = "Documents have been successfully retrieved.")
     @Operation(summary = "Search documents inside a Silo", description = "Search documents from the Silo.")
@@ -48,8 +51,30 @@ public class SearchRagApiController {
         SiloEntity silo = siloRepository.getByUuid(uuid)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found"));
         List<EmbeddingMatchResponse> searchResults = new ArrayList<>();
-        EmbeddingSearchResult<TextSegment> embeddingSearchResult = embeddingStoreService.query(silo, query, maxResults);
-        for (EmbeddingMatch<TextSegment> embeddingMatch : embeddingSearchResult.matches()) {
+        List<EmbeddingMatch<TextSegment>> embeddingSearchResult = embeddingStoreService.query(silo, query, maxResults);
+        for (EmbeddingMatch<TextSegment> embeddingMatch : embeddingSearchResult) {
+            searchResults.add(EmbeddingMatchResponse.builder()
+                    .score(embeddingMatch.score())
+                    .metadata(embeddingMatch.embedded().metadata().toMap())
+                    .text(embeddingMatch.embedded().text())
+                    .build());
+        }
+        return searchResults;
+    }
+
+    @PostMapping("/documents/farm/{uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}")
+    @ApiResponse(responseCode = "200", description = "Documents have been successfully retrieved.")
+    @Operation(summary = "Search documents inside a Farm", description = "Search documents from the Farm.")
+    public List<EmbeddingMatchResponse> searchDocumentsInFarm(
+            @PathVariable("uuid") @Parameter(description = "Identifier of the Farm") UUID uuid,
+            @RequestParam(name = "maxResults", required = false, defaultValue = "10") @Parameter(description = "Max results to return") Integer maxResults,
+            @RequestBody String query)
+            throws Exception {
+        FarmEntity farm = farmRepository.getByUuid(uuid)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found"));
+        List<EmbeddingMatchResponse> searchResults = new ArrayList<>();
+        List<EmbeddingMatch<TextSegment>> embeddingSearchResult = embeddingStoreService.query(farm, query, maxResults);
+        for (EmbeddingMatch<TextSegment> embeddingMatch : embeddingSearchResult) {
             searchResults.add(EmbeddingMatchResponse.builder()
                     .score(embeddingMatch.score())
                     .metadata(embeddingMatch.embedded().metadata().toMap())
