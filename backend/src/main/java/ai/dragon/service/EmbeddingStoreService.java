@@ -100,22 +100,22 @@ public class EmbeddingStoreService {
         embeddingStore.removeAll(documentFilter);
     }
 
-    public List<EmbeddingMatch<TextSegment>> query(SiloEntity silo, String query, Integer maxResults)
+    public List<EmbeddingMatch<TextSegment>> query(SiloEntity silo, String query, int maxResults, double minScore)
             throws Exception {
-        return query(List.of(silo), query, maxResults);
+        return query(List.of(silo), query, maxResults, minScore);
     }
 
-    public List<EmbeddingMatch<TextSegment>> query(FarmEntity farm, String query, Integer maxResults)
+    public List<EmbeddingMatch<TextSegment>> query(FarmEntity farm, String query, int maxResults, double minScore)
             throws Exception {
         List<SiloEntity> silos = new ArrayList<>();
         for (UUID siloUuid : farm.getSilos()) {
             SiloEntity silo = siloRepository.getByUuid(siloUuid).orElseThrow();
             silos.add(silo);
         }
-        return query(silos, query, maxResults);
+        return query(silos, query, maxResults, minScore);
     }
 
-    public List<EmbeddingMatch<TextSegment>> query(List<SiloEntity> silos, String query, Integer maxResults)
+    public List<EmbeddingMatch<TextSegment>> query(List<SiloEntity> silos, String query, int maxResults, double minScore)
             throws Exception {
         List<EmbeddingMatch<TextSegment>> matches = new ArrayList<>();
         for (SiloEntity silo : silos) {
@@ -125,6 +125,7 @@ public class EmbeddingStoreService {
             EmbeddingSearchRequest embeddingSearchRequest = EmbeddingSearchRequest.builder()
                     .queryEmbedding(queryEmbedding)
                     .maxResults(maxResults)
+                    .minScore(minScore)
                     .build();
             EmbeddingSearchResult<TextSegment> searchResult = embeddingStore.search(embeddingSearchRequest);
             matches.addAll(searchResult.matches());

@@ -51,7 +51,7 @@ public class SearchRagApiController {
         SiloEntity silo = siloRepository.getByUuid(uuid)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found"));
         List<EmbeddingMatchResponse> searchResults = new ArrayList<>();
-        List<EmbeddingMatch<TextSegment>> embeddingSearchResult = embeddingStoreService.query(silo, query, maxResults);
+        List<EmbeddingMatch<TextSegment>> embeddingSearchResult = embeddingStoreService.query(silo, query, maxResults, 0.8);
         for (EmbeddingMatch<TextSegment> embeddingMatch : embeddingSearchResult) {
             searchResults.add(EmbeddingMatchResponse.builder()
                     .score(embeddingMatch.score())
@@ -73,7 +73,7 @@ public class SearchRagApiController {
         FarmEntity farm = farmRepository.getByUuid(uuid)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found"));
         List<EmbeddingMatchResponse> searchResults = new ArrayList<>();
-        List<EmbeddingMatch<TextSegment>> embeddingSearchResult = embeddingStoreService.query(farm, query, maxResults);
+        List<EmbeddingMatch<TextSegment>> embeddingSearchResult = embeddingStoreService.query(farm, query, maxResults, 0.8);
         for (EmbeddingMatch<TextSegment> embeddingMatch : embeddingSearchResult) {
             searchResults.add(EmbeddingMatchResponse.builder()
                     .score(embeddingMatch.score())
