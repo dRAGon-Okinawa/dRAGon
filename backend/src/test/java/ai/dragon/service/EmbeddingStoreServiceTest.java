@@ -26,37 +26,27 @@ import dev.langchain4j.store.embedding.EmbeddingMatch;
 @SpringBootTest
 @ActiveProfiles("test")
 public class EmbeddingStoreServiceTest {
+    private static final String SILONAME = "Searchy_Silo";
+
     @Autowired
     private EmbeddingStoreService embeddingStoreService;
 
     @Autowired
-    private IngestorService ingestorService;
-
-    @Autowired
     private SiloRepository siloRepository;
 
-    /*@BeforeAll
-    void prepare() {
+    @BeforeAll
+    static void prepare(@Autowired SiloRepository siloRepository, @Autowired IngestorService ingestorService)
+            throws Exception {
         siloRepository.deleteAll();
-    }
 
-    @AfterAll
-    void clean() {
-        siloRepository.deleteAll();
-    }*/
-
-    @Test
-    void searchOnSilo() throws Exception {
         String ragResourcesPath = "src/test/resources/rag_documents/sunspots";
         File ragResources = new File(ragResourcesPath);
         String ragResourcesAbsolutePath = ragResources.getAbsolutePath();
         assertNotNull(ragResourcesAbsolutePath);
 
-        siloRepository.deleteAll();
-
         SiloEntity silo = new SiloEntity();
         silo.setUuid(UUID.randomUUID());
-        silo.setName("Searchy Silo");
+        silo.setName(SILONAME);
         silo.setEmbeddingModel(EmbeddingModelType.BgeSmallEnV15QuantizedEmbeddingModel);
         silo.setEmbeddingSettings(List.of(
                 "chunkSize=1000",
@@ -74,7 +64,17 @@ public class EmbeddingStoreServiceTest {
         }, ingestLogMessage -> {
             System.out.println(ingestLogMessage.getMessage());
         });
+    }
 
+    @AfterAll
+    static void clean(@Autowired SiloRepository siloRepository) {
+        siloRepository.deleteAll();
+    }
+
+    @Test
+    void querySilo() throws Exception {
+        SiloEntity silo = siloRepository.findUniqueByFieldValue("name", SILONAME)
+                .orElseThrow(() -> new IllegalArgumentException("Silo not found"));
         double minScore = 0.8;
         List<EmbeddingMatch<TextSegment>> searchResult = embeddingStoreService.query(silo, "Why sunspots are dark?",
                 10, minScore);
