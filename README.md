@@ -5,7 +5,7 @@ dRAGon is a multi-modal RAG engine which can search over multiple kind of docume
 
 [Your journey to the dRAGon starts &gt; here &lt;](https://dragon.okinawa)
 
-![dRAGon](https://dragon.okinawa/img/dragon_okinawa.jpg)
+![dRAGon](https://raw.githubusercontent.com/dragon-okinawa/dragon/main/static/img/dragon_okinawa.jpg)
 
 ## dRAGon is all of us
 dRAGon is an open-source project that thrives on community participation. We invite you to fork, extend, and contribute to its development.
