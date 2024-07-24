@@ -33,6 +33,7 @@ public class OpenAiCompatibleV1ApiControllerTest {
         FarmEntity farm = new FarmEntity();
         farm.setRaagIdentifier("awesome-raag");
         farmRepository.save(farm);
+        
         OpenAiService service = new OpenAiService("TODO_PUT_KEY_HERE",
                 String.format("http://localhost:%d/api/raag/v1/", serverPort));
         List<Model> models = service.listModels();

@@ -1,4 +1,4 @@
-package ai.dragon.util;
+package ai.dragon.util.spel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,7 +8,7 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.SimpleEvaluationContext;
 
-import ai.dragon.util.spel.EnvVarFunc;
+import ai.dragon.util.spel.func.EnvVarFunc;
 
 public class SettingsExpressionParserUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(SettingsExpressionParserUtil.class);
