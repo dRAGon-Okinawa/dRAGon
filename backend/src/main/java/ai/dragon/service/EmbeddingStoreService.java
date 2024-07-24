@@ -1,7 +1,9 @@
 package ai.dragon.service;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -10,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ai.dragon.component.DirectoryStructureComponent;
+import ai.dragon.dto.embedding.store.EmbeddingStoreSearchRequest;
 import ai.dragon.entity.DocumentEntity;
+import ai.dragon.entity.FarmEntity;
 import ai.dragon.entity.SiloEntity;
 import ai.dragon.listener.EntityChangeListener;
 import ai.dragon.properties.store.PGVectorEmbeddingStoreSettings;
@@ -21,6 +25,7 @@ import ai.dragon.util.embedding.store.inmemory.persist.PersistInMemoryEmbeddingS
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
+import dev.langchain4j.store.embedding.EmbeddingMatch;
 import dev.langchain4j.store.embedding.EmbeddingSearchRequest;
 import dev.langchain4j.store.embedding.EmbeddingSearchResult;
 import dev.langchain4j.store.embedding.EmbeddingStore;
@@ -96,15 +101,39 @@ public class EmbeddingStoreService {
         embeddingStore.removeAll(documentFilter);
     }
 
-    public EmbeddingSearchResult<TextSegment> query(SiloEntity silo, String query, Integer maxResults) throws Exception {
-        EmbeddingStore<TextSegment> embeddingStore = retrieveEmbeddingStore(silo.getUuid());
-        EmbeddingModel embeddingModel = embeddingModelService.modelForSilo(silo);
-        Embedding queryEmbedding = embeddingModel.embed(query).content();
-        EmbeddingSearchRequest embeddingSearchRequest1 = EmbeddingSearchRequest.builder()
-                .queryEmbedding(queryEmbedding)
-                .maxResults(maxResults)
-                .build();
-        return embeddingStore.search(embeddingSearchRequest1);
+    public List<EmbeddingMatch<TextSegment>> search(SiloEntity silo, EmbeddingStoreSearchRequest searchRequest)
+            throws Exception {
+        return search(List.of(silo), searchRequest);
+    }
+
+    public List<EmbeddingMatch<TextSegment>> search(FarmEntity farm, EmbeddingStoreSearchRequest searchRequest)
+            throws Exception {
+        List<SiloEntity> silos = new ArrayList<>();
+        for (UUID siloUuid : farm.getSilos()) {
+            SiloEntity silo = siloRepository.getByUuid(siloUuid).orElseThrow();
+            silos.add(silo);
+        }
+        return search(silos, searchRequest);
+    }
+
+    public List<EmbeddingMatch<TextSegment>> search(List<SiloEntity> silos, EmbeddingStoreSearchRequest searchRequest)
+            throws Exception {
+        List<EmbeddingMatch<TextSegment>> matches = new ArrayList<>();
+        for (SiloEntity silo : silos) {
+            EmbeddingStore<TextSegment> embeddingStore = retrieveEmbeddingStore(silo.getUuid());
+            EmbeddingModel embeddingModel = embeddingModelService.modelForSilo(silo);
+            Embedding queryEmbedding = embeddingModel.embed(searchRequest.getQuery()).content();
+            EmbeddingSearchRequest embeddingSearchRequest = EmbeddingSearchRequest.builder()
+                    .queryEmbedding(queryEmbedding)
+                    .maxResults(searchRequest.getMaxResults())
+                    .minScore(searchRequest.getMinScore())
+                    .filter(searchRequest.getFilter())
+                    .build();
+            EmbeddingSearchResult<TextSegment> searchResult = embeddingStore.search(embeddingSearchRequest);
+            matches.addAll(searchResult.matches());
+        }
+        matches.sort((m1, m2) -> Double.compare(m2.score(), m1.score()));
+        return matches.subList(0, Math.min(searchRequest.getMaxResults(), matches.size()));
     }
 
     private void closeEmbeddingStore(UUID siloUuid) {
