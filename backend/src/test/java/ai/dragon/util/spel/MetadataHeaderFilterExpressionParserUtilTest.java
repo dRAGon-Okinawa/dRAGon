@@ -40,4 +40,10 @@ public class MetadataHeaderFilterExpressionParserUtilTest {
         assertEquals("SunSpots.pdf", it.next());
         assertEquals("viewing_sun_safely.pdf", it.next());
     }
+
+    @Test
+    void invalidExpression() {
+        Filter filter = MetadataHeaderFilterExpressionParserUtil.parse("{{ #metadataKey('document_name').isIn() }}");
+        assertEquals(null, filter);
+    }
 }

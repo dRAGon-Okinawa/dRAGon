@@ -71,6 +71,7 @@ public class RaagService {
                 .find()
                 .toList()
                 .stream()
+                .filter(farm -> farm.getRaagIdentifier() != null && !farm.getRaagIdentifier().isEmpty())
                 .map(farm -> {
                     return OpenAiModel
                             .builder()
