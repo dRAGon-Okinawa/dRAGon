@@ -2,7 +2,7 @@ package ai.dragon.properties.store;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import ai.dragon.util.SettingsExpressionParserUtil;
+import ai.dragon.util.spel.SettingsExpressionParserUtil;
 import lombok.Data;
 
 @Data

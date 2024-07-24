@@ -1,4 +1,4 @@
-package ai.dragon.util;
+package ai.dragon.util.spel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -31,5 +31,15 @@ public class SettingsExpressionParserUtilTest {
     void badFormatExpression() {
         assertNull(SettingsExpressionParserUtil.parse("{{ Awesome! }}", String.class));
         assertEquals("Alternative", SettingsExpressionParserUtil.parse("{{ Awesome! }}", "Alternative", String.class));
+    }
+
+    @Test
+    void nullExpression() {
+        assertNull(SettingsExpressionParserUtil.parse(null, String.class));
+    }
+
+    @Test
+    void emptyExpression() {
+        assertNull(SettingsExpressionParserUtil.parse("", String.class));
     }
 }
