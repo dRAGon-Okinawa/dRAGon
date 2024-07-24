@@ -46,4 +46,16 @@ public class MetadataHeaderFilterExpressionParserUtilTest {
         Filter filter = MetadataHeaderFilterExpressionParserUtil.parse("{{ #metadataKey('document_name').isIn() }}");
         assertEquals(null, filter);
     }
+
+    @Test
+    void nullExpression() {
+        Filter filter = MetadataHeaderFilterExpressionParserUtil.parse(null);
+        assertEquals(null, filter);
+    }
+
+    @Test
+    void emptyExpression() {
+        Filter filter = MetadataHeaderFilterExpressionParserUtil.parse("");
+        assertEquals(null, filter);
+    }
 }

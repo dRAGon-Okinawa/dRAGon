@@ -32,4 +32,14 @@ public class SettingsExpressionParserUtilTest {
         assertNull(SettingsExpressionParserUtil.parse("{{ Awesome! }}", String.class));
         assertEquals("Alternative", SettingsExpressionParserUtil.parse("{{ Awesome! }}", "Alternative", String.class));
     }
+
+    @Test
+    void nullExpression() {
+        assertNull(SettingsExpressionParserUtil.parse(null, String.class));
+    }
+
+    @Test
+    void emptyExpression() {
+        assertNull(SettingsExpressionParserUtil.parse("", String.class));
+    }
 }
