@@ -21,9 +21,10 @@ import ai.dragon.enumeration.EmbeddingModelType;
 import ai.dragon.enumeration.IngestorLoaderType;
 import ai.dragon.enumeration.VectorStoreType;
 import ai.dragon.repository.SiloRepository;
+import ai.dragon.util.spel.MetadataHeaderFilterExpressionParserUtil;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.store.embedding.EmbeddingMatch;
-import dev.langchain4j.store.embedding.filter.MetadataFilterBuilder;
+import dev.langchain4j.store.embedding.filter.Filter;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -101,14 +102,15 @@ public class EmbeddingStoreServiceTest {
                 .orElseThrow(() -> new IllegalArgumentException("Silo not found"));
         double minScore = EmbeddingStoreSearchRequest.DEFAULT_MIN_SCORE;
         int maxResults = EmbeddingStoreSearchRequest.DEFAULT_MAX_RESULTS;
+        Filter metadataFilter = MetadataHeaderFilterExpressionParserUtil
+                .parse("{{ #metadataKey('document_name').isEqualTo('SunSpots.pdf') }}");
 
         List<EmbeddingMatch<TextSegment>> searchResult = embeddingStoreService.search(silo,
                 EmbeddingStoreSearchRequest.builder()
                         .query("Why sunspots are dark?")
                         .maxResults(maxResults)
                         .minScore(minScore)
-                        .filter(MetadataFilterBuilder.metadataKey("document_name")
-                                .isEqualTo("SunSpots.pdf"))
+                        .filter(metadataFilter)
                         .build());
         assertNotNull(searchResult);
         assertNotEquals(0, searchResult.size());
