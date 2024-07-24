@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import ai.dragon.dto.embedding.store.EmbeddingStoreSearchRequest;
 import ai.dragon.dto.openai.completion.OpenAiChatCompletionRequest;
 import ai.dragon.dto.openai.completion.OpenAiChatCompletionResponse;
 import ai.dragon.dto.openai.completion.OpenAiCompletionMessage;
@@ -113,10 +114,10 @@ public class RaagService {
                 .embeddingStore(embeddingStore)
                 .embeddingModel(embeddingModel)
                 .dynamicMaxResults(query -> {
-                    return 10; // TODO SiloEntity or FarmEntity settings
+                    return EmbeddingStoreSearchRequest.DEFAULT_MAX_RESULTS; // TODO SiloEntity or FarmEntity settings
                 })
                 .dynamicMinScore(query -> {
-                    return 0.8; // TODO SiloEntity or FarmEntity settings
+                    return EmbeddingStoreSearchRequest.DEFAULT_MIN_SCORE; // TODO SiloEntity or FarmEntity settings
                 })
                 .dynamicFilter(query -> {
                     return null; // TODO SiloEntity or FarmEntity settings

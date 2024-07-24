@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import ai.dragon.dto.embedding.store.EmbeddingStoreSearchRequest;
 import ai.dragon.entity.FarmEntity;
 import ai.dragon.entity.SiloEntity;
 import ai.dragon.repository.FarmRepository;
@@ -45,13 +46,21 @@ public class SearchRagApiController {
     @Operation(summary = "Search documents inside a Silo", description = "Search documents from the Silo.")
     public List<EmbeddingMatchResponse> searchDocumentsInSilo(
             @PathVariable("uuid") @Parameter(description = "Identifier of the Silo") UUID uuid,
-            @RequestParam(name = "maxResults", required = false, defaultValue = "10") @Parameter(description = "Max results to return") Integer maxResults,
+            @RequestParam(name = "maxResults", required = false, defaultValue = ""
+                    + EmbeddingStoreSearchRequest.DEFAULT_MAX_RESULTS) @Parameter(description = "Max results to return") Integer maxResults,
+            @RequestParam(name = "minScore", required = false, defaultValue = ""
+                    + EmbeddingStoreSearchRequest.DEFAULT_MIN_SCORE) @Parameter(description = "Minimum score to return") Double minScore,
             @RequestBody String query)
             throws Exception {
         SiloEntity silo = siloRepository.getByUuid(uuid)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found"));
         List<EmbeddingMatchResponse> searchResults = new ArrayList<>();
-        List<EmbeddingMatch<TextSegment>> embeddingSearchResult = embeddingStoreService.query(silo, query, maxResults, 0.8);
+        List<EmbeddingMatch<TextSegment>> embeddingSearchResult = embeddingStoreService.search(silo,
+                EmbeddingStoreSearchRequest.builder()
+                        .query(query)
+                        .maxResults(maxResults)
+                        .minScore(minScore)
+                        .build());
         for (EmbeddingMatch<TextSegment> embeddingMatch : embeddingSearchResult) {
             searchResults.add(EmbeddingMatchResponse.builder()
                     .score(embeddingMatch.score())
@@ -67,13 +76,21 @@ public class SearchRagApiController {
     @Operation(summary = "Search documents inside a Farm", description = "Search documents from the Farm.")
     public List<EmbeddingMatchResponse> searchDocumentsInFarm(
             @PathVariable("uuid") @Parameter(description = "Identifier of the Farm") UUID uuid,
-            @RequestParam(name = "maxResults", required = false, defaultValue = "10") @Parameter(description = "Max results to return") Integer maxResults,
+            @RequestParam(name = "maxResults", required = false, defaultValue = ""
+                    + EmbeddingStoreSearchRequest.DEFAULT_MAX_RESULTS) @Parameter(description = "Max results to return") Integer maxResults,
+            @RequestParam(name = "minScore", required = false, defaultValue = ""
+                    + EmbeddingStoreSearchRequest.DEFAULT_MIN_SCORE) @Parameter(description = "Minimum score to return") Double minScore,
             @RequestBody String query)
             throws Exception {
         FarmEntity farm = farmRepository.getByUuid(uuid)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found"));
         List<EmbeddingMatchResponse> searchResults = new ArrayList<>();
-        List<EmbeddingMatch<TextSegment>> embeddingSearchResult = embeddingStoreService.query(farm, query, maxResults, 0.8);
+        List<EmbeddingMatch<TextSegment>> embeddingSearchResult = embeddingStoreService.search(farm,
+                EmbeddingStoreSearchRequest.builder()
+                        .query(query)
+                        .maxResults(maxResults)
+                        .minScore(minScore)
+                        .build());
         for (EmbeddingMatch<TextSegment> embeddingMatch : embeddingSearchResult) {
             searchResults.add(EmbeddingMatchResponse.builder()
                     .score(embeddingMatch.score())
