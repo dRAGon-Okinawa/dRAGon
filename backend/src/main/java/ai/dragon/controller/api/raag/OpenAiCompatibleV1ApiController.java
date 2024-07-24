@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @RestController
@@ -45,21 +46,23 @@ public class OpenAiCompatibleV1ApiController {
     @PostMapping("/completions")
     @Operation(summary = "Creates a completion", description = "Creates a completion for the provided prompt and parameters.")
     @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OpenAiCompletionResponse.class)))
-    public Object completions(@Valid @RequestBody OpenAiCompletionRequest request)
+    public Object completions(@Valid @RequestBody OpenAiCompletionRequest completionRequest,
+            HttpServletRequest servletRequest)
             throws Exception {
         FarmEntity farm = farmRepository
-                .findUniqueByFieldValue("raagIdentifier", request.getModel())
+                .findUniqueByFieldValue("raagIdentifier", completionRequest.getModel())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Farm not found"));
-        return raagService.makeCompletionResponse(farm, request);
+        return raagService.makeCompletionResponse(farm, completionRequest, servletRequest);
     }
 
     @PostMapping("/chat/completions")
     @Operation(summary = "Creates a chat completion", description = "Creates a chat completion for the provided prompt and parameters.")
     @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OpenAiChatCompletionResponse.class)))
-    public Object chatCompletions(@Valid @RequestBody OpenAiChatCompletionRequest request) throws Exception {
+    public Object chatCompletions(@Valid @RequestBody OpenAiChatCompletionRequest chatCompletionRequest,
+            HttpServletRequest servletRequest) throws Exception {
         FarmEntity farm = farmRepository
-                .findUniqueByFieldValue("raagIdentifier", request.getModel())
+                .findUniqueByFieldValue("raagIdentifier", chatCompletionRequest.getModel())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Farm not found"));
-        return raagService.makeChatCompletionResponse(farm, request);
+        return raagService.makeChatCompletionResponse(farm, chatCompletionRequest, servletRequest);
     }
 }
