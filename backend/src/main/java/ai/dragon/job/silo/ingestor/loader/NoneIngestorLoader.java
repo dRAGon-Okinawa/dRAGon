@@ -22,5 +22,6 @@ public class NoneIngestorLoader extends ImplAbstractSiloIngestorLoader {
     }
 
     public void checkIngestorLoaderSettings() throws Exception {
+        throw new UnsupportedOperationException("checkIngestorLoaderSettings method is not implemented.");
     }
 }
