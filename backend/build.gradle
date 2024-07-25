@@ -30,13 +30,13 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
 
-	implementation 'dev.langchain4j:langchain4j-open-ai:0.32.0'
-	implementation 'dev.langchain4j:langchain4j:0.32.0'
-    implementation 'dev.langchain4j:langchain4j-core:0.32.0'
-    implementation 'dev.langchain4j:langchain4j-embeddings:0.32.0'
-    implementation 'dev.langchain4j:langchain4j-pgvector:0.32.0'
-    implementation 'dev.langchain4j:langchain4j-open-ai:0.32.0'
-    implementation 'dev.langchain4j:langchain4j-easy-rag:0.32.0'
+	implementation 'dev.langchain4j:langchain4j-open-ai:0.33.0'
+	implementation 'dev.langchain4j:langchain4j:0.33.0'
+    implementation 'dev.langchain4j:langchain4j-core:0.33.0'
+    implementation 'dev.langchain4j:langchain4j-embeddings:0.33.0'
+    implementation 'dev.langchain4j:langchain4j-pgvector:0.33.0'
+    implementation 'dev.langchain4j:langchain4j-open-ai:0.33.0'
+    implementation 'dev.langchain4j:langchain4j-easy-rag:0.33.0'
 
 	implementation platform('org.dizitart:nitrite-bom:4.2.1')
 	implementation 'org.dizitart:nitrite'

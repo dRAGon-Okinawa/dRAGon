@@ -3,7 +3,7 @@ package ai.dragon.enumeration;
 import java.util.List;
 
 import ai.dragon.job.silo.ingestor.dto.embedding.EmbeddingModelDefinition;
-import dev.langchain4j.model.embedding.bge.small.en.v15.BgeSmallEnV15QuantizedEmbeddingModel;
+import dev.langchain4j.model.embedding.onnx.bgesmallenv15q.BgeSmallEnV15QuantizedEmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiEmbeddingModelName;
 
@@ -40,7 +40,7 @@ public enum EmbeddingModelType {
                         .builder()
                         .languages(List.of("en"))
                         .embeddingModelClassName(
-                                "dev.langchain4j.model.embedding.bge.small.en.v15.BgeSmallEnV15QuantizedEmbeddingModel")
+                                "dev.langchain4j.model.embedding.onnx.bgesmallenv15q.BgeSmallEnV15QuantizedEmbeddingModel")
                         .embeddingModelName("BgeSmallEnV15QuantizedEmbeddingModel")
                         .embeddingModelWithSettings(parameters -> {
                             // TODO : Ability to specify a different Thread Pool Size :
