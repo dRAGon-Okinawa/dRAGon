@@ -36,8 +36,10 @@ public abstract class CommandLineRunnerWithArgumentsParser implements CommandLin
                 return;
             case Error:
                 System.exit(1);
+                return;
             case Executed:
                 System.exit(0);
+                return;
         }
     }
 
