@@ -22,6 +22,7 @@ public class EntityChangeListener<T extends AbstractEntity> implements Collectio
     }
 
     public void onChangeEvent(CollectionEventInfo<?> collectionEventInfo, T entity) {
+        throw new UnsupportedOperationException("onChangeEvent method is not implemented.");
     }
 
     @SuppressWarnings("unchecked")
