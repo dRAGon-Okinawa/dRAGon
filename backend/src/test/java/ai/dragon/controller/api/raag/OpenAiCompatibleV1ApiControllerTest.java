@@ -168,8 +168,6 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
         assertNotNull(response.choices());
         assertNotEquals(0, response.choices().size());
         assertEquals("hello", response.choices().get(0).text());
-
-        // TODO Test Stream
     }
 
     @Test
