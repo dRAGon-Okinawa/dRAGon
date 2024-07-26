@@ -33,6 +33,8 @@ import ai.dragon.service.IngestorService;
 import ai.dragon.test.AbstractTest;
 import dev.ai4j.openai4j.OpenAiClient;
 import dev.ai4j.openai4j.OpenAiHttpException;
+import dev.ai4j.openai4j.chat.ChatCompletionRequest;
+import dev.ai4j.openai4j.chat.ChatCompletionResponse;
 import dev.ai4j.openai4j.completion.CompletionRequest;
 import dev.ai4j.openai4j.completion.CompletionResponse;
 import dev.langchain4j.model.mistralai.internal.api.MistralAiModelResponse;
@@ -52,7 +54,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
 
         // OpenAI settings for RaaG
         String apiKeySetting = String.format("apiKey=%s", System.getenv("OPENAI_API_KEY"));
-        String modelNameSetting = "modelName=gpt-4o";
+        String modelNameSetting = "modelName=gpt-4o-mini";
 
         // Farm with no silo
         FarmEntity farmWithoutSilo = new FarmEntity();
@@ -80,7 +82,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
         sunspotsSilo.setIngestorSettings(List.of(
                 String.format("paths[]=%s", ragResourcesAbsolutePath),
                 "recursive=false",
-                "pathMatcher=regex:.**\\.pdf"));
+                "pathMatcher=glob:**.{pdf,doc,docx,ppt,pptx}"));
         siloRepository.save(sunspotsSilo);
 
         // Launching ingestion of documents inside the Silo
@@ -97,6 +99,15 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
         farmWithSunspotsSilo.setLanguageModelSettings(List.of(apiKeySetting, modelNameSetting));
         farmWithSunspotsSilo.setSilos(List.of(sunspotsSilo.getUuid()));
         farmRepository.save(farmWithSunspotsSilo);
+
+        // Farm with the Sunspots Silo but with Query Rewriting
+        FarmEntity farmWithSunspotsSiloAndQueryRewriting = new FarmEntity();
+        farmWithSunspotsSiloAndQueryRewriting.setRaagIdentifier("sunspots-rewriting-raag");
+        farmWithSunspotsSiloAndQueryRewriting.setLanguageModel(LanguageModelType.OpenAiModel);
+        farmWithSunspotsSiloAndQueryRewriting.setLanguageModelSettings(List.of(apiKeySetting, modelNameSetting));
+        farmWithSunspotsSiloAndQueryRewriting.setSilos(List.of(sunspotsSilo.getUuid()));
+        farmWithSunspotsSiloAndQueryRewriting.setRetrievalAugmentorSettings(List.of("rewriteQuery=true"));
+        farmRepository.save(farmWithSunspotsSiloAndQueryRewriting);
     }
 
     @AfterAll
@@ -149,6 +160,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
         CompletionRequest request = CompletionRequest.builder()
                 .model("no-silo-raag")
                 .prompt("Just say 'HELLO' in lowercased letters.")
+                .temperature(0.0)
                 .build();
         CompletionResponse response = client.completion(request).execute();
         assertNotNull(response);
@@ -161,22 +173,72 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
 
     @Test
     @EnabledIf("canRunOpenAiRelatedTests")
-    void testFarmWithSunspotsSiloOpenAI() {
+    void testFarmCompletionOpenAI() {
         OpenAiClient client = OpenAiClient.builder()
                 .openAiApiKey("TODO_PUT_KEY_HERE")
                 .baseUrl(String.format("http://localhost:%d/api/raag/v1/", serverPort))
                 .build();
         CompletionRequest request = CompletionRequest.builder()
                 .model("sunspots-raag")
-                .prompt("Who is the author of document 'The Size of the Carrington Event Sunspot Group'? Just reply the name.")
+                .prompt("Who is the author of document 'The Size of the Carrington Event Sunspot Group'? Just reply with the firstname and lastname.")
+                .stream(false)
+                .temperature(0.0)
                 .build();
         CompletionResponse response = client.completion(request).execute();
         assertNotNull(response);
         assertNotNull(response.choices());
         assertNotEquals(0, response.choices().size());
         assertEquals("Peter Meadows", response.choices().get(0).text());
+    }
 
-        // TODO Test Stream
-        // TODO Test Rewrite Chat History
+    @Test
+    @EnabledIf("canRunOpenAiRelatedTests")
+    void testFarmCompletionStreamOpenAI() {
+        OpenAiClient client = OpenAiClient.builder()
+                .openAiApiKey("TODO_PUT_KEY_HERE")
+                .baseUrl(String.format("http://localhost:%d/api/raag/v1/", serverPort))
+                .build();
+        CompletionRequest request = CompletionRequest.builder()
+                .model("sunspots-raag")
+                .prompt("Who is the author of document 'Sunspots, unemployment, and recessions, or Can the solar activity cycle shape the business cycle?'? Just reply with the firstname and lastname.")
+                .stream(true)
+                .temperature(0.0)
+                .build();
+        CompletionResponse response = client.completion(request).execute();
+        assertNotNull(response);
+        assertNotNull(response.choices());
+        assertNotEquals(0, response.choices().size());
+        assertEquals("Mikhail Gorbanev", response.choices().get(0).text());
+    }
+
+    @Test
+    @EnabledIf("canRunOpenAiRelatedTests")
+    void testFarmChatRewriteQueryOpenAI() {
+        OpenAiClient client = OpenAiClient.builder()
+                .openAiApiKey("TODO_PUT_KEY_HERE")
+                .baseUrl(String.format("http://localhost:%d/api/raag/v1/", serverPort))
+                .build();
+        ChatCompletionRequest.Builder requestBuilder = ChatCompletionRequest.builder()
+                .addSystemMessage(
+                        "You are a researcher in solar physics and you provide help to other researchers.")
+                .addUserMessage(
+                        "Hello, I am looking for the author of the document 'The Size of the Carrington Event Sunspot Group'.")
+                .addUserMessage(
+                        "Can you help me? If the information is not provided in the context, just say 'I do not know'. Just reply with the firstname and lastname.")
+                .temperature(0.0);
+
+        for (int i = 0; i <= 1; i++) {
+            for (int j = 0; j <= 1; j++) {
+                ChatCompletionRequest request = requestBuilder
+                        .model(i == 0 ? "sunspots-raag" : "sunspots-rewriting-raag")
+                        .stream(j == 1)
+                        .build();
+                ChatCompletionResponse response = client.chatCompletion(request).execute();
+                assertNotNull(response);
+                assertNotNull(response.choices());
+                assertNotEquals(0, response.choices().size());
+                assertTrue(response.content().contains(i == 0 ? "I do not know" : "Peter Meadows"));
+            }
+        }
     }
 }
