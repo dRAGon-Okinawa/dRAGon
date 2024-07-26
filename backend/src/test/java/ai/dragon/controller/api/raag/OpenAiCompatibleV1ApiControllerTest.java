@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.junit.jupiter.api.AfterAll;
@@ -200,7 +201,10 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
                 .build();
         CompletionRequest request = CompletionRequest.builder()
                 .model("sunspots-raag")
-                .prompt("Who is the author of document 'Sunspots, unemployment, and recessions, or Can the solar activity cycle shape the business cycle?'? Just reply with the firstname and lastname.")
+                .prompt("""
+                        Who is the author of document 'Sunspots, unemployment, and recessions, or Can the solar activity cycle shape the business cycle?'?
+                        Just reply with the firstname and lastname.
+                        """)
                 .stream(true)
                 .temperature(0.0)
                 .build();
@@ -224,7 +228,12 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
                 .addUserMessage(
                         "Hello, I am looking for the author of the document 'The Size of the Carrington Event Sunspot Group'.")
                 .addUserMessage(
-                        "Can you help me? If the information is not provided in the context, just say 'I do not know'. Just reply with the firstname and lastname.")
+                        """
+                                Can you help me?
+                                * Just use the context of this message and nothing else to reply.
+                                * If the information is not provided, just say 'I do not know!'
+                                * Just reply with the firstname and lastname.
+                                    """)
                 .temperature(0.0);
 
         for (int i = 0; i <= 1; i++) {
@@ -237,8 +246,45 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
                 assertNotNull(response);
                 assertNotNull(response.choices());
                 assertNotEquals(0, response.choices().size());
-                assertTrue(response.content().contains(i == 0 ? "I do not know" : "Peter Meadows"));
+                assertEquals(i == 0 ? "I do not know!" : "Peter Meadows", response.content());
             }
         }
+    }
+
+    @Test
+    @EnabledIf("canRunOpenAiRelatedTests")
+    @SuppressWarnings("unchecked")
+    void testFarmCompletionWithMetadataFilterOpenAI() {
+        Map.of(
+                "non_existing_document.pdf", false,
+                "BAAJournalCarringtonEventPaper_compressed.pdf", true)
+                .forEach((documentName, expected) -> {
+                    Map<String, String> customHeaders = Map.of(
+                            "X-RAG-FILTER-METADATA",
+                            String.format("{{#metadataKey('document_name').isIn('%s')}}", documentName));
+                    OpenAiClient client = OpenAiClient.builder()
+                            .openAiApiKey("TODO_PUT_KEY_HERE")
+                            .baseUrl(String.format("http://localhost:%d/api/raag/v1/", serverPort))
+                            .customHeaders(customHeaders)
+                            .build();
+                    CompletionRequest request = CompletionRequest.builder()
+                            .model("sunspots-raag")
+                            .prompt("""
+                                    Who is the author of document 'The Size of the Carrington Event Sunspot Group'?
+                                    Just reply with the firstname and lastname.
+                                    """)
+                            .stream(false)
+                            .temperature(0.0)
+                            .build();
+                    CompletionResponse response = client.completion(request).execute();
+                    assertNotNull(response);
+                    assertNotNull(response.choices());
+                    assertNotEquals(0, response.choices().size());
+                    if (expected) {
+                        assertEquals("Peter Meadows", response.choices().get(0).text());
+                    } else {
+                        assertNotEquals("Peter Meadows", response.choices().get(0).text());
+                    }
+                });
     }
 }
