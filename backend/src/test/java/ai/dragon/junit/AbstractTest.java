@@ -1,4 +1,4 @@
-package ai.dragon.test;
+package ai.dragon.junit;
 
 public abstract class AbstractTest {
     protected boolean canRunOpenAiRelatedTests() {
