@@ -58,7 +58,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
 
         // OpenAI settings for RaaG
         String apiKeySetting = String.format("apiKey=%s", System.getenv("OPENAI_API_KEY"));
-        String modelNameSetting = "modelName=gpt-4o-mini";
+        String modelNameSetting = "modelName=gpt-4o";
 
         // Farm with no silo
         FarmEntity farmWithoutSilo = new FarmEntity();
@@ -124,16 +124,31 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
         siloRepository.deleteAll();
     }
 
-    @Test
-    @RetryOnExceptions(value = 2, onExceptions = { InterruptedIOException.class, SocketTimeoutException.class })
-    void listModels() throws Exception {
-        MistralAiClient client = MistralAiClient.builder()
+    @SuppressWarnings("rawtypes")
+    private OpenAiClient.Builder createOpenAiClientBuilder() {
+        return OpenAiClient.builder()
+                .openAiApiKey("TODO_PUT_KEY_HERE")
+                .baseUrl(String.format("http://localhost:%d/api/raag/v1/", serverPort))
+                .callTimeout(Duration.ofSeconds(10))
+                .readTimeout(Duration.ofSeconds(10))
+                .writeTimeout(Duration.ofSeconds(10))
+                .connectTimeout(Duration.ofSeconds(10));
+    }
+
+    @SuppressWarnings("rawtypes")
+    private MistralAiClient.Builder createMistralAiClientBuilder() {
+        return MistralAiClient.builder()
                 .apiKey("TODO_PUT_KEY_HERE")
                 .baseUrl(String.format("http://localhost:%d/api/raag/v1/", serverPort))
                 .timeout(Duration.ofSeconds(10))
                 .logRequests(false)
-                .logResponses(false)
-                .build();
+                .logResponses(false);
+    }
+
+    @Test
+    @RetryOnExceptions(value = 2, onExceptions = { InterruptedIOException.class, SocketTimeoutException.class })
+    void listModels() throws Exception {
+        MistralAiClient client = createMistralAiClientBuilder().build();
         MistralAiModelResponse modelsResponse = client.listModels();
         assertNotNull(modelsResponse);
         assertNotEquals(0, modelsResponse.getData().size());
@@ -143,10 +158,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
     @EnabledIf("canRunOpenAiRelatedTests")
     @RetryOnExceptions(value = 2, onExceptions = { InterruptedIOException.class, SocketTimeoutException.class })
     void testModelDoesntExistOpenAI() {
-        OpenAiClient client = OpenAiClient.builder()
-                .openAiApiKey("TODO_PUT_KEY_HERE")
-                .baseUrl(String.format("http://localhost:%d/api/raag/v1/", serverPort))
-                .build();
+        OpenAiClient client = createOpenAiClientBuilder().build();
         CompletionRequest request = CompletionRequest.builder()
                 .model("should-not-exist")
                 .prompt("Just say : 'dRAGon'")
@@ -160,10 +172,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
     @EnabledIf("canRunOpenAiRelatedTests")
     @RetryOnExceptions(value = 2, onExceptions = { InterruptedIOException.class, SocketTimeoutException.class })
     void testFarmNoSiloOpenAI() {
-        OpenAiClient client = OpenAiClient.builder()
-                .openAiApiKey("TODO_PUT_KEY_HERE")
-                .baseUrl(String.format("http://localhost:%d/api/raag/v1/", serverPort))
-                .build();
+        OpenAiClient client = createOpenAiClientBuilder().build();
         CompletionRequest request = CompletionRequest.builder()
                 .model("no-silo-raag")
                 .prompt("Just say 'HELLO' in lowercased letters.")
@@ -180,10 +189,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
     @EnabledIf("canRunOpenAiRelatedTests")
     @RetryOnExceptions(value = 2, onExceptions = { InterruptedIOException.class, SocketTimeoutException.class })
     void testFarmCompletionOpenAI() {
-        OpenAiClient client = OpenAiClient.builder()
-                .openAiApiKey("TODO_PUT_KEY_HERE")
-                .baseUrl(String.format("http://localhost:%d/api/raag/v1/", serverPort))
-                .build();
+        OpenAiClient client = createOpenAiClientBuilder().build();
         CompletionRequest request = CompletionRequest.builder()
                 .model("sunspots-raag")
                 .prompt("Who is the author of document 'The Size of the Carrington Event Sunspot Group'? Just reply with the firstname and lastname.")
@@ -201,10 +207,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
     @EnabledIf("canRunOpenAiRelatedTests")
     @RetryOnExceptions(value = 2, onExceptions = { InterruptedIOException.class, SocketTimeoutException.class })
     void testFarmCompletionStreamOpenAI() {
-        OpenAiClient client = OpenAiClient.builder()
-                .openAiApiKey("TODO_PUT_KEY_HERE")
-                .baseUrl(String.format("http://localhost:%d/api/raag/v1/", serverPort))
-                .build();
+        OpenAiClient client = createOpenAiClientBuilder().build();
         CompletionRequest request = CompletionRequest.builder()
                 .model("sunspots-raag")
                 .prompt("""
@@ -225,10 +228,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
     @EnabledIf("canRunOpenAiRelatedTests")
     @RetryOnExceptions(value = 2, onExceptions = { InterruptedIOException.class, SocketTimeoutException.class })
     void testFarmChatRewriteQueryOpenAI() {
-        OpenAiClient client = OpenAiClient.builder()
-                .openAiApiKey("TODO_PUT_KEY_HERE")
-                .baseUrl(String.format("http://localhost:%d/api/raag/v1/", serverPort))
-                .build();
+        OpenAiClient client = createOpenAiClientBuilder().build();
         ChatCompletionRequest.Builder requestBuilder = ChatCompletionRequest.builder()
                 .addSystemMessage(
                         "You are a researcher in solar physics and you provide help to other researchers.")
@@ -270,9 +270,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
                     Map<String, String> customHeaders = Map.of(
                             "X-RAG-FILTER-METADATA",
                             String.format("{{#metadataKey('document_name').isIn('%s')}}", documentName));
-                    OpenAiClient client = OpenAiClient.builder()
-                            .openAiApiKey("TODO_PUT_KEY_HERE")
-                            .baseUrl(String.format("http://localhost:%d/api/raag/v1/", serverPort))
+                    OpenAiClient client = createOpenAiClientBuilder()
                             .customHeaders(customHeaders)
                             .build();
                     CompletionRequest request = CompletionRequest.builder()
