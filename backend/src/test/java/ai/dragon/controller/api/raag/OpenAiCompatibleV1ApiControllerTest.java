@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.io.InterruptedIOException;
+import java.net.SocketTimeoutException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +34,7 @@ import ai.dragon.repository.FarmRepository;
 import ai.dragon.repository.SiloRepository;
 import ai.dragon.service.IngestorService;
 import ai.dragon.test.AbstractTest;
+import ai.dragon.test.junit.extension.retry.RetryOnExceptions;
 import dev.ai4j.openai4j.OpenAiClient;
 import dev.ai4j.openai4j.OpenAiHttpException;
 import dev.ai4j.openai4j.chat.ChatCompletionRequest;
@@ -122,6 +125,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
     }
 
     @Test
+    @RetryOnExceptions(value = 2, onExceptions = { InterruptedIOException.class, SocketTimeoutException.class })
     void listModels() throws Exception {
         MistralAiClient client = MistralAiClient.builder()
                 .apiKey("TODO_PUT_KEY_HERE")
@@ -137,6 +141,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
 
     @Test
     @EnabledIf("canRunOpenAiRelatedTests")
+    @RetryOnExceptions(value = 2, onExceptions = { InterruptedIOException.class, SocketTimeoutException.class })
     void testModelDoesntExistOpenAI() {
         OpenAiClient client = OpenAiClient.builder()
                 .openAiApiKey("TODO_PUT_KEY_HERE")
@@ -153,6 +158,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
 
     @Test
     @EnabledIf("canRunOpenAiRelatedTests")
+    @RetryOnExceptions(value = 2, onExceptions = { InterruptedIOException.class, SocketTimeoutException.class })
     void testFarmNoSiloOpenAI() {
         OpenAiClient client = OpenAiClient.builder()
                 .openAiApiKey("TODO_PUT_KEY_HERE")
@@ -172,6 +178,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
 
     @Test
     @EnabledIf("canRunOpenAiRelatedTests")
+    @RetryOnExceptions(value = 2, onExceptions = { InterruptedIOException.class, SocketTimeoutException.class })
     void testFarmCompletionOpenAI() {
         OpenAiClient client = OpenAiClient.builder()
                 .openAiApiKey("TODO_PUT_KEY_HERE")
@@ -192,6 +199,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
 
     @Test
     @EnabledIf("canRunOpenAiRelatedTests")
+    @RetryOnExceptions(value = 2, onExceptions = { InterruptedIOException.class, SocketTimeoutException.class })
     void testFarmCompletionStreamOpenAI() {
         OpenAiClient client = OpenAiClient.builder()
                 .openAiApiKey("TODO_PUT_KEY_HERE")
@@ -215,6 +223,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
 
     @Test
     @EnabledIf("canRunOpenAiRelatedTests")
+    @RetryOnExceptions(value = 2, onExceptions = { InterruptedIOException.class, SocketTimeoutException.class })
     void testFarmChatRewriteQueryOpenAI() {
         OpenAiClient client = OpenAiClient.builder()
                 .openAiApiKey("TODO_PUT_KEY_HERE")
@@ -251,6 +260,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
 
     @Test
     @EnabledIf("canRunOpenAiRelatedTests")
+    @RetryOnExceptions(value = 2, onExceptions = { InterruptedIOException.class, SocketTimeoutException.class })
     @SuppressWarnings("unchecked")
     void testFarmCompletionWithMetadataFilterOpenAI() {
         Map.of(
