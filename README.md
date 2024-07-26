@@ -1,4 +1,4 @@
-![Build dRAGon Project](https://github.com/dragon-okinawa/dragon/actions/workflows/build.yml/badge.svg?branch=main)
+[![Build dRAGon Project](https://github.com/dragon-okinawa/dragon/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/dRAGon-Okinawa/dRAGon/actions)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=dRAGon-Okinawa_dRAGon&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=dRAGon-Okinawa_dRAGon)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=dRAGon-Okinawa_dRAGon&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=dRAGon-Okinawa_dRAGon)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=dRAGon-Okinawa_dRAGon&metric=bugs)](https://sonarcloud.io/summary/new_code?id=dRAGon-Okinawa_dRAGon)
