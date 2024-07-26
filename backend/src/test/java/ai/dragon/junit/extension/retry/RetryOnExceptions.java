@@ -1,4 +1,4 @@
-package ai.dragon.test.junit.extension.retry;
+package ai.dragon.junit.extension.retry;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 
