@@ -1,10 +1,13 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 plugins {
 	id 'java'
 	id 'java-library'
 	id 'jacoco'
 	id 'checkstyle' 
 	id 'application'
-	id 'org.springframework.boot' version '3.3.0'
+	id 'org.springframework.boot' version '3.3.2'
 	id 'io.spring.dependency-management' version '1.1.6'
 	id 'org.springdoc.openapi-gradle-plugin' version '1.8.0'
 }
@@ -24,7 +27,7 @@ dependencies {
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:3.2.5'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:3.3.2'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.hibernate.validator:hibernate-validator'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -143,4 +146,26 @@ tasks.named('compileJava') {
 
 tasks.named('processResources') {
 	dependsOn('copyWebApp')
+}
+
+// Based on : https://stackoverflow.com/a/36130467/8102448
+tasks.withType(Test) {
+    testLogging {
+        events TestLogEvent.FAILED,
+               TestLogEvent.PASSED,
+               TestLogEvent.SKIPPED
+        exceptionFormat TestExceptionFormat.FULL
+        showExceptions true
+        showCauses true
+        showStackTraces true
+
+        afterSuite { desc, result ->
+            if (!desc.parent) {
+                def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} passed, ${result.failedTestCount} failed, ${result.skippedTestCount} skipped)"
+                def startItem = '|  ', endItem = '  |'
+                def repeatLength = startItem.length() + output.length() + endItem.length()
+                println('\n' + ('-' * repeatLength) + '\n' + startItem + output + endItem + '\n' + ('-' * repeatLength))
+            }
+        }
+    }
 }
