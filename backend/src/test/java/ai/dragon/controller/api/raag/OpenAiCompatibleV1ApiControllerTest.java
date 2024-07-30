@@ -58,7 +58,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
 
         // OpenAI settings for RaaG
         String apiKeySetting = String.format("apiKey=%s", System.getenv("OPENAI_API_KEY"));
-        String modelNameSetting = "modelName=gpt-4o";
+        String modelNameSetting = "modelName=gpt-3.5-turbo"; // TODO Migrate to gpt-4o-mini when reliable
 
         // Farm with no silo
         FarmEntity farmWithoutSilo = new FarmEntity();
