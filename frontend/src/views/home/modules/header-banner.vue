@@ -28,7 +28,7 @@ const statisticData = computed<StatisticData[]>(() => [
   {
     id: 1,
     label: $t('page.home.todo'),
-    value: '4/16'
+    value: '4'
   },
   {
     id: 2,
