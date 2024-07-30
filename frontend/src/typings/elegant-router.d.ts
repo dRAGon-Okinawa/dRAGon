@@ -28,10 +28,10 @@ declare module "@elegant-router/types" {
     "help": "/help";
     "home": "/home";
     "iframe-page": "/iframe-page/:url";
+    "infrastructure": "/infrastructure";
+    "infrastructure_silo-detail": "/infrastructure/silo-detail/:id";
+    "infrastructure_silo-list": "/infrastructure/silo-list";
     "login": "/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?";
-    "manage": "/manage";
-    "manage_silo-detail": "/manage/silo-detail/:id";
-    "manage_silo-list": "/manage/silo-list";
     "user-center": "/user-center";
   };
 
@@ -75,8 +75,8 @@ declare module "@elegant-router/types" {
     | "help"
     | "home"
     | "iframe-page"
+    | "infrastructure"
     | "login"
-    | "manage"
     | "user-center"
   >;
 
@@ -103,8 +103,8 @@ declare module "@elegant-router/types" {
     | "about"
     | "help"
     | "home"
-    | "manage_silo-detail"
-    | "manage_silo-list"
+    | "infrastructure_silo-detail"
+    | "infrastructure_silo-list"
     | "user-center"
   >;
 

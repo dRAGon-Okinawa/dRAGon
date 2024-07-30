@@ -23,7 +23,7 @@ export const views: Record<LastLevelRouteKey, RouteComponent | (() => Promise<Ro
   about: () => import("@/views/about/index.vue"),
   help: () => import("@/views/help/index.vue"),
   home: () => import("@/views/home/index.vue"),
-  "manage_silo-detail": () => import("@/views/manage/silo-detail/[id].vue"),
-  "manage_silo-list": () => import("@/views/manage/silo-list/index.vue"),
+  "infrastructure_silo-detail": () => import("@/views/infrastructure/silo-detail/[id].vue"),
+  "infrastructure_silo-list": () => import("@/views/infrastructure/silo-list/index.vue"),
   "user-center": () => import("@/views/user-center/index.vue"),
 };

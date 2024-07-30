@@ -88,6 +88,45 @@ export const generatedRoutes: GeneratedRoute[] = [
     }
   },
   {
+    name: 'infrastructure',
+    path: '/infrastructure',
+    component: 'layout.base',
+    meta: {
+      title: 'infrastructure',
+      i18nKey: 'route.infrastructure',
+      localIcon: 'mdi--land-fields',
+      order: 2,
+      roles: ['R_ADMIN']
+    },
+    children: [
+      {
+        name: 'infrastructure_silo-detail',
+        path: '/infrastructure/silo-detail/:id',
+        component: 'view.infrastructure_silo-detail',
+        meta: {
+          title: 'infrastructure_silo-detail',
+          i18nKey: 'route.infrastructure_silo-detail',
+          roles: ['R_ADMIN'],
+          activeMenu: 'infrastructure_silo-list',
+          hideInMenu: true
+        }
+      },
+      {
+        name: 'infrastructure_silo-list',
+        path: '/infrastructure/silo-list',
+        component: 'view.infrastructure_silo-list',
+        meta: {
+          title: 'infrastructure_silo-list',
+          i18nKey: 'route.infrastructure_silo-list',
+          localIcon: 'mdi--silo-outline',
+          order: 1,
+          roles: ['R_ADMIN'],
+          keepAlive: true
+        }
+      }
+    ]
+  },
+  {
     name: 'login',
     path: '/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?',
     component: 'layout.blank$view.login',
@@ -98,45 +137,6 @@ export const generatedRoutes: GeneratedRoute[] = [
       constant: true,
       hideInMenu: true
     }
-  },
-  {
-    name: 'manage',
-    path: '/manage',
-    component: 'layout.base',
-    meta: {
-      title: 'manage',
-      i18nKey: 'route.manage',
-      localIcon: 'mdi--land-fields',
-      order: 9,
-      roles: ['R_ADMIN']
-    },
-    children: [
-      {
-        name: 'manage_silo-detail',
-        path: '/manage/silo-detail/:id',
-        component: 'view.manage_silo-detail',
-        meta: {
-          title: 'manage_silo-detail',
-          i18nKey: 'route.manage_silo-detail',
-          roles: ['R_ADMIN'],
-          activeMenu: 'manage_silo-list',
-          hideInMenu: true
-        }
-      },
-      {
-        name: 'manage_silo-list',
-        path: '/manage/silo-list',
-        component: 'view.manage_silo-list',
-        meta: {
-          title: 'manage_silo-list',
-          i18nKey: 'route.manage_silo-list',
-          localIcon: 'mdi--silo-outline',
-          order: 1,
-          roles: ['R_ADMIN'],
-          keepAlive: true
-        }
-      }
-    ]
   },
   {
     name: 'user-center',

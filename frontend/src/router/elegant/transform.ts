@@ -172,10 +172,10 @@ const routeMap: RouteMap = {
   "help": "/help",
   "home": "/home",
   "iframe-page": "/iframe-page/:url",
+  "infrastructure": "/infrastructure",
+  "infrastructure_silo-detail": "/infrastructure/silo-detail/:id",
+  "infrastructure_silo-list": "/infrastructure/silo-list",
   "login": "/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?",
-  "manage": "/manage",
-  "manage_silo-detail": "/manage/silo-detail/:id",
-  "manage_silo-list": "/manage/silo-list",
   "user-center": "/user-center"
 };
 
