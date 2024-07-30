@@ -36,7 +36,7 @@ const options = computed(() => {
     {
       label: $t('common.userCenter'),
       key: 'user-center',
-      icon: SvgIconVNode({ localIcon: 'ph--user-circle', fontSize: 18 })
+      icon: SvgIconVNode({ localIcon: 'mdi--user-circle-outline', fontSize: 18 })
     },
     {
       type: 'divider',
@@ -80,7 +80,7 @@ function handleDropdown(key: DropdownKey) {
   <NDropdown v-else placement="bottom" trigger="click" :options="options" @select="handleDropdown">
     <div>
       <ButtonIcon>
-        <SvgIcon local-icon="ph--user-circle" class="text-icon-large" />
+        <SvgIcon local-icon="mdi--user-circle-outline" class="text-icon-large" />
         <span class="text-16px font-medium">{{ authStore.userInfo.userName }}</span>
       </ButtonIcon>
     </div>
