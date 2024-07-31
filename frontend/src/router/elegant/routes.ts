@@ -63,18 +63,6 @@ export const generatedRoutes: GeneratedRoute[] = [
     }
   },
   {
-    name: 'home',
-    path: '/home',
-    component: 'layout.base$view.home',
-    meta: {
-      title: 'home',
-      i18nKey: 'route.home',
-      localIcon: 'mdi--monitor-dashboard',
-      order: 1,
-      keepAlive: true
-    }
-  },
-  {
     name: 'iframe-page',
     path: '/iframe-page/:url',
     component: 'layout.base$view.iframe-page',
@@ -136,6 +124,18 @@ export const generatedRoutes: GeneratedRoute[] = [
       i18nKey: 'route.login',
       constant: true,
       hideInMenu: true
+    }
+  },
+  {
+    name: 'operations-center',
+    path: '/operations-center',
+    component: 'layout.base$view.operations-center',
+    meta: {
+      title: 'operations-center',
+      i18nKey: 'route.operations-center',
+      localIcon: 'mdi--monitor-dashboard',
+      order: 1,
+      keepAlive: true
     }
   },
   {

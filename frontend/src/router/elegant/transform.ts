@@ -170,12 +170,12 @@ const routeMap: RouteMap = {
   "500": "/500",
   "about": "/about",
   "help": "/help",
-  "home": "/home",
   "iframe-page": "/iframe-page/:url",
   "infrastructure": "/infrastructure",
   "infrastructure_silo-detail": "/infrastructure/silo-detail/:id",
   "infrastructure_silo-list": "/infrastructure/silo-list",
   "login": "/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?",
+  "operations-center": "/operations-center",
   "user-center": "/user-center"
 };
 
