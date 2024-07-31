@@ -28,6 +28,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.4.0
       - uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: 8.7
@@ -42,15 +45,10 @@ jobs:
         run: gradle createRelease
 
       - name: Set Frontend Version
-        run: npm version from-git --no-git-tag-version --prefix frontend
-      - name: Set Docs Version
-        run: npm version from-git --no-git-tag-version --prefix docs
+        run: pnpm version from-git --no-git-tag-version --prefix frontend
 
       - name: Test dRAGon
-        run: gradle npmInstall npmLint checkstyleMain checkstyleTest test
-
-      - name: Build Documentation
-        run: npm install --prefix docs && npm run build --prefix docs
+        run: gradle pnpmInstall pnpmLint checkstyleMain checkstyleTest test --stacktrace
 
       - name: Build dRAGon
         run: gradle bootJar -Pversion=$(gradle cV -q -Prelease.quiet)
@@ -93,13 +91,3 @@ jobs:
           github.ref == 'refs/heads/main' &&
           github.repository == 'dragon-okinawa/dragon'
         run: gradle pushRelease
-
-      - name: Deploy Documentation
-        uses: JamesIves/github-pages-deploy-action@releases/v3
-        if: |
-          github.ref == 'refs/heads/main' &&
-          github.repository == 'dragon-okinawa/dragon'
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: gh-pages
-          FOLDER: docs/build

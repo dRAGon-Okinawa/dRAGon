@@ -9,6 +9,7 @@ lerna-debug.log*
 
 node_modules
 .DS_Store
+build
 dist
 dist-ssr
 coverage
