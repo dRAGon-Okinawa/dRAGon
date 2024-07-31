@@ -83,6 +83,22 @@ declare namespace Api {
   }
 
   /**
+   * namespace AppDashboard
+   *
+   * backend api module: "appDashboard"
+   */
+  namespace AppDashboard {
+    type Numbers = {
+      /** total Farm count */
+      farms: number;
+      /** total Silo count */
+      silos: number;
+      /** total Document count */
+      documents: number;
+    };
+  }
+
+  /**
    * namespace SystemManage
    *
    * backend api module: "systemManage"

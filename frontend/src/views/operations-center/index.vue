@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useAppStore } from '@/store/modules/app';
+import { fetchApiAppDashboardGetNumbers } from '@/service/api';
 import HeaderBanner from './modules/header-banner.vue';
 import CardData from './modules/card-data.vue';
 import LineChart from './modules/line-chart.vue';
@@ -11,11 +12,21 @@ import CreativityBanner from './modules/creativity-banner.vue';
 const appStore = useAppStore();
 
 const gap = computed(() => (appStore.isMobile ? 0 : 16));
+
+const numbers = ref({} as Api.AppDashboard.Numbers);
+
+const GetNumbers = async () => {
+  const { error, data } = await fetchApiAppDashboardGetNumbers();
+  if (!error) {
+    numbers.value = data;
+  }
+};
+GetNumbers();
 </script>
 
 <template>
   <NSpace vertical :size="16">
-    <HeaderBanner />
+    <HeaderBanner :numbers="numbers" />
     <CardData />
     <NGrid :x-gap="gap" :y-gap="16" responsive="screen" item-responsive>
       <NGi span="24 s:24 m:14">

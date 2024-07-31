@@ -1,4 +1,13 @@
 const local: App.I18n.Schema = {
+  dRAGon: {
+    silo: 'Silo',
+    silos: 'Silos',
+    farm: 'Farm',
+    farms: 'Farms',
+    document: 'Document',
+    documents: 'Documents',
+    dashboard: 'Operations Center'
+  },
   system: {
     title: 'dRAGon',
     updateTitle: 'System Version Update Notification',
@@ -220,72 +229,6 @@ const local: App.I18n.Schema = {
       prdDep: 'Frontend Production Dependencies',
       devDep: 'Frontend Development Dependencies'
     },
-    home: {
-      greeting: '{userName}, your journey starts now!',
-      weatherDesc: 'All components are healthy',
-      projectCount: 'Farms',
-      todo: 'Silos',
-      message: 'Documents',
-      downloadCount: 'Document Count',
-      registerCount: 'Token Count',
-      schedule: 'Work and rest Schedule',
-      study: 'Silo',
-      work: 'Farm',
-      rest: 'Granary',
-      entertainment: 'Harvester',
-      visitCount: 'Query Count',
-      turnover: 'Token Used',
-      dealCount: 'Error Count',
-      projectNews: {
-        title: 'Latest Events',
-        moreNews: 'More Events',
-        desc1: 'Silo "08C98C" has been successfully built',
-        desc2: 'User "dRAGon" has been successfully registered',
-        desc3: 'User "dRAGon" has been successfully logged in',
-        desc4: 'Farm "F9CF9C" has been successfully built',
-        desc5: 'Farm "F9CF9C" has been removed'
-      },
-      creativity: 'Other'
-    },
-    function: {
-      tab: {
-        tabOperate: {
-          title: 'Tab Operation',
-          addTab: 'Add Tab',
-          addTabDesc: 'To about page',
-          closeTab: 'Close Tab',
-          closeCurrentTab: 'Close Current Tab',
-          closeAboutTab: 'Close "About" Tab',
-          addMultiTab: 'Add Multi Tab',
-          addMultiTabDesc1: 'To MultiTab page',
-          addMultiTabDesc2: 'To MultiTab page(with query params)'
-        },
-        tabTitle: {
-          title: 'Tab Title',
-          changeTitle: 'Change Title',
-          change: 'Change',
-          resetTitle: 'Reset Title',
-          reset: 'Reset'
-        }
-      },
-      multiTab: {
-        routeParam: 'Route Param',
-        backTab: 'Back function_tab'
-      },
-      toggleAuth: {
-        toggleAccount: 'Toggle Account',
-        authHook: 'Auth Hook Function `hasAuth`',
-        superAdminVisible: 'Super Admin Visible',
-        adminVisible: 'Admin Visible',
-        adminOrUserVisible: 'Admin and User Visible'
-      },
-      request: {
-        repeatedErrorOccurOnce: 'Repeated Request Error Occurs Once',
-        repeatedError: 'Repeated Request Error',
-        repeatedErrorMsg1: 'Custom Request Error 1',
-        repeatedErrorMsg2: 'Custom Request Error 2'
-      }
-    },
     manage: {
       common: {
         status: {
@@ -336,7 +279,6 @@ const local: App.I18n.Schema = {
         }
       },
       menu: {
-        home: 'Operations Center',
         title: 'Menu List',
         id: 'ID',
         parentId: 'Parent ID',

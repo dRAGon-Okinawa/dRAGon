@@ -245,6 +245,15 @@ declare namespace App {
     };
 
     type Schema = {
+      dRAGon: {
+        silo: string;
+        silos: string;
+        farm: string;
+        farms: string;
+        document: string;
+        documents: string;
+        dashboard: string;
+      };
       system: {
         title: string;
         updateTitle: string;
@@ -416,72 +425,6 @@ declare namespace App {
           prdDep: string;
           devDep: string;
         };
-        home: {
-          greeting: string;
-          weatherDesc: string;
-          projectCount: string;
-          todo: string;
-          message: string;
-          downloadCount: string;
-          registerCount: string;
-          schedule: string;
-          study: string;
-          work: string;
-          rest: string;
-          entertainment: string;
-          visitCount: string;
-          turnover: string;
-          dealCount: string;
-          projectNews: {
-            title: string;
-            moreNews: string;
-            desc1: string;
-            desc2: string;
-            desc3: string;
-            desc4: string;
-            desc5: string;
-          };
-          creativity: string;
-        };
-        function: {
-          tab: {
-            tabOperate: {
-              title: string;
-              addTab: string;
-              addTabDesc: string;
-              closeTab: string;
-              closeCurrentTab: string;
-              closeAboutTab: string;
-              addMultiTab: string;
-              addMultiTabDesc1: string;
-              addMultiTabDesc2: string;
-            };
-            tabTitle: {
-              title: string;
-              changeTitle: string;
-              change: string;
-              resetTitle: string;
-              reset: string;
-            };
-          };
-          multiTab: {
-            routeParam: string;
-            backTab: string;
-          };
-          toggleAuth: {
-            toggleAccount: string;
-            authHook: string;
-            superAdminVisible: string;
-            adminVisible: string;
-            adminOrUserVisible: string;
-          };
-          request: {
-            repeatedErrorOccurOnce: string;
-            repeatedError: string;
-            repeatedErrorMsg1: string;
-            repeatedErrorMsg2: string;
-          };
-        };
         manage: {
           common: {
             status: {
@@ -532,7 +475,6 @@ declare namespace App {
             };
           };
           menu: {
-            home: string;
             title: string;
             id: string;
             parentId: string;
@@ -628,8 +570,8 @@ declare namespace App {
 
     type GetI18nKey<T extends Record<string, unknown>, K extends keyof T = keyof T> = K extends string
       ? T[K] extends Record<string, unknown>
-        ? `${K}.${GetI18nKey<T[K]>}`
-        : K
+      ? `${K}.${GetI18nKey<T[K]>}`
+      : K
       : never;
 
     type I18nKey = GetI18nKey<Schema>;
@@ -659,9 +601,9 @@ declare namespace App {
     }
 
     /** The backend service config */
-    interface ServiceConfig extends ServiceConfigItem {}
+    interface ServiceConfig extends ServiceConfigItem { }
 
-    interface SimpleServiceConfig extends Pick<ServiceConfigItem, 'baseURL'> {}
+    interface SimpleServiceConfig extends Pick<ServiceConfigItem, 'baseURL'> { }
 
     /** The backend service response data */
     type Response<T = unknown> = {

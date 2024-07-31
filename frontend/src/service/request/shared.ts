@@ -48,7 +48,9 @@ export function showErrorMsg(state: RequestInstanceState, message: string) {
         setTimeout(() => {
           state.errMsgStack = [];
         }, 5000);
-      }
+      },
+      duration: 60000,
+      closable: true
     });
   }
 }

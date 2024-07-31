@@ -13,6 +13,10 @@
       "children": [
         {
           "type": "folder",
+          "uuid": "e23b80c8-8487-4342-ba7f-152be018578f"
+        },
+        {
+          "type": "folder",
           "uuid": "059be112-aa2e-4e68-872f-c863fc1fd972"
         }
       ]
@@ -48,6 +52,30 @@
         {
           "type": "route",
           "uuid": "cd0e8e0b-c130-4d4a-87f7-673246e250d2"
+        }
+      ]
+    },
+    {
+      "uuid": "e23b80c8-8487-4342-ba7f-152be018578f",
+      "name": "app",
+      "children": [
+        {
+          "type": "folder",
+          "uuid": "583c3361-0cfc-46a5-8352-f80705f04797"
+        },
+        {
+          "type": "folder",
+          "uuid": "2e32e415-ffda-4d7e-9fb2-3584131428e8"
+        }
+      ]
+    },
+    {
+      "uuid": "2e32e415-ffda-4d7e-9fb2-3584131428e8",
+      "name": "dashboard",
+      "children": [
+        {
+          "type": "route",
+          "uuid": "65043f0b-02cd-48d3-924b-b9da53428caf"
         }
       ]
     }
@@ -87,7 +115,7 @@
       "type": "http",
       "documentation": "Login Endpoint",
       "method": "post",
-      "endpoint": "auth/login",
+      "endpoint": "api/app/auth/login",
       "responses": [
         {
           "uuid": "0f069a2b-d27d-4e3f-b343-fe3ed06e08a4",
@@ -116,11 +144,40 @@
       "type": "http",
       "documentation": "",
       "method": "get",
-      "endpoint": "auth/getUserInfo",
+      "endpoint": "api/app/auth/getUserInfo",
       "responses": [
         {
           "uuid": "a2b7f8de-998e-4e33-9302-f0bd0f1c84d4",
           "body": "{\n    \"data\": {\n        \"userId\": \"0\",\n        \"userName\": \"dRAGon\",\n        \"roles\": [\n            \"R_SUPER\"\n        ],\n        \"buttons\": [\n            \"B_CODE1\",\n            \"B_CODE2\",\n            \"B_CODE3\"\n        ]\n    },\n    \"code\": \"0000\",\n    \"msg\": \"OK\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "65043f0b-02cd-48d3-924b-b9da53428caf",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "api/app/dashboard/numbers",
+      "responses": [
+        {
+          "uuid": "58458bee-0645-43e1-85ea-09518cebb8da",
+          "body": "{\n  \"data\": {\n    \"farms\": 1,\n    \"silos\": 2,\n    \"documents\": 3\n  },\n    \"code\": \"0000\",\n    \"msg\": \"OK\"\n}",
           "latency": 0,
           "statusCode": 200,
           "label": "",
@@ -145,10 +202,6 @@
     {
       "type": "folder",
       "uuid": "c98e1298-8e19-4747-9184-0f9311de3443"
-    },
-    {
-      "type": "folder",
-      "uuid": "583c3361-0cfc-46a5-8352-f80705f04797"
     }
   ],
   "proxyMode": false,
