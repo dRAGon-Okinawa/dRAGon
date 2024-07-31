@@ -1,8 +1,0 @@
-.inputswitch-theme .p-inputswitch-slider:before {
-    font-family: 'primeicons';
-    content: '\e9c8';
-}
-
-.inputswitch-theme.p-highlight .p-inputswitch-slider:before {
-    content: '\e9c7';
-}

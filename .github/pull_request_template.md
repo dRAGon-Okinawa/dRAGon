@@ -24,4 +24,4 @@
 - [ ] I have added unit and integration tests for my change
 - [ ] I have manually run all the unit and integration tests in the module I have added/changed, and they are all green
 <!-- Before adding documentation and example(s) (below), please wait until the PR is reviewed and approved. -->
-- [ ] I have added/updated the [documentation](https://github.com/dRAGon-Okinawa/dRAGon/tree/main/docs)
+- [ ] I have added/updated the [documentation](https://docs.dragon.okinawa)
