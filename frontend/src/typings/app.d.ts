@@ -252,7 +252,8 @@ declare namespace App {
         farms: string;
         document: string;
         documents: string;
-        dashboard: string;
+        infrastructure: string;
+        infrastructureDescription: string;
       };
       system: {
         title: string;
