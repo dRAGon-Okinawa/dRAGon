@@ -7,7 +7,7 @@ const local: App.I18n.Schema = {
     document: 'Document',
     documents: 'Documents',
     infrastructure: 'Infrastructure',
-    infrastructureDescription: 'Overall situation of the dRAGon infrastructure',
+    infrastructureDescription: 'Overall situation of the dRAGon infrastructure'
   },
   system: {
     title: 'dRAGon',

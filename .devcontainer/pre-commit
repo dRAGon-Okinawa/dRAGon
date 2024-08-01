@@ -1,0 +1,2 @@
+#!/bin/sh
+gradle pnpmLint checkstyleMain checkstyleTest --no-daemon --quiet
