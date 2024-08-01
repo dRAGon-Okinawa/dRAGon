@@ -4,8 +4,13 @@ import { createReusableTemplate } from '@vueuse/core';
 import { $t } from '@/locales';
 
 defineOptions({
-  name: 'CardData'
+  name: 'JvmCards'
 });
+
+interface Props {
+  numbers: Api.AppDashboard.Numbers;
+}
+const props = defineProps<Props>();
 
 interface CardData {
   key: string;
@@ -22,7 +27,7 @@ interface CardData {
 const cardData = computed<CardData[]>(() => [
   {
     key: 'visitCount',
-    title: $t('page.home.visitCount'),
+    title: String(props.numbers.documents),
     value: 9725,
     unit: '',
     color: {

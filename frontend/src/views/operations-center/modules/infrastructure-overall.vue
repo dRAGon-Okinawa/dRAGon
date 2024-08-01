@@ -4,7 +4,7 @@ import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
 
 defineOptions({
-  name: 'HeaderBanner'
+  name: 'InfrastructureOverall'
 });
 
 interface Props {
