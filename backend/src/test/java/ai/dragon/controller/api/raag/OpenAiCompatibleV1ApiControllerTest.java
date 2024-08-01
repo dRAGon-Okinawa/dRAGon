@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.InterruptedIOException;
@@ -165,7 +164,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
                 .build();
         OpenAiHttpException exception = assertThrows(OpenAiHttpException.class,
                 () -> client.completion(request).execute());
-        assertTrue(exception.code() == 404);
+        assertEquals(404, exception.code());
     }
 
     @Test
