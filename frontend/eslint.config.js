@@ -20,5 +20,8 @@ export default defineConfig(
       ],
       'unocss/order-attributify': 'off'
     }
+  },
+  {
+    ignores: ['mockoon_dRAGon.json']
   }
 );

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, onActivated, ref } from 'vue';
 import { useAppStore } from '@/store/modules/app';
 import { fetchApiAppDashboardGetNumbers } from '@/service/api';
 import HeaderBanner from './modules/header-banner.vue';
@@ -21,7 +21,10 @@ const GetNumbers = async () => {
     numbers.value = data;
   }
 };
-GetNumbers();
+
+onActivated(() => {
+  GetNumbers();
+});
 </script>
 
 <template>
