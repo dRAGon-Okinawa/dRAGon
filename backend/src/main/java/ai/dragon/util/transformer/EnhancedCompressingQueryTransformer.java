@@ -22,10 +22,9 @@ public class EnhancedCompressingQueryTransformer extends CompressingQueryTransfo
     // Will use deprecated : return "User: " + message.text();
     @Override
     protected String format(ChatMessage message) {
-        if (message instanceof UserMessage) {
-            return "User: " + ChatMessageUtil.singleTextFrom(message);
-        } else if (message instanceof AiMessage) {
-            AiMessage aiMessage = (AiMessage) message;
+        if (message instanceof UserMessage userMessage) {
+            return "User: " + ChatMessageUtil.singleTextFrom(userMessage);
+        } else if (message instanceof AiMessage aiMessage) {
             if (aiMessage.hasToolExecutionRequests()) {
                 return null;
             }
