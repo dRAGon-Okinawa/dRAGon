@@ -1,8 +1,5 @@
 package ai.dragon.controller.api.app;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.OperatingSystemMXBean;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -61,12 +58,5 @@ public class DashboardAppApiController {
                 .nonHeapMemoryInit(systemMonitoringService.getNonHeapMemoryInit())
                 .build())
                 .build();
-    }
-
-    public static void main(String[] args) {
-        OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
-        System.out.println(operatingSystemMXBean.getSystemLoadAverage());
-        System.out.println(operatingSystemMXBean.getAvailableProcessors());
-        System.out.println(operatingSystemMXBean.getArch());
     }
 }

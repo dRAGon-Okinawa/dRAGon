@@ -16,6 +16,13 @@ public class ErrorHandlerController implements ErrorController {
     @RequestMapping("/error")
     public @ResponseBody byte[] getImage() throws IOException {
         InputStream in = getClass().getResourceAsStream("/static/index.html");
+        if (in == null) {
+            throw new IOException("index.html not found");
+        }
         return IOUtils.toByteArray(in);
+    }
+
+    public String getErrorPath() {
+        return "/error";
     }
 }
