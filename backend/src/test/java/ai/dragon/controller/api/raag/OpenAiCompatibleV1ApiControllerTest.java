@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.InterruptedIOException;
@@ -19,6 +18,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -53,11 +53,12 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
     @BeforeAll
     static void beforeAll(@Autowired FarmRepository farmRepository,
             @Autowired SiloRepository siloRepository,
-            @Autowired IngestorService ingestorService) throws Exception {
+            @Autowired IngestorService ingestorService,
+            @Value("${OPENAI_API_KEY:}") String openaiApiKey) throws Exception {
         cleanUp(farmRepository, siloRepository);
 
         // OpenAI settings for RaaG
-        String apiKeySetting = String.format("apiKey=%s", System.getenv("OPENAI_API_KEY"));
+        String apiKeySetting = String.format("apiKey=%s", openaiApiKey);
         String modelNameSetting = "modelName=gpt-3.5-turbo"; // TODO Migrate to gpt-4o-mini when reliable
 
         // Farm with no silo
@@ -165,7 +166,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
                 .build();
         OpenAiHttpException exception = assertThrows(OpenAiHttpException.class,
                 () -> client.completion(request).execute());
-        assertTrue(exception.code() == 404);
+        assertEquals(404, exception.code());
     }
 
     @Test

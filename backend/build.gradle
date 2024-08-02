@@ -49,6 +49,7 @@ dependencies {
 
 	implementation 'net.sourceforge.argparse4j:argparse4j:0.9.0'
 	implementation 'org.jobrunr:jobrunr-spring-boot-3-starter:7.2.2'
+	implementation 'me.paulschwarz:spring-dotenv:4.0.0'
 	
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testImplementation 'org.awaitility:awaitility:4.2.1'
@@ -128,10 +129,6 @@ tasks.register("bootProdRun") {
             systemProperty("spring.profiles.active", "prod")
         }
     }
-}
-
-jacoco {
-    toolVersion = "0.8.12"
 }
 
 tasks.register('copyWebApp', Copy) {

@@ -47,10 +47,16 @@ jobs:
       - name: Set Frontend Version
         run: pnpm version from-git --no-git-tag-version --prefix frontend
 
-      - name: Test dRAGon
-        run: gradle pnpmInstall pnpmLint checkstyleMain checkstyleTest test --stacktrace
+      - name: Lint Frontend
+        run: gradle pnpmInstall pnpmLint
 
-      - name: Build dRAGon
+      - name: Lint Backend
+        run: gradle checkstyleMain checkstyleTest
+
+      - name: Test dRAGon
+        run: gradle test
+
+      - name: Package dRAGon
         run: gradle bootJar -Pversion=$(gradle cV -q -Prelease.quiet)
 
       - name: Upload coverage reports to Codecov

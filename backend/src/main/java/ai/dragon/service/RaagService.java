@@ -20,9 +20,11 @@ import ai.dragon.dto.openai.completion.OpenAiCompletionResponse;
 import ai.dragon.dto.openai.completion.OpenAiRequest;
 import ai.dragon.dto.openai.model.OpenAiModel;
 import ai.dragon.entity.FarmEntity;
+import ai.dragon.entity.SiloEntity;
 import ai.dragon.properties.embedding.LanguageModelSettings;
 import ai.dragon.properties.raag.RetrievalAugmentorSettings;
 import ai.dragon.repository.FarmRepository;
+import ai.dragon.repository.SiloRepository;
 import ai.dragon.util.KVSettingUtil;
 import ai.dragon.util.ai.AiAssistant;
 import ai.dragon.util.spel.MetadataHeaderFilterExpressionParserUtil;
@@ -59,6 +61,9 @@ public class RaagService {
 
     @Autowired
     private FarmRepository farmRepository;
+
+    @Autowired
+    private SiloRepository siloRepository;
 
     @Autowired
     private ChatMessageService chatMessageService;
@@ -106,18 +111,20 @@ public class RaagService {
         }
         farm.getSilos().forEach(siloUuid -> {
             try {
-                this.buildRetriever(siloUuid, servletRequest).ifPresent(retrievers::add);
+                SiloEntity silo = siloRepository.getByUuid(siloUuid).orElseThrow();
+                this.buildSiloRetriever(silo, servletRequest).ifPresent(retrievers::add);
             } catch (Exception ex) {
                 logger.error("Error building Content Retriever for Silo '{}'", siloUuid, ex);
             }
         });
+        // TODO Granaries
         return retrievers;
     }
 
-    public Optional<ContentRetriever> buildRetriever(UUID siloUuid, HttpServletRequest servletRequest)
+    public Optional<ContentRetriever> buildSiloRetriever(SiloEntity silo, HttpServletRequest servletRequest)
             throws Exception {
-        EmbeddingModel embeddingModel = embeddingModelService.modelForSilo(siloUuid);
-        EmbeddingStore<TextSegment> embeddingStore = embeddingStoreService.retrieveEmbeddingStore(siloUuid);
+        EmbeddingModel embeddingModel = embeddingModelService.modelForSilo(silo.getUuid());
+        EmbeddingStore<TextSegment> embeddingStore = embeddingStoreService.retrieveEmbeddingStore(silo.getUuid());
         return Optional.of(EmbeddingStoreContentRetriever.builder()
                 .embeddingStore(embeddingStore)
                 .embeddingModel(embeddingModel)
