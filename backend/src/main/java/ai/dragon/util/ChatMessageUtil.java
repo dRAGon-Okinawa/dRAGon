@@ -77,8 +77,8 @@ public class ChatMessageUtil {
                     // TODO "UserMessage.name"
                     chatMessage = new UserMessage(stringContent);
                 } else {
-                    List<Map<String, Object>> content = (List<Map<String, Object>>) completionMessage.getContent();
-                    List<Content> contents = contentsListFrom(content);
+                    List<Content> contents = contentsListFrom(
+                            (List<Map<String, Object>>) completionMessage.getContent());
                     // TODO "UserMessage.name"
                     chatMessage = new UserMessage(contents);
                 }
@@ -95,31 +95,41 @@ public class ChatMessageUtil {
         return Optional.ofNullable(chatMessage);
     }
 
-    @SuppressWarnings("unchecked")
     private static List<Content> contentsListFrom(List<Map<String, Object>> content) {
         List<Content> contents = new ArrayList<>();
         content.forEach(contentItem -> {
-            if (!contentItem.containsKey("type")) {
+            String type = (String) contentItem.get("type");
+            if (type == null) {
                 LOGGER.error("Content part must have a type field!");
                 return;
             }
-            String type = (String) contentItem.get("type");
-            if ("text".equals(type)) {
-                String text = (String) contentItem.get("text");
-                contents.add(new TextContent(text));
-            } else if ("image_url".equals(type)) {
-                Map<String, Object> imageURL = (Map<String, Object>) contentItem.get("image_url");
-                String url = (String) imageURL.get("url");
-                if (url.startsWith("http")) {
-                    contents.add(new ImageContent(url));
-                } else if (url.startsWith("data:")) {
-                    String mimetype = DataUrlUtil.getImageType(url);
-                    String base64String = DataUrlUtil.getDataBytesString(url);
-                    contents.add(ImageContent.from(base64String, mimetype));
-                }
-                // TODO ImageURL.detail
-            }
+            contents.add(createContent(type, contentItem));
         });
         return contents;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Content createContent(String type, Map<String, Object> contentItem) {
+        switch (type) {
+            case "text":
+                return new TextContent((String) contentItem.get("text"));
+            case "image_url":
+                return createImageContent((Map<String, Object>) contentItem.get("image_url"));
+            default:
+                return null;
+        }
+    }
+
+    private static Content createImageContent(Map<String, Object> imageURL) {
+        String url = (String) imageURL.get("url");
+        if (url.startsWith("http")) {
+            return new ImageContent(url);
+        } else if (url.startsWith("data:")) {
+            String mimetype = DataUrlUtil.getImageType(url);
+            String base64String = DataUrlUtil.getDataBytesString(url);
+            return ImageContent.from(base64String, mimetype);
+        }
+        // TODO ImageURL.detail
+        return null;
     }
 }
