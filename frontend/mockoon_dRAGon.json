@@ -177,7 +177,7 @@
       "responses": [
         {
           "uuid": "58458bee-0645-43e1-85ea-09518cebb8da",
-          "body": "{\n  \"data\": {\n    \"farms\": 1,\n    \"silos\": 2,\n    \"documents\": 3\n  },\n    \"code\": \"0000\",\n    \"msg\": \"OK\"\n}",
+          "body": "{\n  \"data\": {\n    \"silos\": 2,\n    \"farms\": 1,\n    \"documents\": 9,\n    \"systemLoadAverage\": 1.43017578125,\n    \"availableProcessors\": 4,\n    \"arch\": \"aarch64\",\n    \"usedMemory\": 65131328,\n    \"totalMemory\": 88080384,\n    \"freeMemory\": 22949056,\n    \"usedMemoryPercentage\": 73,\n    \"freeMemoryPercentage\": 26,\n    \"uptime\": 5710,\n    \"heapMemoryUsage\": 64517528,\n    \"heapMemoryUsagePercentage\": 4,\n    \"nonHeapMemoryUsage\": 62203056,\n    \"heapMemoryMax\": 1553989632,\n    \"heapMemoryCommitted\": 88080384,\n    \"nonHeapMemoryCommitted\": 63438848,\n    \"heapMemoryInit\": 98566144,\n    \"nonHeapMemoryInit\": 2555904\n  },\n  \"code\": \"0000\",\n  \"msg\": \"OK\"\n}",
           "latency": 0,
           "statusCode": 200,
           "label": "",

@@ -95,6 +95,30 @@ declare namespace Api {
       silos: number;
       /** total Document count */
       documents: number;
+      /** system load average */
+      systemLoadAverage: number;
+      /** system processor count */
+      availableProcessors: number;
+      /** system architecture */
+      arch: string;
+      /** used memory */
+      usedMemory: number;
+      /** total memory */
+      totalMemory: number;
+      /** free memory */
+      freeMemory: number;
+      /** used memory percentage */
+      usedMemoryPercentage: number;
+      /** free memory percentage */
+      freeMemoryPercentage: number;
+      /** system uptime */
+      uptime: number;
+      /** heap memory usage */
+      heapMemoryUsage: number;
+      /** heap memory usage percentage */
+      heapMemoryUsagePercentage: number;
+      /** non-heap memory usage */
+      nonHeapMemoryUsage: number;
     };
   }
 

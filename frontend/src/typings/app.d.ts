@@ -261,6 +261,10 @@ declare namespace App {
         updateContent: string;
         updateConfirm: string;
         updateCancel: string;
+        usedMemory: string;
+        loadAverage: string;
+        heapMemory: string;
+        processors: string;
       };
       common: {
         action: string;
