@@ -36,7 +36,7 @@ const cardData = computed<CardData[]>(() => [
       start: '#ec4786',
       end: '#b955a4'
     },
-    icon: 'ant-design:bar-chart-outlined'
+    icon: 'mdi--memory'
   },
   {
     key: 'turnover',
@@ -47,7 +47,7 @@ const cardData = computed<CardData[]>(() => [
       start: '#865ec0',
       end: '#5144b4'
     },
-    icon: 'ant-design:money-collect-outlined'
+    icon: 'mdi--graph-bell-curve'
   },
   {
     key: 'downloadCount',
@@ -58,7 +58,7 @@ const cardData = computed<CardData[]>(() => [
       start: '#56cdf3',
       end: '#719de3'
     },
-    icon: 'carbon:document-download'
+    icon: 'mdi--layers-triple-outline'
   },
   {
     key: 'dealCount',
@@ -68,7 +68,7 @@ const cardData = computed<CardData[]>(() => [
       start: '#fcbc25',
       end: '#f68057'
     },
-    icon: 'ant-design:trademark-circle-outlined'
+    icon: 'mdi--cpu-64-bit'
   }
 ]);
 
