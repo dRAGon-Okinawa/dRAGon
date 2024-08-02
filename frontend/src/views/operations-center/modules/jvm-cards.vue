@@ -4,14 +4,21 @@ import { createReusableTemplate } from '@vueuse/core';
 import { $t } from '@/locales';
 
 defineOptions({
-  name: 'CardData'
+  name: 'JvmCards'
 });
+
+interface Props {
+  numbers: Api.AppDashboard.Numbers;
+}
+const props = defineProps<Props>();
 
 interface CardData {
   key: string;
   title: string;
   value: number;
-  unit: string;
+  prefix?: string;
+  suffix?: string;
+  decimals?: number;
   color: {
     start: string;
     end: string;
@@ -22,47 +29,46 @@ interface CardData {
 const cardData = computed<CardData[]>(() => [
   {
     key: 'visitCount',
-    title: $t('page.home.visitCount'),
-    value: 9725,
-    unit: '',
+    title: $t('system.usedMemory'),
+    value: props.numbers.usedMemoryPercentage,
+    suffix: '%',
     color: {
       start: '#ec4786',
       end: '#b955a4'
     },
-    icon: 'ant-design:bar-chart-outlined'
+    icon: 'mdi--memory'
   },
   {
     key: 'turnover',
-    title: $t('page.home.turnover'),
-    value: 1026,
-    unit: '$',
+    title: $t('system.loadAverage'),
+    value: props.numbers.systemLoadAverage,
+    decimals: 2,
     color: {
       start: '#865ec0',
       end: '#5144b4'
     },
-    icon: 'ant-design:money-collect-outlined'
+    icon: 'mdi--graph-bell-curve'
   },
   {
     key: 'downloadCount',
-    title: $t('page.home.downloadCount'),
-    value: 970925,
-    unit: '',
+    title: $t('system.heapMemory'),
+    value: props.numbers.heapMemoryUsagePercentage,
+    suffix: '%',
     color: {
       start: '#56cdf3',
       end: '#719de3'
     },
-    icon: 'carbon:document-download'
+    icon: 'mdi--layers-triple-outline'
   },
   {
     key: 'dealCount',
-    title: $t('page.home.dealCount'),
-    value: 9527,
-    unit: '',
+    title: $t('system.processors'),
+    value: props.numbers.availableProcessors,
     color: {
       start: '#fcbc25',
       end: '#f68057'
     },
-    icon: 'ant-design:trademark-circle-outlined'
+    icon: 'mdi--cpu-64-bit'
   }
 ]);
 
@@ -94,9 +100,11 @@ function getGradientColor(color: CardData['color']) {
           <div class="flex justify-between pt-12px">
             <SvgIcon :local-icon="item.icon" class="text-32px" />
             <CountTo
-              :prefix="item.unit"
+              :prefix="item.prefix"
+              :suffix="item.suffix"
               :start-value="1"
               :end-value="item.value"
+              :decimals="item.decimals"
               class="text-30px text-white dark:text-dark"
             />
           </div>

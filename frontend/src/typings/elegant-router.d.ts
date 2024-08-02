@@ -26,12 +26,12 @@ declare module "@elegant-router/types" {
     "500": "/500";
     "about": "/about";
     "help": "/help";
-    "home": "/home";
     "iframe-page": "/iframe-page/:url";
     "infrastructure": "/infrastructure";
     "infrastructure_silo-detail": "/infrastructure/silo-detail/:id";
     "infrastructure_silo-list": "/infrastructure/silo-list";
     "login": "/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?";
+    "operations-center": "/operations-center";
     "user-center": "/user-center";
   };
 
@@ -47,7 +47,7 @@ declare module "@elegant-router/types" {
 
   /**
    * custom route key
-   */ 
+   */
   export type CustomRouteKey = Extract<
     RouteKey,
     | "root"
@@ -60,7 +60,7 @@ declare module "@elegant-router/types" {
 
   /**
    * the generated route key
-   */ 
+   */
   export type GeneratedRouteKey = Exclude<RouteKey, CustomRouteKey>;
 
   /**
@@ -73,10 +73,10 @@ declare module "@elegant-router/types" {
     | "500"
     | "about"
     | "help"
-    | "home"
     | "iframe-page"
     | "infrastructure"
     | "login"
+    | "operations-center"
     | "user-center"
   >;
 
@@ -102,9 +102,9 @@ declare module "@elegant-router/types" {
     | "login"
     | "about"
     | "help"
-    | "home"
     | "infrastructure_silo-detail"
     | "infrastructure_silo-list"
+    | "operations-center"
     | "user-center"
   >;
 
