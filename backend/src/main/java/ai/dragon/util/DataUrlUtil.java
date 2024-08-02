@@ -31,14 +31,13 @@ public class DataUrlUtil {
 
     public static String convertFileToDataImageBase64(File file, String mimeType) throws IOException {
         // Read the file into a byte array
-        FileInputStream fileInputStream = new FileInputStream(file);
-        byte[] fileBytes = new byte[(int) file.length()];
-        fileInputStream.read(fileBytes);
-        fileInputStream.close();
-
+        byte[] fileBytes;
+        try (FileInputStream fileInputStream = new FileInputStream(file)) {
+            fileBytes = new byte[(int) file.length()];
+            fileInputStream.read(fileBytes);
+        }
         // Encode the byte array to base64
         String base64Encoded = Base64.getEncoder().encodeToString(fileBytes);
-
         // Construct the data:image base64 string
         return "data:" + mimeType + ";base64," + base64Encoded;
     }

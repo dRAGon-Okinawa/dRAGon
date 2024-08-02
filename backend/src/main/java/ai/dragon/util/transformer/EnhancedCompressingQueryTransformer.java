@@ -19,7 +19,7 @@ public class EnhancedCompressingQueryTransformer extends CompressingQueryTransfo
 
     // Apply override as long as [protected String format(ChatMessage message)] :
     // langchain4j-core/src/main/java/dev/langchain4j/rag/query/transformer/CompressingQueryTransformer.java#L90
-    // Will use deprecated : return "User: " + message.text();
+    // While langchain4j using deprecated [message.text()] to get the text of the message.
     @Override
     protected String format(ChatMessage message) {
         if (message instanceof UserMessage userMessage) {
