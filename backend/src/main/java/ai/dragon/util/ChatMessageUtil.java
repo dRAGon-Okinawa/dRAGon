@@ -38,13 +38,12 @@ public class ChatMessageUtil {
         if (contents == null) {
             return sb.toString();
         }
-        if (contents instanceof String) {
-            return (String) contents;
-        } else if (contents instanceof List) {
-            List<Content> contentList = (List<Content>) contents;
-            contentList.forEach(content -> {
-                if (content instanceof TextContent) {
-                    sb.append(((TextContent) content).text());
+        if (contents instanceof String stringContent) {
+            return stringContent;
+        } else if (contents instanceof List listContent) {
+            listContent.forEach(content -> {
+                if (content instanceof TextContent textContent) {
+                    sb.append(textContent.text());
                 }
             });
             return sb.toString();
@@ -55,12 +54,11 @@ public class ChatMessageUtil {
     @SuppressWarnings("unchecked")
     public static String singleTextFrom(OpenAiCompletionRequest request) {
         Object prompt = request.getPrompt();
-        if (prompt instanceof String) {
-            return (String) prompt;
-        } else if (prompt instanceof List) {
-            List<String> promptList = (List<String>) prompt;
+        if (prompt instanceof String stringPrompt) {
+            return stringPrompt;
+        } else if (prompt instanceof List listPrompt) {
             StringBuilder sb = new StringBuilder();
-            promptList.forEach(promptItem -> {
+            listPrompt.forEach(promptItem -> {
                 sb.append(promptItem);
             });
             return sb.toString();
