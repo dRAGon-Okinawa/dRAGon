@@ -1,4 +1,4 @@
-package ai.dragon.service;
+package ai.dragon.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,11 +7,9 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import ai.dragon.dto.openai.completion.OpenAiCompletionMessage;
 import ai.dragon.dto.openai.completion.OpenAiCompletionRequest;
-import ai.dragon.util.DataUrlUtil;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.Content;
@@ -20,12 +18,11 @@ import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.data.message.TextContent;
 import dev.langchain4j.data.message.UserMessage;
 
-@Service
-public class ChatMessageService {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+public class ChatMessageUtil {
+    private static final Logger LOGGER = LoggerFactory.getLogger(KVSettingUtil.class);
 
     @SuppressWarnings("unchecked")
-    public String singleTextFrom(ChatMessage message) {
+    public static String singleTextFrom(ChatMessage message) {
         StringBuilder sb = new StringBuilder();
         Object contents = null;
         if (message instanceof UserMessage) {
@@ -53,7 +50,7 @@ public class ChatMessageService {
     }
 
     @SuppressWarnings("unchecked")
-    public String singleTextFrom(OpenAiCompletionRequest request) {
+    public static String singleTextFrom(OpenAiCompletionRequest request) {
         Object prompt = request.getPrompt();
         if (prompt instanceof String) {
             return (String) prompt;
@@ -69,7 +66,7 @@ public class ChatMessageService {
     }
 
     @SuppressWarnings("unchecked")
-    public Optional<ChatMessage> convertToChatMessage(OpenAiCompletionMessage completionMessage) {
+    public static Optional<ChatMessage> convertToChatMessage(OpenAiCompletionMessage completionMessage) {
         ChatMessage chatMessage = null;
         switch (completionMessage.getRole()) {
             case "user":
@@ -81,7 +78,7 @@ public class ChatMessageService {
                     List<Content> contents = new ArrayList<>();
                     content.forEach(contentItem -> {
                         if (!contentItem.containsKey("type")) {
-                            logger.error("Content part must have a type field!");
+                            LOGGER.error("Content part must have a type field!");
                             return;
                         }
                         String type = (String) contentItem.get("type");
@@ -112,7 +109,7 @@ public class ChatMessageService {
                 chatMessage = new AiMessage((String) completionMessage.getContent());
                 break;
             default:
-                logger.error(String.format("Invalid Message Role '%s'", completionMessage.getRole()));
+                LOGGER.error(String.format("Invalid Message Role '%s'", completionMessage.getRole()));
         }
         return Optional.ofNullable(chatMessage);
     }

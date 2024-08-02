@@ -25,9 +25,11 @@ import ai.dragon.properties.embedding.LanguageModelSettings;
 import ai.dragon.properties.raag.RetrievalAugmentorSettings;
 import ai.dragon.repository.FarmRepository;
 import ai.dragon.repository.SiloRepository;
+import ai.dragon.util.ChatMessageUtil;
 import ai.dragon.util.KVSettingUtil;
 import ai.dragon.util.ai.AiAssistant;
 import ai.dragon.util.spel.MetadataHeaderFilterExpressionParserUtil;
+import ai.dragon.util.transformer.EnhancedCompressingQueryTransformer;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.memory.ChatMemory;
@@ -64,9 +66,6 @@ public class RaagService {
 
     @Autowired
     private SiloRepository siloRepository;
-
-    @Autowired
-    private ChatMessageService chatMessageService;
 
     @Autowired
     private OpenAiCompletionService openAiCompletionService;
@@ -147,14 +146,14 @@ public class RaagService {
             HttpServletRequest servletRequest)
             throws Exception {
         AiAssistant assistant = this.makeCompletionAssistant(farm, completionRequest, servletRequest, false);
-        Result<String> answer = assistant.answer(chatMessageService.singleTextFrom(completionRequest));
+        Result<String> answer = assistant.answer(ChatMessageUtil.singleTextFrom(completionRequest));
         return openAiCompletionService.createCompletionResponse(completionRequest, answer);
     }
 
     private SseEmitter streamCompletionResponse(FarmEntity farm, OpenAiCompletionRequest completionRequest,
             HttpServletRequest servletRequest) throws Exception {
         AiAssistant assistant = this.makeCompletionAssistant(farm, completionRequest, servletRequest, true);
-        TokenStream stream = assistant.chat(chatMessageService.singleTextFrom(completionRequest));
+        TokenStream stream = assistant.chat(ChatMessageUtil.singleTextFrom(completionRequest));
         UUID emitterID = sseService.createEmitter();
         stream
                 .onNext(nextChunk -> {
@@ -181,9 +180,9 @@ public class RaagService {
         AiAssistant assistant = this.makeChatAssistant(farm, chatCompletionRequest, servletRequest, false);
         OpenAiCompletionMessage lastCompletionMessage = chatCompletionRequest.getMessages()
                 .get(chatCompletionRequest.getMessages().size() - 1);
-        ChatMessage lastChatMessage = chatMessageService.convertToChatMessage(lastCompletionMessage)
+        ChatMessage lastChatMessage = ChatMessageUtil.convertToChatMessage(lastCompletionMessage)
                 .orElseThrow();
-        Result<String> answer = assistant.answer(chatMessageService.singleTextFrom(lastChatMessage));
+        Result<String> answer = assistant.answer(ChatMessageUtil.singleTextFrom(lastChatMessage));
         return openAiCompletionService.createChatCompletionResponse(answer);
     }
 
@@ -193,9 +192,9 @@ public class RaagService {
         AiAssistant assistant = this.makeChatAssistant(farm, chatCompletionRequest, servletRequest, true);
         OpenAiCompletionMessage lastCompletionMessage = chatCompletionRequest.getMessages()
                 .get(chatCompletionRequest.getMessages().size() - 1);
-        ChatMessage lastChatMessage = chatMessageService.convertToChatMessage(lastCompletionMessage)
+        ChatMessage lastChatMessage = ChatMessageUtil.convertToChatMessage(lastCompletionMessage)
                 .orElseThrow();
-        TokenStream stream = assistant.chat(chatMessageService.singleTextFrom(lastChatMessage));
+        TokenStream stream = assistant.chat(ChatMessageUtil.singleTextFrom(lastChatMessage));
         UUID emitterID = sseService.createEmitter();
         stream
                 .onNext(nextChunk -> {
@@ -260,7 +259,7 @@ public class RaagService {
                 .apply(retrievalSettings);
         for (int i = 0; i < request.getMessages().size(); i++) {
             OpenAiCompletionMessage requestMessage = request.getMessages().get(i);
-            chatMessageService.convertToChatMessage(requestMessage).ifPresent(memory::add);
+            ChatMessageUtil.convertToChatMessage(requestMessage).ifPresent(memory::add);
         }
         return memory;
     }
@@ -309,8 +308,9 @@ public class RaagService {
                     && openAiRequest instanceof OpenAiChatCompletionRequest) {
                 // Query Rewriting => Improve RAG Performance and Accuracy
                 // => Uses Chat History.
-                retrievalAugmentorBuilder.queryTransformer(CompressingQueryTransformer.builder()
-                        .chatLanguageModel(this.buildChatLanguageModel(farm, openAiRequest)).build());
+                CompressingQueryTransformer compressingQueryTransformer = new EnhancedCompressingQueryTransformer(
+                        this.buildChatLanguageModel(farm, openAiRequest));
+                retrievalAugmentorBuilder.queryTransformer(compressingQueryTransformer);
             }
             assistantBuilder.retrievalAugmentor(retrievalAugmentorBuilder.build());
         }
