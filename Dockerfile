@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/openjdk/jdk:17-ubuntu
+FROM mcr.microsoft.com/openjdk/jdk:21-ubuntu
 LABEL org.opencontainers.image.source="https://github.com/dRAGon-Okinawa/dRAGon"
 
 EXPOSE 1985
