@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,72 +25,53 @@ public class ChatMessageUtil {
     private ChatMessageUtil() {
     }
 
-    @SuppressWarnings("unchecked")
     public static String singleTextFrom(ChatMessage message) {
         StringBuilder sb = new StringBuilder();
-        Object contents = null;
         if (message instanceof UserMessage userMessage) {
-            contents = userMessage.contents();
-        } else if (message instanceof AiMessage aiMessage) {
-            contents = aiMessage.text();
-        } else if (message instanceof SystemMessage systemMessage) {
-            contents = systemMessage.text();
-        }
-        if (contents == null) {
-            return sb.toString();
-        }
-        if (contents instanceof String stringContent) {
-            return stringContent;
-        } else if (contents instanceof List listContent) {
-            listContent.forEach(content -> {
+            userMessage.contents().forEach(content -> {
                 if (content instanceof TextContent textContent) {
                     sb.append(textContent.text());
                 }
             });
-            return sb.toString();
+        } else if (message instanceof AiMessage aiMessage) {
+            sb.append(aiMessage.text());
+        } else if (message instanceof SystemMessage systemMessage) {
+            sb.append(systemMessage.text());
         }
         return sb.toString();
     }
-
-    @SuppressWarnings("unchecked")
+    
     public static String singleTextFrom(OpenAiCompletionRequest request) {
         Object prompt = request.getPrompt();
         if (prompt instanceof String stringPrompt) {
             return stringPrompt;
-        } else if (prompt instanceof List listPrompt) {
-            StringBuilder sb = new StringBuilder();
-            listPrompt.forEach(promptItem -> {
-                sb.append(promptItem);
-            });
-            return sb.toString();
+        } else if (prompt instanceof List<?> listPrompt) {
+            return listPrompt.stream()
+                    .map(Object::toString)
+                    .collect(Collectors.joining());
         }
         return null;
     }
 
     @SuppressWarnings("unchecked")
     public static Optional<ChatMessage> convertToChatMessage(OpenAiCompletionMessage completionMessage) {
-        ChatMessage chatMessage = null;
-        switch (completionMessage.getRole()) {
-            case "user":
+        ChatMessage chatMessage = switch (completionMessage.getRole()) {
+            case "user" -> {
                 if (completionMessage.getContent() instanceof String stringContent) {
-                    // TODO "UserMessage.name"
-                    chatMessage = new UserMessage(stringContent);
+                    yield new UserMessage(stringContent);
                 } else {
                     List<Content> contents = contentsListFrom(
                             (List<Map<String, Object>>) completionMessage.getContent());
-                    // TODO "UserMessage.name"
-                    chatMessage = new UserMessage(contents);
+                    yield new UserMessage(contents);
                 }
-                break;
-            case "system":
-                chatMessage = new SystemMessage((String) completionMessage.getContent());
-                break;
-            case "assistant":
-                chatMessage = new AiMessage((String) completionMessage.getContent());
-                break;
-            default:
+            }
+            case "system" -> new SystemMessage((String) completionMessage.getContent());
+            case "assistant" -> new AiMessage((String) completionMessage.getContent());
+            default -> {
                 LOGGER.error(String.format("Invalid Message Role '%s'", completionMessage.getRole()));
-        }
+                yield null;
+            }
+        };
         return Optional.ofNullable(chatMessage);
     }
 
