@@ -58,7 +58,7 @@
     "pinia": "2.2.0",
     "tailwind-merge": "2.4.0",
     "vue": "3.4.35",
-    "vue-draggable-plus": "0.5.2",
+    "vue-draggable-plus": "0.5.3",
     "vue-i18n": "9.13.1",
     "vue-router": "4.4.2"
   },
