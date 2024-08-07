@@ -52,7 +52,7 @@ dependencies {
 	implementation 'me.paulschwarz:spring-dotenv:4.0.0'
 	
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	testImplementation 'org.awaitility:awaitility:4.2.1'
+	testImplementation 'org.awaitility:awaitility:4.2.2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 
