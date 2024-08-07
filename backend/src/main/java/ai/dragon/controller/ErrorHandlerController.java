@@ -14,7 +14,7 @@ public class ErrorHandlerController implements ErrorController {
     // We are using a SPA (Single Page Application) so we need to output the
     // index.html file when an error occurs :
     @RequestMapping("/error")
-    public @ResponseBody byte[] getImage() throws IOException {
+    public @ResponseBody byte[] getSpaContent() throws IOException {
         InputStream in = getClass().getResourceAsStream("/static/index.html");
         if (in == null) {
             throw new IOException("index.html not found");

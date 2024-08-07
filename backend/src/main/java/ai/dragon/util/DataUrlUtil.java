@@ -1,5 +1,9 @@
 package ai.dragon.util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Base64;
 
 public class DataUrlUtil {
@@ -18,6 +22,24 @@ public class DataUrlUtil {
 
     public static String getImageType(String base64String) {
         return getImageType(getDataBytes(getDataBytesString(base64String)));
+    }
+
+    public static String convertFileToDataImageBase64(File file) throws IOException {
+        String mimeType = Files.probeContentType(file.toPath());
+        return convertFileToDataImageBase64(file, mimeType != null ? mimeType : "application/octet-stream");
+    }
+
+    public static String convertFileToDataImageBase64(File file, String mimeType) throws IOException {
+        // Read the file into a byte array
+        byte[] fileBytes;
+        try (FileInputStream fileInputStream = new FileInputStream(file)) {
+            fileBytes = new byte[(int) file.length()];
+            fileInputStream.read(fileBytes);
+        }
+        // Encode the byte array to base64
+        String base64Encoded = Base64.getEncoder().encodeToString(fileBytes);
+        // Construct the data:image base64 string
+        return "data:" + mimeType + ";base64," + base64Encoded;
     }
 
     private static byte[] getDataBytes(String base64String) {

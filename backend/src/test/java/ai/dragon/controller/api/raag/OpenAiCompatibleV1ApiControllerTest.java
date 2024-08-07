@@ -4,11 +4,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.SocketTimeoutException;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -35,10 +38,14 @@ import ai.dragon.junit.extension.retry.RetryOnExceptions;
 import ai.dragon.repository.FarmRepository;
 import ai.dragon.repository.SiloRepository;
 import ai.dragon.service.IngestorService;
+import ai.dragon.util.DataUrlUtil;
 import dev.ai4j.openai4j.OpenAiClient;
 import dev.ai4j.openai4j.OpenAiHttpException;
 import dev.ai4j.openai4j.chat.ChatCompletionRequest;
 import dev.ai4j.openai4j.chat.ChatCompletionResponse;
+import dev.ai4j.openai4j.chat.Message;
+import dev.ai4j.openai4j.chat.SystemMessage;
+import dev.ai4j.openai4j.chat.UserMessage;
 import dev.ai4j.openai4j.completion.CompletionRequest;
 import dev.ai4j.openai4j.completion.CompletionResponse;
 import dev.langchain4j.model.mistralai.internal.api.MistralAiModelResponse;
@@ -59,13 +66,14 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
 
         // OpenAI settings for RaaG
         String apiKeySetting = String.format("apiKey=%s", openaiApiKey);
-        String modelNameSetting = "modelName=gpt-3.5-turbo"; // TODO Migrate to gpt-4o-mini when reliable
+        String standardModelNameSetting = "modelName=gpt-3.5-turbo"; // TODO Migrate to gpt-4o-mini when reliable
+        String omniModelNameSetting = "modelName=gpt-4o-mini";
 
         // Farm with no silo
         FarmEntity farmWithoutSilo = new FarmEntity();
         farmWithoutSilo.setRaagIdentifier("no-silo-raag");
         farmWithoutSilo.setLanguageModel(LanguageModelType.OpenAiModel);
-        farmWithoutSilo.setLanguageModelSettings(List.of(apiKeySetting, modelNameSetting));
+        farmWithoutSilo.setLanguageModelSettings(List.of(apiKeySetting, standardModelNameSetting));
         farmRepository.save(farmWithoutSilo);
 
         // Resources for the silo
@@ -101,7 +109,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
         FarmEntity farmWithSunspotsSilo = new FarmEntity();
         farmWithSunspotsSilo.setRaagIdentifier("sunspots-raag");
         farmWithSunspotsSilo.setLanguageModel(LanguageModelType.OpenAiModel);
-        farmWithSunspotsSilo.setLanguageModelSettings(List.of(apiKeySetting, modelNameSetting));
+        farmWithSunspotsSilo.setLanguageModelSettings(List.of(apiKeySetting, standardModelNameSetting));
         farmWithSunspotsSilo.setSilos(List.of(sunspotsSilo.getUuid()));
         farmRepository.save(farmWithSunspotsSilo);
 
@@ -109,10 +117,21 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
         FarmEntity farmWithSunspotsSiloAndQueryRewriting = new FarmEntity();
         farmWithSunspotsSiloAndQueryRewriting.setRaagIdentifier("sunspots-rewriting-raag");
         farmWithSunspotsSiloAndQueryRewriting.setLanguageModel(LanguageModelType.OpenAiModel);
-        farmWithSunspotsSiloAndQueryRewriting.setLanguageModelSettings(List.of(apiKeySetting, modelNameSetting));
+        farmWithSunspotsSiloAndQueryRewriting
+                .setLanguageModelSettings(List.of(apiKeySetting, standardModelNameSetting));
         farmWithSunspotsSiloAndQueryRewriting.setSilos(List.of(sunspotsSilo.getUuid()));
         farmWithSunspotsSiloAndQueryRewriting.setRetrievalAugmentorSettings(List.of("rewriteQuery=true"));
         farmRepository.save(farmWithSunspotsSiloAndQueryRewriting);
+
+        // Farm with the Sunspots Silo but with Query Rewriting + Omni Model
+        FarmEntity farmWithSunspotsSiloAndQueryRewritingOmni = new FarmEntity();
+        farmWithSunspotsSiloAndQueryRewritingOmni.setRaagIdentifier("sunspots-rewriting-raag-omni");
+        farmWithSunspotsSiloAndQueryRewritingOmni.setLanguageModel(LanguageModelType.OpenAiModel);
+        farmWithSunspotsSiloAndQueryRewritingOmni
+                .setLanguageModelSettings(List.of(apiKeySetting, omniModelNameSetting));
+        farmWithSunspotsSiloAndQueryRewritingOmni.setSilos(List.of(sunspotsSilo.getUuid()));
+        farmWithSunspotsSiloAndQueryRewritingOmni.setRetrievalAugmentorSettings(List.of("rewriteQuery=true"));
+        farmRepository.save(farmWithSunspotsSiloAndQueryRewritingOmni);
     }
 
     @AfterAll
@@ -270,7 +289,8 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
                 .forEach((documentName, expected) -> {
                     Map<String, String> customHeaders = Map.of(
                             "X-RAG-FILTER-METADATA",
-                            String.format("{{#metadataKey('document_name').isIn('%s')}}", documentName));
+                            String.format("{{#metadataKey('document_name').isIn('%s')}}",
+                                    documentName));
                     OpenAiClient client = createOpenAiClientBuilder()
                             .customHeaders(customHeaders)
                             .build();
@@ -293,5 +313,45 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
                         assertNotEquals("Peter Meadows", response.choices().get(0).text());
                     }
                 });
+    }
+
+    @Test
+    @EnabledIf("canRunOpenAiRelatedTests")
+    @RetryOnExceptions(value = 2, onExceptions = { InterruptedIOException.class, SocketTimeoutException.class })
+    void testFarmWithImagesInputUserMessageOpenAI() throws IOException {
+        File solarSunspotsThumbnailPictures = new File(
+                "src/test/resources/rag_documents/sunspots/solar-sunspots-thumbnail-isontheline-20240728.png");
+        assertTrue(solarSunspotsThumbnailPictures.exists());
+
+        OpenAiClient client = createOpenAiClientBuilder().build();
+
+        List<Message> chatMessages = new ArrayList<>();
+        chatMessages.add(
+                SystemMessage.from(
+                        "You are a researcher in solar physics and you provide help to other researchers."));
+        chatMessages.add(UserMessage.from(
+                "Hello I need to work on this picture."));
+        chatMessages.add(UserMessage.from("""
+                Could you tell me what is it?
+                Just reply one of the following options (without asterisks):
+                * JUPITER
+                * MERCURY
+                * SUN
+                * VENUS
+                * SATURN
+                """, DataUrlUtil.convertFileToDataImageBase64(solarSunspotsThumbnailPictures)));
+
+        ChatCompletionRequest.Builder requestBuilder = ChatCompletionRequest.builder()
+                .messages(chatMessages)
+                .temperature(0.0);
+        ChatCompletionRequest request = requestBuilder
+                .model("sunspots-rewriting-raag-omni")
+                .stream(false)
+                .build();
+        ChatCompletionResponse response = client.chatCompletion(request).execute();
+        assertNotNull(response);
+        assertNotNull(response.choices());
+        assertNotEquals(0, response.choices().size());
+        assertEquals("SUN", response.content());
     }
 }
