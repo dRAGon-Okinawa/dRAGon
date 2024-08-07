@@ -26,7 +26,7 @@ public class DataUrlUtil {
 
     public static String convertFileToDataImageBase64(File file) throws IOException {
         String mimeType = Files.probeContentType(file.toPath());
-        return convertFileToDataImageBase64(file, mimeType);
+        return convertFileToDataImageBase64(file, mimeType != null ? mimeType : "application/octet-stream");
     }
 
     public static String convertFileToDataImageBase64(File file, String mimeType) throws IOException {

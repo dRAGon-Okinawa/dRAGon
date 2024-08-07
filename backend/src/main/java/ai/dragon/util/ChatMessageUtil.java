@@ -40,7 +40,7 @@ public class ChatMessageUtil {
         }
         return sb.toString();
     }
-    
+
     public static String singleTextFrom(OpenAiCompletionRequest request) {
         Object prompt = request.getPrompt();
         if (prompt instanceof String stringPrompt) {
@@ -77,14 +77,16 @@ public class ChatMessageUtil {
 
     private static List<Content> contentsListFrom(List<Map<String, Object>> content) {
         List<Content> contents = new ArrayList<>();
-        content.forEach(contentItem -> {
-            String type = (String) contentItem.get("type");
-            if (type == null) {
-                LOGGER.error("Content part must have a type field!");
-                return;
-            }
-            contents.add(createContent(type, contentItem));
-        });
+        if (content != null) {
+            content.forEach(contentItem -> {
+                String type = (String) contentItem.get("type");
+                if (type == null) {
+                    LOGGER.error("Content part must have a type field!");
+                    return;
+                }
+                contents.add(createContent(type, contentItem));
+            });
+        }
         return contents;
     }
 
