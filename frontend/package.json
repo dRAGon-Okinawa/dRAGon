@@ -60,7 +60,7 @@
     "vue": "3.4.35",
     "vue-draggable-plus": "0.5.2",
     "vue-i18n": "9.13.1",
-    "vue-router": "4.4.2"
+    "vue-router": "4.4.3"
   },
   "devDependencies": {
     "@dragon/scripts": "workspace:*",
