@@ -57,7 +57,7 @@
     "nprogress": "0.2.0",
     "pinia": "2.2.1",
     "tailwind-merge": "2.5.2",
-    "vue": "3.4.37",
+    "vue": "3.4.38",
     "vue-draggable-plus": "0.5.3",
     "vue-i18n": "9.13.1",
     "vue-router": "4.4.3"
