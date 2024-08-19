@@ -66,14 +66,13 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
 
         // OpenAI settings for RaaG
         String apiKeySetting = String.format("apiKey=%s", openaiApiKey);
-        String standardModelNameSetting = "modelName=gpt-3.5-turbo"; // TODO Migrate to gpt-4o-mini when reliable
         String omniModelNameSetting = "modelName=gpt-4o-mini";
 
         // Farm with no silo
         FarmEntity farmWithoutSilo = new FarmEntity();
         farmWithoutSilo.setRaagIdentifier("no-silo-raag");
         farmWithoutSilo.setLanguageModel(LanguageModelType.OpenAiModel);
-        farmWithoutSilo.setLanguageModelSettings(List.of(apiKeySetting, standardModelNameSetting));
+        farmWithoutSilo.setLanguageModelSettings(List.of(apiKeySetting, omniModelNameSetting));
         farmRepository.save(farmWithoutSilo);
 
         // Resources for the silo
@@ -109,7 +108,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
         FarmEntity farmWithSunspotsSilo = new FarmEntity();
         farmWithSunspotsSilo.setRaagIdentifier("sunspots-raag");
         farmWithSunspotsSilo.setLanguageModel(LanguageModelType.OpenAiModel);
-        farmWithSunspotsSilo.setLanguageModelSettings(List.of(apiKeySetting, standardModelNameSetting));
+        farmWithSunspotsSilo.setLanguageModelSettings(List.of(apiKeySetting, omniModelNameSetting));
         farmWithSunspotsSilo.setSilos(List.of(sunspotsSilo.getUuid()));
         farmRepository.save(farmWithSunspotsSilo);
 
@@ -118,7 +117,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
         farmWithSunspotsSiloAndQueryRewriting.setRaagIdentifier("sunspots-rewriting-raag");
         farmWithSunspotsSiloAndQueryRewriting.setLanguageModel(LanguageModelType.OpenAiModel);
         farmWithSunspotsSiloAndQueryRewriting
-                .setLanguageModelSettings(List.of(apiKeySetting, standardModelNameSetting));
+                .setLanguageModelSettings(List.of(apiKeySetting, omniModelNameSetting));
         farmWithSunspotsSiloAndQueryRewriting.setSilos(List.of(sunspotsSilo.getUuid()));
         farmWithSunspotsSiloAndQueryRewriting.setRetrievalAugmentorSettings(List.of("rewriteQuery=true"));
         farmRepository.save(farmWithSunspotsSiloAndQueryRewriting);
