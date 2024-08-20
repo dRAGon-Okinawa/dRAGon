@@ -3,7 +3,7 @@
 	"image": "mcr.microsoft.com/devcontainers/base:ubuntu",
 	"features": {
 		"ghcr.io/devcontainers/features/java:1": {
-			"version": "17",
+			"version": "21",
 			"jdkDistro": "ms",
 			"installGradle": "true",
 			"gradleVersion": "8.7"
