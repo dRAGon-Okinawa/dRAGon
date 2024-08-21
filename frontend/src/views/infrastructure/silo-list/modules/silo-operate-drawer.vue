@@ -2,7 +2,7 @@
 import { computed, reactive, watch } from 'vue';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
 import { $t } from '@/locales';
-import { enableStatusOptions, vectorStoreOptions } from '@/constants/business';
+import { vectorStoreOptions } from '@/constants/business';
 
 defineOptions({
   name: 'SiloOperateDrawer'
@@ -103,11 +103,6 @@ watch(visible, () => {
         </NFormItem>
         <NFormItem :label="$t('page.manage.user.userEmail')" path="email">
           <NInput v-model:value="model.name" :placeholder="$t('page.manage.user.form.userEmail')" />
-        </NFormItem>
-        <NFormItem :label="$t('page.manage.user.userStatus')" path="status">
-          <NRadioGroup v-model:value="model.name">
-            <NRadio v-for="item in enableStatusOptions" :key="item.value" :value="item.value" :label="$t(item.label)" />
-          </NRadioGroup>
         </NFormItem>
         <NFormItem :label="$t('page.manage.user.userRole')" path="roles">
           <NSelect

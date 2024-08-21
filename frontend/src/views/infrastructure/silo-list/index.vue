@@ -3,7 +3,7 @@ import { NButton, NPopconfirm, NTag } from 'naive-ui';
 import { fetchGetSilosList } from '@/service/api';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
-import { vectoreStoreRecord } from '@/constants/business';
+import { embeddingModelRecord, ingestorLoaderRecord, vectoreStoreRecord } from '@/constants/business';
 import { useTable, useTableOperate } from '@/hooks/common/table';
 import UserOperateDrawer from './modules/silo-operate-drawer.vue';
 import UserSearch from './modules/silo-search.vue';
@@ -58,12 +58,11 @@ const {
 
         const tagMap: Record<Api.SiloManage.VectorStoreType, NaiveUI.ThemeColor> = {
           PersistInMemoryEmbeddingStore: 'default',
-          InMemoryEmbeddingStore: 'warning',
+          InMemoryEmbeddingStore: 'default',
           PGVectorEmbeddingStore: 'default'
         };
 
-        const label = $t(vectoreStoreRecord[row.vectorStore]);
-
+        const label = vectoreStoreRecord[row.vectorStore];
         return <NTag type={tagMap[row.vectorStore]}>{label}</NTag>;
       }
     },
@@ -71,13 +70,42 @@ const {
       key: 'embeddingModel',
       title: $t('dRAGon.embeddingModel'),
       align: 'center',
-      minWidth: 100
+      minWidth: 100,
+      render: (row: Api.SiloManage.Silo) => {
+        if (row.embeddingModel === null) {
+          return null;
+        }
+
+        const tagMap: Record<Api.SiloManage.EmbeddingModelType, NaiveUI.ThemeColor> = {
+          BgeSmallEnV15QuantizedEmbeddingModel: 'default',
+          OpenAiEmbeddingAda002Model: 'default',
+          OpenAiEmbedding3SmallModel: 'default',
+          OpenAiEmbedding3LargeModel: 'default'
+        };
+
+        const label = embeddingModelRecord[row.embeddingModel];
+        return <NTag type={tagMap[row.embeddingModel]}>{label}</NTag>;
+      }
     },
     {
       key: 'ingestorLoader',
       title: $t('dRAGon.ingestorLoader'),
       align: 'center',
-      width: 120
+      width: 120,
+      render: (row: Api.SiloManage.Silo) => {
+        if (row.ingestorLoader === null) {
+          return null;
+        }
+
+        const tagMap: Record<Api.SiloManage.IngestorLoaderType, NaiveUI.ThemeColor> = {
+          None: 'default',
+          FileSystem: 'default',
+          URL: 'default'
+        };
+
+        const label = ingestorLoaderRecord[row.ingestorLoader];
+        return <NTag type={tagMap[row.ingestorLoader]}>{label}</NTag>;
+      }
     },
     {
       key: 'operate',
