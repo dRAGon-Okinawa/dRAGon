@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import { $t } from '@/locales';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
-import { enableStatusOptions, vectorStoreOptions } from '@/constants/business';
+import { vectorStoreOptions } from '@/constants/business';
 import { translateOptions } from '@/utils/common';
 
 defineOptions({
@@ -18,7 +18,7 @@ const emit = defineEmits<Emits>();
 
 const { formRef, validate, restoreValidation } = useNaiveForm();
 
-const model = defineModel<Api.SystemManage.UserSearchParams>('model', { required: true });
+const model = defineModel<Api.SiloManage.SiloSearchParams>('model', { required: true });
 
 type RuleKey = Extract<keyof Api.SystemManage.UserSearchParams, 'userEmail' | 'userPhone'>;
 
@@ -46,35 +46,21 @@ async function search() {
   <NCard :title="$t('common.search')" :bordered="false" size="small" class="card-wrapper">
     <NForm ref="formRef" :model="model" :rules="rules" label-placement="left" :label-width="80">
       <NGrid responsive="screen" item-responsive>
-        <NFormItemGi span="24 s:12 m:6" :label="$t('page.manage.user.userName')" path="userName" class="pr-24px">
-          <NInput v-model:value="model.userName" :placeholder="$t('page.manage.user.form.userName')" />
+        <NFormItemGi span="24 s:12 m:6" label="UUID" path="uuid" class="pr-24px">
+          <NInput v-model:value="model.uuid" placeholder="UUID" />
         </NFormItemGi>
-        <NFormItemGi span="24 s:12 m:6" :label="$t('page.manage.user.userGender')" path="userGender" class="pr-24px">
+        <NFormItemGi span="24 s:12 m:6" :label="$t('common.name')" path="name" class="pr-24px">
+          <NInput v-model:value="model.name" :placeholder="$t('common.name')" />
+        </NFormItemGi>
+        <NFormItemGi span="24 s:12 m:6" :label="$t('dRAGon.vectorStore')" path="vectorStore" class="pr-24px">
           <NSelect
-            v-model:value="model.userGender"
-            :placeholder="$t('page.manage.user.form.userGender')"
+            v-model:value="model.vectorStore"
+            :placeholder="$t('dRAGon.vectorStore')"
             :options="translateOptions(vectorStoreOptions)"
             clearable
           />
         </NFormItemGi>
-        <NFormItemGi span="24 s:12 m:6" :label="$t('page.manage.user.nickName')" path="nickName" class="pr-24px">
-          <NInput v-model:value="model.nickName" :placeholder="$t('page.manage.user.form.nickName')" />
-        </NFormItemGi>
-        <NFormItemGi span="24 s:12 m:6" :label="$t('page.manage.user.userPhone')" path="userPhone" class="pr-24px">
-          <NInput v-model:value="model.userPhone" :placeholder="$t('page.manage.user.form.userPhone')" />
-        </NFormItemGi>
-        <NFormItemGi span="24 s:12 m:6" :label="$t('page.manage.user.userEmail')" path="userEmail" class="pr-24px">
-          <NInput v-model:value="model.userEmail" :placeholder="$t('page.manage.user.form.userEmail')" />
-        </NFormItemGi>
-        <NFormItemGi span="24 s:12 m:6" :label="$t('page.manage.user.userStatus')" path="userStatus" class="pr-24px">
-          <NSelect
-            v-model:value="model.status"
-            :placeholder="$t('page.manage.user.form.userStatus')"
-            :options="translateOptions(enableStatusOptions)"
-            clearable
-          />
-        </NFormItemGi>
-        <NFormItemGi span="24 m:12" class="pr-24px">
+        <NFormItemGi span="24 s:12 m:6" class="pr-24px">
           <NSpace class="w-full" justify="end">
             <NButton @click="reset">
               <template #icon>

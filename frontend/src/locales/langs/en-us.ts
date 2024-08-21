@@ -1,13 +1,16 @@
 const local: App.I18n.Schema = {
   dRAGon: {
-    silo: 'Silo',
-    silos: 'Silos',
-    farm: 'Farm',
-    farms: 'Farms',
     document: 'Document',
     documents: 'Documents',
+    embeddingModel: 'Embedding Model',
+    farm: 'Farm',
+    farms: 'Farms',
     infrastructure: 'Infrastructure',
-    infrastructureDescription: 'Overall situation of the dRAGon infrastructure'
+    infrastructureDescription: 'Overall situation of the dRAGon infrastructure',
+    ingestorLoader: 'Ingestor Loader',
+    silo: 'Silo',
+    silos: 'Silos',
+    vectorStore: 'Vector Store'
   },
   system: {
     title: 'dRAGon',
@@ -46,6 +49,7 @@ const local: App.I18n.Schema = {
     lookForward: 'Coming soon',
     modify: 'Modify',
     modifySuccess: 'Modify Success',
+    name: 'Name',
     noData: 'No Data',
     operate: 'Operate',
     pleaseCheckValue: 'Please check whether the value is valid',

@@ -5,6 +5,8 @@
  */
 declare namespace Api {
   namespace Common {
+    type CommonSearchParams = Pick<Common.PaginatingCommonParams, 'current' | 'size'>;
+
     /** common params of paginating */
     interface PaginatingCommonParams {
       /** current page number */
@@ -30,18 +32,8 @@ declare namespace Api {
 
     /** common record */
     type CommonRecord<T = any> = {
-      /** record id */
-      id: number;
-      /** record creator */
-      createBy: string;
-      /** record create time */
-      createTime: string;
-      /** record updater */
-      updateBy: string;
-      /** record update time */
-      updateTime: string;
-      /** record status */
-      status: EnableStatus | null;
+      /** record uuid */
+      uuid: string;
     } & T;
   }
 
@@ -144,12 +136,12 @@ declare namespace Api {
     type IngestorLoaderType = 'None' | 'FileSystem' | 'URL';
 
     /** Silo Search Params */
-    type SiloSearchParams = CommonType.RecordNullable<Pick<Api.SiloManage.Silo, 'name'> & CommonSearchParams>;
+    type SiloSearchParams = CommonType.RecordNullable<
+      Pick<Api.SiloManage.Silo, 'name' | 'uuid' | 'vectorStore'> & Common.CommonSearchParams
+    >;
 
     /** Silo */
     type Silo = Common.CommonRecord<{
-      /** Silo UUID */
-      uuid: string;
       /** Silo Name */
       name: string;
       /** Vector Store Type */
@@ -173,8 +165,6 @@ declare namespace Api {
    * backend api module: "systemManage"
    */
   namespace SystemManage {
-    type CommonSearchParams = Pick<Common.PaginatingCommonParams, 'current' | 'size'>;
-
     /** role */
     type Role = Common.CommonRecord<{
       /** role name */
@@ -187,14 +177,14 @@ declare namespace Api {
 
     /** role search params */
     type RoleSearchParams = CommonType.RecordNullable<
-      Pick<Api.SystemManage.Role, 'roleName' | 'roleCode' | 'status'> & CommonSearchParams
+      Pick<Api.SystemManage.Role, 'uuid' | 'roleName' | 'roleCode'> & Common.CommonSearchParams
     >;
 
     /** role list */
     type RoleList = Common.PaginatingQueryRecord<Role>;
 
     /** all role */
-    type AllRole = Pick<Role, 'id' | 'roleName' | 'roleCode'>;
+    type AllRole = Pick<Role, 'uuid' | 'roleName' | 'roleCode'>;
 
     /**
      * user gender
@@ -222,12 +212,12 @@ declare namespace Api {
 
     /** user search params */
     type UserSearchParams = CommonType.RecordNullable<
-      Pick<Api.SystemManage.User, 'userName' | 'userGender' | 'nickName' | 'userPhone' | 'userEmail' | 'status'> &
-        CommonSearchParams
+      Pick<Api.SystemManage.User, 'uuid' | 'userName' | 'userGender' | 'nickName' | 'userPhone' | 'userEmail'> &
+        Common.CommonSearchParams
     >;
 
-    /** user list */
-    type UserList = Common.PaginatingQueryRecord<User>;
+    /** Silo List */
+    type SiloList = Common.PaginatingQueryRecord<SiloManage.Silo>;
 
     /**
      * menu type

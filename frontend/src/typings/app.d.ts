@@ -246,14 +246,17 @@ declare namespace App {
 
     type Schema = {
       dRAGon: {
-        silo: string;
-        silos: string;
-        farm: string;
-        farms: string;
         document: string;
         documents: string;
+        embeddingModel: string;
+        farm: string;
+        farms: string;
         infrastructure: string;
         infrastructureDescription: string;
+        ingestorLoader: string;
+        silo: string;
+        silos: string;
+        vectorStore: string;
       };
       system: {
         title: string;
@@ -292,6 +295,7 @@ declare namespace App {
         lookForward: string;
         modify: string;
         modifySuccess: string;
+        name: string;
         noData: string;
         operate: string;
         pleaseCheckValue: string;

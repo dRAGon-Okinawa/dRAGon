@@ -3,10 +3,10 @@ import { NButton, NPopconfirm, NTag } from 'naive-ui';
 import { fetchGetSilosList } from '@/service/api';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
-import { _enableStatusRecord, vectoreStoreRecord } from '@/constants/business';
+import { vectoreStoreRecord } from '@/constants/business';
 import { useTable, useTableOperate } from '@/hooks/common/table';
-import UserOperateDrawer from './modules/user-operate-drawer.vue';
-import UserSearch from './modules/user-search.vue';
+import UserOperateDrawer from './modules/silo-operate-drawer.vue';
+import UserSearch from './modules/silo-search.vue';
 
 const appStore = useAppStore();
 
@@ -25,15 +25,7 @@ const {
   showTotal: true,
   apiParams: {
     current: 1,
-    size: 10,
-    // if you want to use the searchParams in Form, you need to define the following properties, and the value is null
-    // the value can not be undefined, otherwise the property in Form will not be reactive
-    status: null,
-    userName: null,
-    userGender: null,
-    nickName: null,
-    userPhone: null,
-    userEmail: null
+    size: 10
   },
   columns: () => [
     {
@@ -43,30 +35,31 @@ const {
     },
     {
       key: 'uuid',
-      title: $t('_uuid'),
+      title: 'UUID',
       align: 'center',
-      width: 64
+      width: 90,
+      render: row => row.uuid.split('-')[0]
     },
     {
       key: 'name',
-      title: $t('_silo_name'),
+      title: $t('common.name'),
       align: 'center',
       minWidth: 100
     },
     {
       key: 'vectorStore',
-      title: $t('_vector_store'),
+      title: $t('dRAGon.vectorStore'),
       align: 'center',
       width: 100,
-      render: row => {
+      render: (row: Api.SiloManage.Silo) => {
         if (row.vectorStore === null) {
           return null;
         }
 
         const tagMap: Record<Api.SiloManage.VectorStoreType, NaiveUI.ThemeColor> = {
-          PersistInMemoryEmbeddingStore: 'error',
+          PersistInMemoryEmbeddingStore: 'default',
           InMemoryEmbeddingStore: 'warning',
-          PGVectorEmbeddingStore: 'primary'
+          PGVectorEmbeddingStore: 'default'
         };
 
         const label = $t(vectoreStoreRecord[row.vectorStore]);
@@ -76,50 +69,22 @@ const {
     },
     {
       key: 'embeddingModel',
-      title: $t('_embedding_model'),
+      title: $t('dRAGon.embeddingModel'),
       align: 'center',
       minWidth: 100
     },
     {
       key: 'ingestorLoader',
-      title: $t('_ingestor_loader'),
+      title: $t('dRAGon.ingestorLoader'),
       align: 'center',
       width: 120
-    },
-    {
-      key: 'vectorStoreSettings',
-      title: $t('_vector_store_settings'),
-      align: 'center',
-      minWidth: 200
-    },
-    {
-      key: 'embeddingSettings',
-      title: $t('_embedding_settings'),
-      align: 'center',
-      width: 100
-      /*
-      render: row => {
-        if (row.status === null) {
-          return null;
-        }
-
-        const tagMap: Record<Api.Common.EnableStatus, NaiveUI.ThemeColor> = {
-          1: 'success',
-          2: 'warning'
-        };
-
-        const label = $t(enableStatusRecord[row.status]);
-
-        return <NTag type={tagMap[row.status]}>{label}</NTag>;
-      }
-        */
     },
     {
       key: 'operate',
       title: $t('common.operate'),
       align: 'center',
       width: 130,
-      render: row => (
+      render: (row: Api.SiloManage.Silo) => (
         <div class="flex-center gap-8px">
           <NButton type="primary" ghost size="small" onClick={() => edit(row.uuid)}>
             {$t('common.edit')}
@@ -159,14 +124,14 @@ async function handleBatchDelete() {
   onBatchDeleted();
 }
 
-function handleDelete(_id: number) {
+function handleDelete(_id: string) {
   // request
   // console.log(id);
 
   onDeleted();
 }
 
-function edit(id: number) {
+function edit(id: string) {
   handleEdit(id);
 }
 </script>
@@ -174,7 +139,7 @@ function edit(id: number) {
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
     <UserSearch v-model:model="searchParams" @reset="resetSearchParams" @search="getDataByPage" />
-    <NCard :title="$t('page.manage.user.title')" :bordered="false" size="small" class="sm:flex-1-hidden card-wrapper">
+    <NCard :title="$t('dRAGon.silos')" :bordered="false" size="small" class="sm:flex-1-hidden card-wrapper">
       <template #header-extra>
         <TableHeaderOperation
           v-model:columns="columnChecks"
