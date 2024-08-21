@@ -1,9 +1,9 @@
 <script setup lang="tsx">
 import { NButton, NPopconfirm, NTag } from 'naive-ui';
-import { fetchGetUserList } from '@/service/api';
+import { fetchGetSilosList } from '@/service/api';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
-import { enableStatusRecord, userGenderRecord } from '@/constants/business';
+import { _enableStatusRecord, vectoreStoreRecord } from '@/constants/business';
 import { useTable, useTableOperate } from '@/hooks/common/table';
 import UserOperateDrawer from './modules/user-operate-drawer.vue';
 import UserSearch from './modules/user-search.vue';
@@ -21,7 +21,7 @@ const {
   searchParams,
   resetSearchParams
 } = useTable({
-  apiFn: fetchGetUserList,
+  apiFn: fetchGetSilosList,
   showTotal: true,
   apiParams: {
     current: 1,
@@ -42,60 +42,62 @@ const {
       width: 48
     },
     {
-      key: 'index',
-      title: $t('common.index'),
+      key: 'uuid',
+      title: $t('_uuid'),
       align: 'center',
       width: 64
     },
     {
-      key: 'userName',
-      title: $t('page.manage.user.userName'),
+      key: 'name',
+      title: $t('_silo_name'),
       align: 'center',
       minWidth: 100
     },
     {
-      key: 'userGender',
-      title: $t('page.manage.user.userGender'),
+      key: 'vectorStore',
+      title: $t('_vector_store'),
       align: 'center',
       width: 100,
       render: row => {
-        if (row.userGender === null) {
+        if (row.vectorStore === null) {
           return null;
         }
 
-        const tagMap: Record<Api.SystemManage.UserGender, NaiveUI.ThemeColor> = {
-          1: 'primary',
-          2: 'error'
+        const tagMap: Record<Api.SiloManage.VectorStoreType, NaiveUI.ThemeColor> = {
+          PersistInMemoryEmbeddingStore: 'error',
+          InMemoryEmbeddingStore: 'warning',
+          PGVectorEmbeddingStore: 'primary'
         };
 
-        const label = $t(userGenderRecord[row.userGender]);
+        const label = $t(vectoreStoreRecord[row.vectorStore]);
 
-        return <NTag type={tagMap[row.userGender]}>{label}</NTag>;
+        return <NTag type={tagMap[row.vectorStore]}>{label}</NTag>;
       }
     },
     {
-      key: 'nickName',
-      title: $t('page.manage.user.nickName'),
+      key: 'embeddingModel',
+      title: $t('_embedding_model'),
       align: 'center',
       minWidth: 100
     },
     {
-      key: 'userPhone',
-      title: $t('page.manage.user.userPhone'),
+      key: 'ingestorLoader',
+      title: $t('_ingestor_loader'),
       align: 'center',
       width: 120
     },
     {
-      key: 'userEmail',
-      title: $t('page.manage.user.userEmail'),
+      key: 'vectorStoreSettings',
+      title: $t('_vector_store_settings'),
       align: 'center',
       minWidth: 200
     },
     {
-      key: 'status',
-      title: $t('page.manage.user.userStatus'),
+      key: 'embeddingSettings',
+      title: $t('_embedding_settings'),
       align: 'center',
-      width: 100,
+      width: 100
+      /*
       render: row => {
         if (row.status === null) {
           return null;
@@ -110,6 +112,7 @@ const {
 
         return <NTag type={tagMap[row.status]}>{label}</NTag>;
       }
+        */
     },
     {
       key: 'operate',
@@ -118,10 +121,10 @@ const {
       width: 130,
       render: row => (
         <div class="flex-center gap-8px">
-          <NButton type="primary" ghost size="small" onClick={() => edit(row.id)}>
+          <NButton type="primary" ghost size="small" onClick={() => edit(row.uuid)}>
             {$t('common.edit')}
           </NButton>
-          <NPopconfirm onPositiveClick={() => handleDelete(row.id)}>
+          <NPopconfirm onPositiveClick={() => handleDelete(row.uuid)}>
             {{
               default: () => $t('common.confirmDelete'),
               trigger: () => (
@@ -191,7 +194,7 @@ function edit(id: number) {
         :scroll-x="962"
         :loading="loading"
         remote
-        :row-key="row => row.id"
+        :row-key="row => row.uuid"
         :pagination="mobilePagination"
         class="sm:h-full"
       />

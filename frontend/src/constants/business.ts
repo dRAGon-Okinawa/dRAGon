@@ -7,12 +7,13 @@ export const enableStatusRecord: Record<Api.Common.EnableStatus, App.I18n.I18nKe
 
 export const enableStatusOptions = transformRecordToOption(enableStatusRecord);
 
-export const userGenderRecord: Record<Api.SystemManage.UserGender, App.I18n.I18nKey> = {
-  '1': 'page.manage.user.gender.male',
-  '2': 'page.manage.user.gender.female'
+export const vectoreStoreRecord: Record<Api.SiloManage.VectorStoreType, App.I18n.I18nKey> = {
+  PersistInMemoryEmbeddingStore: 'common.index',
+  InMemoryEmbeddingStore: 'common.index',
+  PGVectorEmbeddingStore: 'common.index'
 };
 
-export const userGenderOptions = transformRecordToOption(userGenderRecord);
+export const vectorStoreOptions = transformRecordToOption(vectoreStoreRecord);
 
 export const menuTypeRecord: Record<Api.SystemManage.MenuType, App.I18n.I18nKey> = {
   '1': 'page.manage.menu.type.directory',

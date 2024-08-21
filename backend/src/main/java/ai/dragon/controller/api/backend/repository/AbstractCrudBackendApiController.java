@@ -3,8 +3,8 @@ package ai.dragon.controller.api.backend.repository;
 import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.UUID;
+import java.util.function.Function;
 
 import org.dizitart.no2.collection.FindOptions;
 import org.dizitart.no2.exceptions.UniqueConstraintException;
@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectReader;
 
 import ai.dragon.entity.AbstractEntity;
 import ai.dragon.repository.AbstractRepository;
+import ai.dragon.repository.util.Pager;
 
 abstract class AbstractCrudBackendApiController<T extends AbstractEntity> {
     protected T update(String uuid, Map<String, Object> fields, AbstractRepository<T> repository) {
@@ -44,6 +45,30 @@ abstract class AbstractCrudBackendApiController<T extends AbstractEntity> {
 
     protected List<T> list(AbstractRepository<T> repository) {
         return repository.find().toList();
+    }
+
+    protected long count(AbstractRepository<T> repository) {
+        return repository.find().size();
+    }
+
+    protected long count(AbstractRepository<T> repository, Filter filter) {
+        return repository.findWithFilter(filter).size();
+    }
+
+    protected Pager<T> page(AbstractRepository<T> repository, int page, int size) {
+        return this.page(repository, Filter.ALL, page, size);
+    }
+
+    protected Pager<T> page(AbstractRepository<T> repository, Filter filter, int page, int size) {
+        Cursor<T> cursorFull = repository.findWithFilter(filter);
+        Cursor<T> cursorLimit = repository.findWithFilter(filter, FindOptions.skipBy((page - 1) * size).limit(size));
+        return Pager
+                .<T>builder()
+                .page(page)
+                .size(size)
+                .total(cursorFull.size())
+                .data(cursorLimit.toList())
+                .build();
     }
 
     protected T create(AbstractRepository<T> repository) throws Exception {

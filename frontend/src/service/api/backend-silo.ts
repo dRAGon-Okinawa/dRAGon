@@ -12,10 +12,10 @@ export function fetchGetAllRoles() {
   });
 }
 
-/** get user list */
-export function fetchGetUserList(params?: Api.SystemManage.UserSearchParams) {
-  return request<Api.SystemManage.UserList>({
-    url: '/systemManage/getUserList',
+/** Get Silos List */
+export function fetchGetSilosList(params?: Api.SiloManage.SiloSearchParams) {
+  return request<Api.SiloManage.Silo>({
+    url: '/api/backend/repository/silo/',
     method: 'get',
     params
   });

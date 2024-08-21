@@ -258,31 +258,6 @@ const local: App.I18n.Schema = {
         addRole: 'Add Role',
         editRole: 'Edit Role'
       },
-      user: {
-        title: 'User List',
-        userName: 'User Name',
-        userGender: 'Gender',
-        nickName: 'Nick Name',
-        userPhone: 'Phone Number',
-        userEmail: 'Email',
-        userStatus: 'User Status',
-        userRole: 'User Role',
-        form: {
-          userName: 'Please enter user name',
-          userGender: 'Please select gender',
-          nickName: 'Please enter nick name',
-          userPhone: 'Please enter phone number',
-          userEmail: 'Please enter email',
-          userStatus: 'Please select user status',
-          userRole: 'Please select user role'
-        },
-        addUser: 'Add User',
-        editUser: 'Edit User',
-        gender: {
-          male: 'Male',
-          female: 'Female'
-        }
-      },
       menu: {
         title: 'Menu List',
         id: 'ID',

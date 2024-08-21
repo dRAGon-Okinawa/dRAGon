@@ -127,6 +127,51 @@ declare namespace Api {
    *
    * backend api module: "systemManage"
    */
+  namespace SiloManage {
+    type CommonSearchParams = Pick<Common.PaginatingCommonParams, 'current' | 'size'>;
+
+    /** Vector Store Type */
+    type VectorStoreType = 'PersistInMemoryEmbeddingStore' | 'InMemoryEmbeddingStore' | 'PGVectorEmbeddingStore';
+
+    /** Embedding Model Type */
+    type EmbeddingModelType =
+      | 'BgeSmallEnV15QuantizedEmbeddingModel'
+      | 'OpenAiEmbeddingAda002Model'
+      | 'OpenAiEmbedding3SmallModel'
+      | 'OpenAiEmbedding3LargeModel';
+
+    /** Ingestor Loader */
+    type IngestorLoaderType = 'None' | 'FileSystem' | 'URL';
+
+    /** Silo Search Params */
+    type SiloSearchParams = CommonType.RecordNullable<Pick<Api.SiloManage.Silo, 'name'> & CommonSearchParams>;
+
+    /** Silo */
+    type Silo = Common.CommonRecord<{
+      /** Silo UUID */
+      uuid: string;
+      /** Silo Name */
+      name: string;
+      /** Vector Store Type */
+      vectorStore: VectorStoreType | null;
+      /** Embedding Model */
+      embeddingModel: EmbeddingModelType | null;
+      /** Ingestor Loader */
+      ingestorLoader: IngestorLoaderType | null;
+      /** Vector Store Settings */
+      vectorStoreSettings: string[] | null;
+      /* Embedding Settings */
+      embeddingSettings: string[] | null;
+      /* Ingestor Settings */
+      ingestorSettings: string[] | null;
+    }>;
+  }
+
+  /**
+   * namespace SystemManage
+   *
+   * backend api module: "systemManage"
+   */
   namespace SystemManage {
     type CommonSearchParams = Pick<Common.PaginatingCommonParams, 'current' | 'size'>;
 

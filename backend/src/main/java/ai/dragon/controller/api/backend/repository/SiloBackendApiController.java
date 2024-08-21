@@ -1,6 +1,5 @@
 package ai.dragon.controller.api.backend.repository;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -12,10 +11,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import ai.dragon.dto.api.DataTableApiResponse;
+import ai.dragon.dto.api.GenericApiResponse;
 import ai.dragon.entity.SiloEntity;
 import ai.dragon.repository.SiloRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,9 +35,10 @@ public class SiloBackendApiController extends AbstractCrudBackendApiController<S
 
     @GetMapping("/")
     @ApiResponse(responseCode = "200", description = "List has been successfully retrieved.")
-    @Operation(summary = "List all Silos", description = "Returns all Silo entities stored in the database.")
-    public List<SiloEntity> listSilos() {
-        return super.list(siloRepository);
+    @Operation(summary = "Search Silos", description = "Search Silo entities stored in the database.")
+    public GenericApiResponse searchSilos(@RequestParam(name = "current", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        return DataTableApiResponse.fromPager(super.page(siloRepository, page, size));
     }
 
     @PostMapping("/")

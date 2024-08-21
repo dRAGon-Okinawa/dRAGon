@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import { $t } from '@/locales';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
-import { enableStatusOptions, userGenderOptions } from '@/constants/business';
+import { enableStatusOptions, vectorStoreOptions } from '@/constants/business';
 import { translateOptions } from '@/utils/common';
 
 defineOptions({
@@ -53,7 +53,7 @@ async function search() {
           <NSelect
             v-model:value="model.userGender"
             :placeholder="$t('page.manage.user.form.userGender')"
-            :options="translateOptions(userGenderOptions)"
+            :options="translateOptions(vectorStoreOptions)"
             clearable
           />
         </NFormItemGi>
