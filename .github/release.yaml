@@ -19,6 +19,6 @@ changelog:
     - title: 🔄 Dependency Updates
       labels:
         - dependency
-    - title: Other Changes
+    - title: 📝 Other Changes
       labels:
         - "*"
