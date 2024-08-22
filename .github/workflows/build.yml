@@ -55,7 +55,7 @@ jobs:
         id: get_labels
         if: env.pr_url != ''
         run: |
-          LABELS=$(gh pr view ${{ env.pr_url }} --json labels --jq '.labels[].name')
+          LABELS=$(gh pr view ${{ env.pr_url }} --json labels --jq '.labels | map(.name) | join(",")')
           echo "labels=$LABELS" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
