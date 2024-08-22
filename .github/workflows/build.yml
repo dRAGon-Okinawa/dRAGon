@@ -61,12 +61,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Set default version incrementer
         run: echo "versionIncrementer=incrementPatch" >> $GITHUB_ENV
-      - name: Check for enhancement label
-        if: contains(env.labels, 'enhancement')
-        run: echo "versionIncrementer=incrementMinor" >> $GITHUB_ENV
-      - name: Check for breaking-change label
-        if: contains(env.labels, 'breaking-change')
-        run: echo "versionIncrementer=incrementMajor" >> $GITHUB_ENV
+      - name: Check for enhancement / breaking-change labels
+        if: env.labels != ''
+        run: |
+          LABELS=${{ env.labels }}
+          if [[ $LABELS == *"enhancement"* ]]; then
+            echo "versionIncrementer=incrementMinor" >> $GITHUB_ENV
+          fi
+          if [[ $LABELS == *"breaking-change"* ]]; then
+            echo "versionIncrementer=incrementMajor" >> $GITHUB_ENV
+          fi
       - name: Display Version Incrementer
         run: echo "Version Incrementer == ${{ env.versionIncrementer }}"
       - name: Create Release
