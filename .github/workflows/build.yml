@@ -73,7 +73,7 @@ jobs:
         if: |
           github.ref == 'refs/heads/main' &&
           github.repository == 'dragon-okinawa/dragon'
-        run: gradle createRelease -Prelease.versionIncrementer=${{ steps.get_labels.outputs.versionIncrementer }}
+        run: gradle createRelease -Prelease.versionIncrementer=${{ env.versionIncrementer }}
 
       # Set Frontend Version
       - name: Set Frontend Version
