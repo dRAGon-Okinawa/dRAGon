@@ -43,32 +43,32 @@ jobs:
       # Create Release Semver
       - name: Get the current branch name
         id: get_branch
-        run: echo "::set-output name=branch::$(echo ${GITHUB_REF#refs/heads/})"
+        run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
       - name: Find related PR
         id: find_pr
         run: |
-          PR_URL=$(gh pr list --base ${{ steps.get_branch.outputs.branch }} --json url --jq '.[0].url')
-          echo "::set-output name=pr_url::$PR_URL"
+          PR_URL=$(gh pr list --base ${{ env.branch }} --json url --jq '.[0].url')
+          echo "pr_url=$PR_URL" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Fetch PR labels
         id: get_labels
-        if: steps.find_pr.outputs.pr_url != ''
+        if: env.pr_url != ''
         run: |
-          LABELS=$(gh pr view ${{ steps.find_pr.outputs.pr_url }} --json labels --jq '.labels[].name')
-          echo "::set-output name=labels::$LABELS"
+          LABELS=$(gh pr view ${{ env.pr_url }} --json labels --jq '.labels[].name')
+          echo "labels=$LABELS" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Set default version incrementer
-        run: echo "::set-output name=versionIncrementer::incrementPatch"
+        run: echo "versionIncrementer=incrementPatch" >> $GITHUB_ENV
       - name: Check for enhancement label
-        if: contains(steps.get_labels.outputs.labels, 'enhancement')
-        run: echo "::set-output name=versionIncrementer::incrementMinor"
+        if: contains(env.labels, 'enhancement')
+        run: echo "versionIncrementer=incrementMinor" >> $GITHUB_ENV
       - name: Check for breaking-change label
-        if: contains(steps.get_labels.outputs.labels, 'breaking-change')
-        run: echo "::set-output name=versionIncrementer::incrementMajor"
+        if: contains(env.labels, 'breaking-change')
+        run: echo "versionIncrementer=incrementMajor" >> $GITHUB_ENV
       - name: Display Version Incrementer
-        run: echo "Version Incrementer == ${{ steps.get_labels.outputs.versionIncrementer }}"
+        run: echo "Version Incrementer == ${{ env.versionIncrementer }}"
       - name: Create Release
         if: |
           github.ref == 'refs/heads/main' &&
