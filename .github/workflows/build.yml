@@ -64,7 +64,7 @@ jobs:
       - name: Check for enhancement / breaking-change labels
         if: env.labels != ''
         run: |
-          LABELS=${{ env.labels }}
+          LABELS="${{ env.labels }}"
           if [[ $LABELS == *"enhancement"* ]]; then
             echo "versionIncrementer=incrementMinor" >> $GITHUB_ENV
           fi
