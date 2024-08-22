@@ -47,7 +47,7 @@ jobs:
       - name: Find related PR
         id: find_pr
         run: |
-          PR_URL=$(gh pr list --base ${{ env.branch }} --json url --jq '.[0].url')
+          PR_URL=$(gh pr list --base ${{ env.branch }} --state=all --json url --limit=1 --jq '.[0].url')
           echo "pr_url=$PR_URL" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
