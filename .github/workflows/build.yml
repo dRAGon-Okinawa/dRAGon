@@ -67,7 +67,8 @@ jobs:
       - name: Check for breaking-change label
         if: contains(steps.get_labels.outputs.labels, 'breaking-change')
         run: echo "::set-output name=versionIncrementer::incrementMajor"
-      - run: echo "Version Incrementer: ${{ steps.get_labels.outputs.versionIncrementer }}"
+      - name: Display Version Incrementer
+        run: echo "Version Incrementer: ${{ steps.get_labels.outputs.versionIncrementer }}"
       - name: Create Release
         if: |
           github.ref == 'refs/heads/main' &&
