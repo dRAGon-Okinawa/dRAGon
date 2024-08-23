@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import org.dizitart.no2.filters.Filter;
 import org.dizitart.no2.filters.FluentFilter;
-import org.dizitart.no2.filters.NitriteFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
