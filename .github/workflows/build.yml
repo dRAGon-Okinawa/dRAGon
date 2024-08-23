@@ -18,6 +18,7 @@ jobs:
       DRAGON_CICD: true
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
     steps:
+      # Prepare Job
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -35,45 +36,82 @@ jobs:
         with:
           gradle-version: 8.7
 
+      # Display Tools Versions
       - name: Display Tools Versions
         run: gradle issueReportInfo
 
+      # Create Release Semver
+      - name: Get the current branch name
+        id: get_branch
+        run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+      - name: Find related PR
+        id: find_pr
+        run: |
+          PR_URL=$(gh pr list --base ${{ env.branch }} --state=all --json url --limit=1 --jq '.[0].url')
+          echo "pr_url=$PR_URL" >> $GITHUB_ENV
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Fetch PR labels
+        id: get_labels
+        if: env.pr_url != ''
+        run: |
+          LABELS=$(gh pr view ${{ env.pr_url }} --json labels --jq '.labels | map(.name) | join(",")')
+          echo "labels=$LABELS" >> $GITHUB_ENV
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set default version incrementer
+        run: echo "versionIncrementer=incrementPatch" >> $GITHUB_ENV
+      - name: Check for enhancement / breaking-change labels
+        if: env.labels != ''
+        run: |
+          LABELS="${{ env.labels }}"
+          if [[ $LABELS == *"enhancement"* ]]; then
+            echo "versionIncrementer=incrementMinor" >> $GITHUB_ENV
+          fi
+          if [[ $LABELS == *"breaking-change"* ]]; then
+            echo "versionIncrementer=incrementMajor" >> $GITHUB_ENV
+          fi
+      - name: Display Version Incrementer
+        run: echo "Version Incrementer == ${{ env.versionIncrementer }}"
       - name: Create Release
         if: |
           github.ref == 'refs/heads/main' &&
           github.repository == 'dragon-okinawa/dragon'
-        run: gradle createRelease
+        run: gradle createRelease -Prelease.versionIncrementer=${{ env.versionIncrementer }}
 
+      # Set Frontend Version
       - name: Set Frontend Version
         run: pnpm version from-git --no-git-tag-version --prefix frontend
 
+      # Lint Frontend and Backend
       - name: Lint Frontend
         run: gradle pnpmInstall pnpmLint
-
       - name: Lint Backend
         run: gradle checkstyleMain checkstyleTest
 
+      # Test dRAGon
       - name: Test dRAGon
         run: gradle test
 
+      # Package dRAGon
       - name: Package dRAGon
         run: gradle bootJar -Pversion=$(gradle cV -q -Prelease.quiet)
 
+      # Upload coverage reports to Codecov
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.5.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
+      # Build and push Docker image
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Docker Meta Data
         id: meta
         uses: docker/metadata-action@v5
@@ -82,7 +120,6 @@ jobs:
           tags: |
             type=raw,value=${{ github.ref_name }},enable=true
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
-
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
@@ -92,6 +129,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
+      # Push Release
       - name: Push Release
         if: |
           github.ref == 'refs/heads/main' &&
