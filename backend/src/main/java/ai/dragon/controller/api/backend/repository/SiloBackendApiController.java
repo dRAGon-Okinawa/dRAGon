@@ -1,8 +1,12 @@
 package ai.dragon.controller.api.backend.repository;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
+import org.dizitart.no2.filters.Filter;
+import org.dizitart.no2.filters.FluentFilter;
+import org.dizitart.no2.filters.NitriteFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +24,7 @@ import ai.dragon.dto.api.DataTableApiResponse;
 import ai.dragon.dto.api.GenericApiResponse;
 import ai.dragon.entity.SiloEntity;
 import ai.dragon.repository.SiloRepository;
+import ai.dragon.repository.util.Pager;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -37,8 +42,16 @@ public class SiloBackendApiController extends AbstractCrudBackendApiController<S
     @ApiResponse(responseCode = "200", description = "List has been successfully retrieved.")
     @Operation(summary = "Search Silos", description = "Search Silo entities stored in the database.")
     public GenericApiResponse searchSilos(@RequestParam(name = "current", defaultValue = "1") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size) {
-        return DataTableApiResponse.fromPager(super.page(siloRepository, page, size));
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "uuid", required = false) String uuid,
+            @RequestParam(name = "name", required = false) String name,
+            @RequestParam(name = "vectorStore", required = false) String vectorStore) {
+        Filter filter = FluentFilter
+                .where("uuid").regex(String.format("^%s", Optional.ofNullable(uuid).orElse("")))
+                .and(FluentFilter.where("name").regex(Optional.ofNullable(name).orElse(""))
+                        .and(FluentFilter.where("vectorStore").regex(Optional.ofNullable(vectorStore).orElse(""))));
+        Pager<SiloEntity> pager = super.page(siloRepository, filter, page, size);
+        return DataTableApiResponse.fromPager(pager);
     }
 
     @PostMapping("/")

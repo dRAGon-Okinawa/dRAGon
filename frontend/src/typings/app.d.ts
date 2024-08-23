@@ -297,7 +297,6 @@ declare namespace App {
         modifySuccess: string;
         name: string;
         noData: string;
-        operate: string;
         pleaseCheckValue: string;
         refresh: string;
         reset: string;

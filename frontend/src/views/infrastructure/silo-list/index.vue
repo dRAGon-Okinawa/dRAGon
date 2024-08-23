@@ -109,7 +109,7 @@ const {
     },
     {
       key: 'operate',
-      title: $t('common.operate'),
+      title: $t('common.action'),
       align: 'center',
       width: 130,
       render: (row: Api.SiloManage.Silo) => (

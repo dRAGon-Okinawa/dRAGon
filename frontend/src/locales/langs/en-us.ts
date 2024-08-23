@@ -51,7 +51,6 @@ const local: App.I18n.Schema = {
     modifySuccess: 'Modify Success',
     name: 'Name',
     noData: 'No Data',
-    operate: 'Operate',
     pleaseCheckValue: 'Please check whether the value is valid',
     refresh: 'Refresh',
     reset: 'Reset',
