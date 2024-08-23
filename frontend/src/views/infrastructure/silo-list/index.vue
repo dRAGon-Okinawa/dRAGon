@@ -25,7 +25,10 @@ const {
   showTotal: true,
   apiParams: {
     current: 1,
-    size: 10
+    size: 10,
+    uuid: '',
+    name: '',
+    vectorStore: null
   },
   columns: () => [
     {
@@ -159,6 +162,11 @@ function handleDelete(_id: string) {
   onDeleted();
 }
 
+function handleReset() {
+  resetSearchParams();
+  getDataByPage();
+}
+
 function edit(id: string) {
   handleEdit(id);
 }
@@ -166,7 +174,7 @@ function edit(id: string) {
 
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
-    <UserSearch v-model:model="searchParams" @reset="resetSearchParams" @search="getDataByPage" />
+    <UserSearch v-model:model="searchParams" @reset="handleReset" @search="getDataByPage" />
     <NCard :title="$t('dRAGon.silos')" :bordered="false" size="small" class="sm:flex-1-hidden card-wrapper">
       <template #header-extra>
         <TableHeaderOperation

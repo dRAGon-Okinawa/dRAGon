@@ -47,10 +47,10 @@ async function search() {
     <NForm ref="formRef" :model="model" :rules="rules" label-placement="left" :label-width="80">
       <NGrid responsive="screen" item-responsive>
         <NFormItemGi span="24 s:12 m:6" label="UUID" path="uuid" class="pr-24px">
-          <NInput v-model:value="model.uuid" placeholder="UUID" />
+          <NInput v-model:value="model.uuid" placeholder="UUID" @keyup.enter="search" />
         </NFormItemGi>
         <NFormItemGi span="24 s:12 m:6" :label="$t('common.name')" path="name" class="pr-24px">
-          <NInput v-model:value="model.name" :placeholder="$t('common.name')" />
+          <NInput v-model:value="model.name" :placeholder="$t('common.name')" @keyup.enter="search" />
         </NFormItemGi>
         <NFormItemGi span="24 s:12 m:6" :label="$t('dRAGon.vectorStore')" path="vectorStore" class="pr-24px">
           <NSelect
@@ -58,6 +58,7 @@ async function search() {
             :placeholder="$t('dRAGon.vectorStore')"
             :options="translateOptions(vectorStoreOptions)"
             clearable
+            @change="search"
           />
         </NFormItemGi>
         <NFormItemGi span="24 s:12 m:6" class="pr-24px">
