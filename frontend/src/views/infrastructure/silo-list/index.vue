@@ -5,8 +5,8 @@ import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
 import { embeddingModelRecord, ingestorLoaderRecord, vectoreStoreRecord } from '@/constants/business';
 import { useTable, useTableOperate } from '@/hooks/common/table';
-import UserOperateDrawer from './modules/silo-operate-drawer.vue';
-import UserSearch from './modules/silo-search.vue';
+import SiloEdit from './modules/silo-edit.vue';
+import SiloSearch from './modules/silo-search.vue';
 
 const appStore = useAppStore();
 
@@ -174,7 +174,7 @@ function edit(id: string) {
 
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
-    <UserSearch v-model:model="searchParams" @reset="handleReset" @search="getDataByPage" />
+    <SiloSearch v-model:model="searchParams" @reset="handleReset" @search="getDataByPage" />
     <NCard :title="$t('dRAGon.silos')" :bordered="false" size="small" class="sm:flex-1-hidden card-wrapper">
       <template #header-extra>
         <TableHeaderOperation
@@ -199,7 +199,7 @@ function edit(id: string) {
         :pagination="mobilePagination"
         class="sm:h-full"
       />
-      <UserOperateDrawer
+      <SiloEdit
         v-model:visible="drawerVisible"
         :operate-type="operateType"
         :row-data="editingData"

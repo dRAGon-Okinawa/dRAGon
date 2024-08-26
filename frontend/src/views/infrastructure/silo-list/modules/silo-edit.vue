@@ -2,10 +2,11 @@
 import { computed, reactive, watch } from 'vue';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
 import { $t } from '@/locales';
-import { vectorStoreOptions } from '@/constants/business';
+import { translateOptions } from '@/utils/common';
+import { embeddingModelOptions, ingestorLoaderOptions, vectorStoreOptions } from '@/constants/business';
 
 defineOptions({
-  name: 'SiloOperateDrawer'
+  name: 'SiloEdit'
 });
 
 interface Props {
@@ -32,8 +33,8 @@ const { defaultRequiredRule } = useFormRules();
 
 const title = computed(() => {
   const titles: Record<NaiveUI.TableOperateType, string> = {
-    add: $t('page.manage.user.addUser'),
-    edit: $t('page.manage.user.editUser')
+    add: $t('common.add'),
+    edit: $t('common.edit')
   };
   return titles[props.operateType];
 });
@@ -87,29 +88,31 @@ watch(visible, () => {
   <NDrawer v-model:show="visible" display-directive="show" :width="360">
     <NDrawerContent :title="title" :native-scrollbar="false" closable>
       <NForm ref="formRef" :model="model" :rules="rules">
-        <NFormItem :label="$t('page.manage.user.userName')" path="userName">
-          <NInput v-model:value="model.name" :placeholder="$t('page.manage.user.form.userName')" />
+        <NFormItem :label="$t('common.name')" path="name">
+          <NInput v-model:value="model.name" :placeholder="$t('common.name')" />
         </NFormItem>
-        <NFormItem :label="$t('page.manage.user.userGender')" path="userGender">
-          <NRadioGroup v-model:value="model.name">
-            <NRadio v-for="item in vectorStoreOptions" :key="item.value" :value="item.value" :label="$t(item.label)" />
-          </NRadioGroup>
-        </NFormItem>
-        <NFormItem :label="$t('page.manage.user.nickName')" path="nickName">
-          <NInput v-model:value="model.name" :placeholder="$t('page.manage.user.form.nickName')" />
-        </NFormItem>
-        <NFormItem :label="$t('page.manage.user.userPhone')" path="userPhone">
-          <NInput v-model:value="model.name" :placeholder="$t('page.manage.user.form.userPhone')" />
-        </NFormItem>
-        <NFormItem :label="$t('page.manage.user.userEmail')" path="email">
-          <NInput v-model:value="model.name" :placeholder="$t('page.manage.user.form.userEmail')" />
-        </NFormItem>
-        <NFormItem :label="$t('page.manage.user.userRole')" path="roles">
+        <NFormItem :label="$t('dRAGon.vectorStore')" path="vectorStore">
           <NSelect
-            v-model:value="model.name"
-            multiple
-            :options="undefined"
-            :placeholder="$t('page.manage.user.form.userRole')"
+            v-model:value="model.vectorStore"
+            :placeholder="$t('dRAGon.vectorStore')"
+            :options="translateOptions(vectorStoreOptions)"
+            clearable
+          />
+        </NFormItem>
+        <NFormItem :label="$t('dRAGon.embeddingModel')" path="embeddingModel">
+          <NSelect
+            v-model:value="model.embeddingModel"
+            :placeholder="$t('dRAGon.embeddingModel')"
+            :options="translateOptions(embeddingModelOptions)"
+            clearable
+          />
+        </NFormItem>
+        <NFormItem :label="$t('dRAGon.ingestorLoader')" path="ingestorLoader">
+          <NSelect
+            v-model:value="model.ingestorLoader"
+            :placeholder="$t('dRAGon.ingestorLoader')"
+            :options="translateOptions(ingestorLoaderOptions)"
+            clearable
           />
         </NFormItem>
       </NForm>

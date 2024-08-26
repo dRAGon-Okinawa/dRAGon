@@ -6,7 +6,7 @@ import { vectorStoreOptions } from '@/constants/business';
 import { translateOptions } from '@/utils/common';
 
 defineOptions({
-  name: 'UserSearch'
+  name: 'SiloSearch'
 });
 
 interface Emits {
