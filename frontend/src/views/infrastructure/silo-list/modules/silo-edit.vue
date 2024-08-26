@@ -88,33 +88,56 @@ watch(visible, () => {
   <NDrawer v-model:show="visible" display-directive="show" :width="360">
     <NDrawerContent :title="title" :native-scrollbar="false" closable>
       <NForm ref="formRef" :model="model" :rules="rules">
-        <NFormItem :label="$t('common.name')" path="name">
-          <NInput v-model:value="model.name" :placeholder="$t('common.name')" />
-        </NFormItem>
-        <NFormItem :label="$t('dRAGon.vectorStore')" path="vectorStore">
-          <NSelect
-            v-model:value="model.vectorStore"
-            :placeholder="$t('dRAGon.vectorStore')"
-            :options="translateOptions(vectorStoreOptions)"
-            clearable
-          />
-        </NFormItem>
-        <NFormItem :label="$t('dRAGon.embeddingModel')" path="embeddingModel">
-          <NSelect
-            v-model:value="model.embeddingModel"
-            :placeholder="$t('dRAGon.embeddingModel')"
-            :options="translateOptions(embeddingModelOptions)"
-            clearable
-          />
-        </NFormItem>
-        <NFormItem :label="$t('dRAGon.ingestorLoader')" path="ingestorLoader">
-          <NSelect
-            v-model:value="model.ingestorLoader"
-            :placeholder="$t('dRAGon.ingestorLoader')"
-            :options="translateOptions(ingestorLoaderOptions)"
-            clearable
-          />
-        </NFormItem>
+        <NDivider title-placement="left">
+          {{ $t('dRAGon.silo') }}
+        </NDivider>
+        <NInput v-model:value="model.name" :placeholder="$t('common.name')" />
+        <NDivider title-placement="left">
+          {{ $t('dRAGon.vectorStore') }}
+        </NDivider>
+        <NSelect
+          v-model:value="model.vectorStore"
+          :placeholder="$t('dRAGon.vectorStore')"
+          :options="translateOptions(vectorStoreOptions)"
+          clearable
+          class="mb-4"
+        />
+        <NCollapse>
+          <NCollapseItem :title="$t('common.settings')">
+            <NDynamicInput>
+              <template #create-button-default>
+                {{ $t('common.add') }}
+              </template>
+              <div class="flex">
+                <NFormItem ignore-path-change :show-label="false" class="flex-auto">
+                  <NInput :placeholder="$t('common.key')" @keydown.enter.prevent />
+                </NFormItem>
+                <div class="mt-1 w-14 flex-auto text-center align-middle">=</div>
+                <NFormItem ignore-path-change :show-label="false" class="flex-auto">
+                  <NInput :placeholder="$t('common.value')" @keydown.enter.prevent />
+                </NFormItem>
+              </div>
+            </NDynamicInput>
+          </NCollapseItem>
+        </NCollapse>
+        <NDivider title-placement="left">
+          {{ $t('dRAGon.embeddingModel') }}
+        </NDivider>
+        <NSelect
+          v-model:value="model.embeddingModel"
+          :placeholder="$t('dRAGon.embeddingModel')"
+          :options="translateOptions(embeddingModelOptions)"
+          clearable
+        />
+        <NDivider title-placement="left">
+          {{ $t('dRAGon.ingestorLoader') }}
+        </NDivider>
+        <NSelect
+          v-model:value="model.ingestorLoader"
+          :placeholder="$t('dRAGon.ingestorLoader')"
+          :options="translateOptions(ingestorLoaderOptions)"
+          clearable
+        />
       </NForm>
       <template #footer>
         <NSpace :size="16">

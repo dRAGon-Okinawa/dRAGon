@@ -289,6 +289,7 @@ declare namespace App {
         error: string;
         help: string;
         index: string;
+        key: string;
         keywordSearch: string;
         logout: string;
         logoutConfirm: string;
@@ -300,6 +301,7 @@ declare namespace App {
         pleaseCheckValue: string;
         refresh: string;
         reset: string;
+        settings: string;
         search: string;
         switch: string;
         tip: string;
@@ -307,6 +309,7 @@ declare namespace App {
         update: string;
         updateSuccess: string;
         userCenter: string;
+        value: string;
         yesOrNo: {
           yes: string;
           no: string;

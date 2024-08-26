@@ -43,6 +43,7 @@ const local: App.I18n.Schema = {
     error: 'Error',
     help: 'Help',
     index: 'Index',
+    key: 'Key',
     keywordSearch: 'Please enter keyword',
     logout: 'Logout',
     logoutConfirm: 'Are you sure you want to log out?',
@@ -55,12 +56,14 @@ const local: App.I18n.Schema = {
     refresh: 'Refresh',
     reset: 'Reset',
     search: 'Search',
+    settings: 'Settings',
     switch: 'Switch',
     tip: 'Tip',
     trigger: 'Trigger',
     update: 'Update',
     updateSuccess: 'Update Success',
     userCenter: 'User Center',
+    value: 'Value',
     yesOrNo: {
       yes: 'Yes',
       no: 'No'
