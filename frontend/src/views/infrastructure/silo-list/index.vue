@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import { NButton, NPopconfirm, NTag } from 'naive-ui';
-import { fetchGetSilosList } from '@/service/api';
+import { fetchDeleteMultipleSilos, fetchDeleteSilo, fetchGetSilosList } from '@/service/api';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
 import { embeddingModelRecord, ingestorLoaderRecord, vectoreStoreRecord } from '@/constants/business';
@@ -149,17 +149,19 @@ const {
 } = useTableOperate(data, getData);
 
 async function handleBatchDelete() {
-  // request
-  // console.log(checkedRowKeys.value);
-
-  onBatchDeleted();
+  fetchDeleteMultipleSilos(checkedRowKeys.value).then(response => {
+    if (response.error === null) {
+      onBatchDeleted();
+    }
+  });
 }
 
 function handleDelete(_id: string) {
-  // request
-  // console.log(id);
-
-  onDeleted();
+  fetchDeleteSilo(_id).then(response => {
+    if (response.error === null) {
+      onDeleted();
+    }
+  });
 }
 
 function handleReset() {

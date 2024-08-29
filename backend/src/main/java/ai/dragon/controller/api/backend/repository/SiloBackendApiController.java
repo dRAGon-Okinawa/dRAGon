@@ -22,6 +22,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import ai.dragon.dto.api.DataTableApiResponse;
 import ai.dragon.dto.api.GenericApiResponse;
+import ai.dragon.dto.api.SuccessApiResponse;
+import ai.dragon.dto.api.backend.UUIDsBatchRequest;
 import ai.dragon.entity.SiloEntity;
 import ai.dragon.repository.SiloRepository;
 import ai.dragon.repository.util.Pager;
@@ -59,49 +61,72 @@ public class SiloBackendApiController extends AbstractCrudBackendApiController<S
     @ApiResponse(responseCode = "200", description = "Silo has been successfully created.")
     @ApiResponse(responseCode = "409", description = "Constraint violation.", content = @Content)
     @Operation(summary = "Create a new Silo", description = "Creates one Silo entity in the database.")
-    public SiloEntity createSilo() throws Exception {
-        return super.create(siloRepository);
+    public GenericApiResponse createSilo() throws Exception {
+        return SuccessApiResponse
+                .builder()
+                .data(super.create(siloRepository))
+                .build();
     }
 
     @GetMapping("/{uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}")
     @ApiResponse(responseCode = "200", description = "Silo has been successfully retrieved.")
     @ApiResponse(responseCode = "404", description = "Silo not found.", content = @Content)
     @Operation(summary = "Retrieve one Silo", description = "Returns one Silo entity from its UUID stored in the database.")
-    public SiloEntity getSilo(
+    public GenericApiResponse getSilo(
             @PathVariable("uuid") @Parameter(description = "Identifier of the Silo", required = true) String uuid) {
-        return super.get(uuid, siloRepository);
+        return SuccessApiResponse
+                .builder()
+                .data(super.get(uuid, siloRepository))
+                .build();
     }
 
     @PatchMapping("/{uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}")
     @ApiResponse(responseCode = "200", description = "Silo has been successfully updated.")
     @ApiResponse(responseCode = "404", description = "Silo not found.", content = @Content)
     @Operation(summary = "Update a Silo", description = "Updates one Silo entity in the database.")
-    public SiloEntity updateSilo(
+    public GenericApiResponse updateSilo(
             @PathVariable("uuid") @Parameter(description = "Identifier of the Silo", required = true) String uuid,
             @RequestBody Map<String, Object> fields) throws JsonMappingException {
-        return super.update(uuid, fields, siloRepository);
+        return SuccessApiResponse
+                .builder()
+                .data(super.update(uuid, fields, siloRepository))
+                .build();
     }
 
     @PutMapping("/{uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}")
     @ApiResponse(responseCode = "200", description = "Silo has been successfully updated.")
     @ApiResponse(responseCode = "404", description = "Silo not found.", content = @Content)
     @Operation(summary = "Upsert a Silo", description = "Upsert one Silo entity in the database.")
-    public SiloEntity upsertSilo(
+    public GenericApiResponse upsertSilo(
             @PathVariable("uuid") @Parameter(description = "Identifier of the Silo", required = false) String uuid,
             @RequestBody Map<String, Object> fields) throws Exception {
         if (uuid == null || UUIDUtil.zeroUUIDString().equals(uuid)) {
             fields.remove("uuid");
             uuid = super.create(siloRepository).getUuid().toString();
         }
-        return super.update(uuid, fields, siloRepository);
+        return SuccessApiResponse
+                .builder()
+                .data(super.update(uuid, fields, siloRepository))
+                .build();
     }
 
     @DeleteMapping("/{uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}")
     @ApiResponse(responseCode = "200", description = "Silo has been successfully deleted.")
     @ApiResponse(responseCode = "404", description = "Silo not found.", content = @Content)
     @Operation(summary = "Delete a Silo", description = "Deletes one Silo entity from its UUID stored in the database.")
-    public void deleteSilo(@PathVariable("uuid") @Parameter(description = "Identifier of the Silo") UUID uuid)
+    public GenericApiResponse deleteSilo(
+            @PathVariable("uuid") @Parameter(description = "Identifier of the Silo") UUID uuid)
             throws Exception {
         super.delete(uuid, siloRepository);
+        return SuccessApiResponse.builder().build();
+    }
+
+    @DeleteMapping("/deleteMultiple")
+    @ApiResponse(responseCode = "200", description = "Silo has been successfully deleted.")
+    @ApiResponse(responseCode = "404", description = "Silo not found.", content = @Content)
+    @Operation(summary = "Delete multiple Silos", description = "Deletes one or more Silo entity from their UUID stored in the database.")
+    public GenericApiResponse deleteMultipleSilos(@RequestBody UUIDsBatchRequest request) throws Exception {
+        super.deleteMultiple(request.getUuids(), siloRepository);
+        return SuccessApiResponse.builder().build();
     }
 }

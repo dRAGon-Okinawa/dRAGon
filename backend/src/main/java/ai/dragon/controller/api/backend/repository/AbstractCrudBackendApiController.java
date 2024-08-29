@@ -109,4 +109,10 @@ abstract class AbstractCrudBackendApiController<T extends AbstractEntity> {
         }
         repository.delete(uuid);
     }
+
+    protected void deleteMultiple(List<String> uuids, AbstractRepository<T> repository) {
+        for (String uuid : uuids) {
+            delete(uuid, repository);
+        }
+    }
 }

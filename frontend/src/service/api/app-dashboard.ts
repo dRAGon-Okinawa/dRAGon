@@ -4,6 +4,6 @@ import { request } from '../request';
 export function fetchApiAppDashboardGetNumbers() {
   return request<Api.AppDashboard.Numbers>({
     url: '/api/app/dashboard/numbers',
-    method: 'get'
+    method: 'GET'
   });
 }

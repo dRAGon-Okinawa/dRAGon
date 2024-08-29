@@ -72,10 +72,13 @@ function closeDrawer() {
 
 async function handleSubmit() {
   await validate();
-  fetchUpsertSilo(model as Api.SiloManage.Silo);
-  window.$message?.success($t('common.updateSuccess'));
-  closeDrawer();
-  emit('submitted');
+  fetchUpsertSilo(model as Api.SiloManage.Silo).then(response => {
+    if (response.error === null) {
+      window.$message?.success($t('common.updateSuccess'));
+      closeDrawer();
+      emit('submitted');
+    }
+  });
 }
 
 watch(visible, () => {

@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class SuccessApiResponse implements GenericApiResponse {
     @Builder.Default
-    private GenericApiData data = null;
+    private Object data = null;
 
     @Builder.Default
     private String code = "0000";
