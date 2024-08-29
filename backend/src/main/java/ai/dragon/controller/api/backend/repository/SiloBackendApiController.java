@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,6 +25,7 @@ import ai.dragon.dto.api.GenericApiResponse;
 import ai.dragon.entity.SiloEntity;
 import ai.dragon.repository.SiloRepository;
 import ai.dragon.repository.util.Pager;
+import ai.dragon.util.UUIDUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -66,7 +68,7 @@ public class SiloBackendApiController extends AbstractCrudBackendApiController<S
     @ApiResponse(responseCode = "404", description = "Silo not found.", content = @Content)
     @Operation(summary = "Retrieve one Silo", description = "Returns one Silo entity from its UUID stored in the database.")
     public SiloEntity getSilo(
-            @PathVariable("uuid") @Parameter(description = "Identifier of the Silo") String uuid) {
+            @PathVariable("uuid") @Parameter(description = "Identifier of the Silo", required = true) String uuid) {
         return super.get(uuid, siloRepository);
     }
 
@@ -77,6 +79,20 @@ public class SiloBackendApiController extends AbstractCrudBackendApiController<S
     public SiloEntity updateSilo(
             @PathVariable("uuid") @Parameter(description = "Identifier of the Silo", required = true) String uuid,
             @RequestBody Map<String, Object> fields) throws JsonMappingException {
+        return super.update(uuid, fields, siloRepository);
+    }
+
+    @PutMapping("/{uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}")
+    @ApiResponse(responseCode = "200", description = "Silo has been successfully updated.")
+    @ApiResponse(responseCode = "404", description = "Silo not found.", content = @Content)
+    @Operation(summary = "Upsert a Silo", description = "Upsert one Silo entity in the database.")
+    public SiloEntity upsertSilo(
+            @PathVariable("uuid") @Parameter(description = "Identifier of the Silo", required = false) String uuid,
+            @RequestBody Map<String, Object> fields) throws Exception {
+        if (uuid == null || UUIDUtil.zeroUUIDString().equals(uuid)) {
+            fields.remove("uuid");
+            uuid = super.create(siloRepository).getUuid().toString();
+        }
         return super.update(uuid, fields, siloRepository);
     }
 

@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { computed, reactive, watch } from 'vue';
+import { NIL as NIL_UUID } from 'uuid';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
 import { $t } from '@/locales';
 import { translateOptions } from '@/utils/common';
 import { embeddingModelOptions, ingestorLoaderOptions, vectorStoreOptions } from '@/constants/business';
+import { fetchUpsertSilo } from '@/service/api';
 
 defineOptions({
   name: 'SiloEdit'
@@ -39,13 +41,13 @@ const title = computed(() => {
   return titles[props.operateType];
 });
 
-type Model = Pick<Api.SiloManage.Silo, 'name'>;
+type Model = Pick<Api.SiloManage.Silo, 'uuid'>;
 
 const model: Model = reactive(createDefaultModel());
 
 function createDefaultModel(): Model {
   return {
-    name: ''
+    uuid: NIL_UUID
   };
 }
 
@@ -70,7 +72,7 @@ function closeDrawer() {
 
 async function handleSubmit() {
   await validate();
-  // request
+  fetchUpsertSilo(model as Api.SiloManage.Silo);
   window.$message?.success($t('common.updateSuccess'));
   closeDrawer();
   emit('submitted');

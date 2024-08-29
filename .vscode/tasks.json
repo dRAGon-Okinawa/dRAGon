@@ -1,0 +1,67 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Start Backend",
+            "type": "shell",
+            "command": "gradle bootRun -x :frontend:pnpmBuild -x :backend:copyWebApp",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "new",
+                "group": "groupA"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Continuous Backend Build",
+            "type": "shell",
+            "command": "gradle backend:bootJar -continuous -xtest -x :frontend:pnpmBuild -x :backend:copyWebApp",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "new",
+                "group": "groupA"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Start Frontend",
+            "type": "shell",
+            "command": "pnpm dev",
+            "options": {
+                "cwd": "${workspaceFolder}/frontend"
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "new",
+                "group": "groupA"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Launch dRAGon Development Mode",
+            "dependsOn": [
+                "Start Backend",
+                "Continuous Backend Build",
+                "Start Frontend"
+            ],
+            "dependsOrder": "parallel",
+            "group": {
+                "kind": "none",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        }
+    ]
+  }
