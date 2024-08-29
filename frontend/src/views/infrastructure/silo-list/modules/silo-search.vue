@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { $t } from '@/locales';
-import { useFormRules, useNaiveForm } from '@/hooks/common/form';
+import { useNaiveForm } from '@/hooks/common/form';
 import { vectorStoreOptions } from '@/constants/business';
 import { translateOptions } from '@/utils/common';
 
@@ -20,17 +19,6 @@ const { formRef, validate, restoreValidation } = useNaiveForm();
 
 const model = defineModel<Api.SiloManage.SiloSearchParams>('model', { required: true });
 
-type RuleKey = Extract<keyof Api.SystemManage.UserSearchParams, 'userEmail' | 'userPhone'>;
-
-const rules = computed<Record<RuleKey, App.Global.FormRule>>(() => {
-  const { patternRules } = useFormRules(); // inside computed to make locale reactive
-
-  return {
-    userEmail: patternRules.email,
-    userPhone: patternRules.phone
-  };
-});
-
 async function reset() {
   await restoreValidation();
   emit('reset');
@@ -44,7 +32,7 @@ async function search() {
 
 <template>
   <NCard :title="$t('common.search')" :bordered="false" size="small" class="card-wrapper">
-    <NForm ref="formRef" :model="model" :rules="rules" label-placement="left" :label-width="80">
+    <NForm ref="formRef" :model="model" label-placement="left" :label-width="80">
       <NGrid responsive="screen" item-responsive>
         <NFormItemGi span="24 s:12 m:6" label="UUID" path="uuid" class="pr-24px">
           <NInput v-model:value="model.uuid" placeholder="UUID" @keyup.enter="search" />

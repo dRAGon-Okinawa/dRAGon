@@ -6,6 +6,7 @@ import { $t } from '@/locales';
 import { translateOptions } from '@/utils/common';
 import { embeddingModelOptions, ingestorLoaderOptions, vectorStoreOptions } from '@/constants/business';
 import { fetchUpsertSilo } from '@/service/api';
+import KVSettings from '../../../../components/custom/kv-settings.vue';
 
 defineOptions({
   name: 'SiloEdit'
@@ -45,9 +46,16 @@ type Model = Pick<Api.SiloManage.Silo, 'uuid'>;
 
 const model: Model = reactive(createDefaultModel());
 
-function createDefaultModel(): Model {
+function createDefaultModel(): Api.SiloManage.Silo {
   return {
-    uuid: NIL_UUID
+    uuid: NIL_UUID,
+    name: '',
+    vectorStore: null,
+    embeddingModel: null,
+    ingestorLoader: null,
+    vectorStoreSettings: null,
+    embeddingSettings: null,
+    ingestorSettings: null
   };
 }
 
@@ -60,7 +68,6 @@ const rules: Record<RuleKey, App.Global.FormRule> = {
 
 function handleInitModel() {
   Object.assign(model, createDefaultModel());
-
   if (props.operateType === 'edit' && props.rowData) {
     Object.assign(model, props.rowData);
   }
@@ -109,20 +116,7 @@ watch(visible, () => {
         />
         <NCollapse>
           <NCollapseItem :title="$t('common.settings')">
-            <NDynamicInput>
-              <template #create-button-default>
-                {{ $t('common.add') }}
-              </template>
-              <div class="flex">
-                <NFormItem ignore-path-change :show-label="false" class="flex-auto">
-                  <NInput :placeholder="$t('common.key')" @keydown.enter.prevent />
-                </NFormItem>
-                <div class="mt-1 w-14 flex-auto text-center align-middle">=</div>
-                <NFormItem ignore-path-change :show-label="false" class="flex-auto">
-                  <NInput :placeholder="$t('common.value')" @keydown.enter.prevent />
-                </NFormItem>
-              </div>
-            </NDynamicInput>
+            <KVSettings v-model:settings="model.vectorStoreSettings" />
           </NCollapseItem>
         </NCollapse>
         <NDivider title-placement="left">
@@ -133,7 +127,13 @@ watch(visible, () => {
           :placeholder="$t('dRAGon.embeddingModel')"
           :options="translateOptions(embeddingModelOptions)"
           clearable
+          class="mb-4"
         />
+        <NCollapse>
+          <NCollapseItem :title="$t('common.settings')">
+            <KVSettings v-model:settings="model.embeddingSettings" />
+          </NCollapseItem>
+        </NCollapse>
         <NDivider title-placement="left">
           {{ $t('dRAGon.ingestorLoader') }}
         </NDivider>
@@ -142,7 +142,13 @@ watch(visible, () => {
           :placeholder="$t('dRAGon.ingestorLoader')"
           :options="translateOptions(ingestorLoaderOptions)"
           clearable
+          class="mb-4"
         />
+        <NCollapse>
+          <NCollapseItem :title="$t('common.settings')">
+            <KVSettings v-model:settings="model.ingestorSettings" />
+          </NCollapseItem>
+        </NCollapse>
       </NForm>
       <template #footer>
         <NSpace :size="16">
