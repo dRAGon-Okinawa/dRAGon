@@ -4,6 +4,7 @@
     "config:recommended"
   ],
   "labels": [
-    "dependency"
+    "dependency",
+    "patch"
   ]
 }
