@@ -1,4 +1,4 @@
-name: Build dRAGon Project
+name: Build and deploy dRAGon Project
 on: 
   - push
   - workflow_dispatch
@@ -129,9 +129,23 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      # Push Release
+      # Push Tag
       - name: Push Release
         if: |
           github.ref == 'refs/heads/main' &&
           github.repository == 'dragon-okinawa/dragon'
         run: gradle pushRelease
+      
+      # Create Release
+      - name: Create release
+        if: |
+          github.ref == 'refs/heads/main' &&
+          github.repository == 'dragon-okinawa/dragon'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag=$(git describe --tags --abbrev=0)
+          gh release create "$tag" \
+              --repo="$GITHUB_REPOSITORY" \
+              --title="v${tag#v}" \
+              --generate-notes
