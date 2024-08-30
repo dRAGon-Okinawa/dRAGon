@@ -19,6 +19,9 @@ changelog:
     - title: 🔄 Dependency Updates
       labels:
         - dependency
+    - title: 🏭 CI/CD
+      labels:
+        - cicd
     - title: Other Changes
       labels:
         - "*"
