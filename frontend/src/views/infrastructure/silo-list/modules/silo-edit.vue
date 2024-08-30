@@ -59,11 +59,13 @@ function createDefaultModel(): Api.SiloManage.Silo {
   };
 }
 
-type RuleKey = Extract<keyof Model, 'userName' | 'status'>;
+type RuleKey = Extract<keyof Model, 'name' | 'vectorStore' | 'embeddingModel' | 'ingestorLoader'>;
 
 const rules: Record<RuleKey, App.Global.FormRule> = {
-  userName: defaultRequiredRule,
-  status: defaultRequiredRule
+  name: defaultRequiredRule,
+  vectorStore: defaultRequiredRule,
+  embeddingModel: defaultRequiredRule,
+  ingestorLoader: defaultRequiredRule
 };
 
 function handleInitModel() {
@@ -103,17 +105,20 @@ watch(visible, () => {
         <NDivider title-placement="left">
           {{ $t('dRAGon.silo') }}
         </NDivider>
-        <NInput v-model:value="model.name" :placeholder="$t('common.name')" />
+        <NFormItem :label="$t('common.name')" path="name">
+          <NInput v-model:value="model.name" :placeholder="$t('common.name')" />
+        </NFormItem>
         <NDivider title-placement="left">
           {{ $t('dRAGon.vectorStore') }}
         </NDivider>
-        <NSelect
-          v-model:value="model.vectorStore"
-          :placeholder="$t('dRAGon.vectorStore')"
-          :options="translateOptions(vectorStoreOptions)"
-          clearable
-          class="mb-4"
-        />
+        <NFormItem :label="$t('common.type')" path="vectorStore">
+          <NSelect
+            v-model:value="model.vectorStore"
+            :placeholder="$t('dRAGon.vectorStore')"
+            :options="translateOptions(vectorStoreOptions)"
+            clearable
+          />
+        </NFormItem>
         <NCollapse>
           <NCollapseItem :title="$t('common.settings')">
             <KVSettings v-model:settings="model.vectorStoreSettings" />
@@ -122,13 +127,14 @@ watch(visible, () => {
         <NDivider title-placement="left">
           {{ $t('dRAGon.embeddingModel') }}
         </NDivider>
-        <NSelect
-          v-model:value="model.embeddingModel"
-          :placeholder="$t('dRAGon.embeddingModel')"
-          :options="translateOptions(embeddingModelOptions)"
-          clearable
-          class="mb-4"
-        />
+        <NFormItem :label="$t('common.type')" path="embeddingModel">
+          <NSelect
+            v-model:value="model.embeddingModel"
+            :placeholder="$t('dRAGon.embeddingModel')"
+            :options="translateOptions(embeddingModelOptions)"
+            clearable
+          />
+        </NFormItem>
         <NCollapse>
           <NCollapseItem :title="$t('common.settings')">
             <KVSettings v-model:settings="model.embeddingSettings" />
@@ -137,13 +143,14 @@ watch(visible, () => {
         <NDivider title-placement="left">
           {{ $t('dRAGon.ingestorLoader') }}
         </NDivider>
-        <NSelect
-          v-model:value="model.ingestorLoader"
-          :placeholder="$t('dRAGon.ingestorLoader')"
-          :options="translateOptions(ingestorLoaderOptions)"
-          clearable
-          class="mb-4"
-        />
+        <NFormItem :label="$t('common.type')" path="ingestorLoader">
+          <NSelect
+            v-model:value="model.ingestorLoader"
+            :placeholder="$t('dRAGon.ingestorLoader')"
+            :options="translateOptions(ingestorLoaderOptions)"
+            clearable
+          />
+        </NFormItem>
         <NCollapse>
           <NCollapseItem :title="$t('common.settings')">
             <KVSettings v-model:settings="model.ingestorSettings" />

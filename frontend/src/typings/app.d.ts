@@ -306,6 +306,7 @@ declare namespace App {
         switch: string;
         tip: string;
         trigger: string;
+        type: string;
         update: string;
         updateSuccess: string;
         userCenter: string;

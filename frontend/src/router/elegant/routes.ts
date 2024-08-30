@@ -88,18 +88,6 @@ export const generatedRoutes: GeneratedRoute[] = [
     },
     children: [
       {
-        name: 'infrastructure_silo-detail',
-        path: '/infrastructure/silo-detail/:id',
-        component: 'view.infrastructure_silo-detail',
-        meta: {
-          title: 'infrastructure_silo-detail',
-          i18nKey: 'route.infrastructure_silo-detail',
-          roles: ['R_ADMIN'],
-          activeMenu: 'infrastructure_silo-list',
-          hideInMenu: true
-        }
-      },
-      {
         name: 'infrastructure_silo-list',
         path: '/infrastructure/silo-list',
         component: 'view.infrastructure_silo-list',

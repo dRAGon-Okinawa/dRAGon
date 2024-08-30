@@ -60,6 +60,7 @@ const local: App.I18n.Schema = {
     switch: 'Switch',
     tip: 'Tip',
     trigger: 'Trigger',
+    type: 'Type',
     update: 'Update',
     updateSuccess: 'Update Success',
     userCenter: 'User Center',
