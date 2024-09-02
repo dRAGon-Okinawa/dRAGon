@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { NIL as NIL_UUID } from 'uuid';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
 import { $t } from '@/locales';
@@ -67,11 +67,22 @@ const rules: Record<RuleKey, App.Global.FormRule> = {
   ingestorLoader: defaultRequiredRule
 };
 
+const kvVectorStoreSettingsKey = ref(0);
+const kvEmbeddingSettingsKey = ref(0);
+const kvIngestorSettingsKey = ref(0);
+
+function refreshKeyValueSettings() {
+  kvVectorStoreSettingsKey.value += 1;
+  kvEmbeddingSettingsKey.value += 1;
+  kvIngestorSettingsKey.value += 1;
+}
+
 function handleInitModel() {
   Object.assign(model, createDefaultModel());
   if (props.operateType === 'edit' && props.rowData) {
     Object.assign(model, props.rowData);
   }
+  refreshKeyValueSettings();
 }
 
 function closeDrawer() {
@@ -120,7 +131,7 @@ watch(visible, () => {
         </NFormItem>
         <NCollapse>
           <NCollapseItem :title="$t('common.settings')">
-            <KVSettings v-model:settings="model.vectorStoreSettings" />
+            <KVSettings :key="kvVectorStoreSettingsKey" v-model:settings="model.vectorStoreSettings" />
           </NCollapseItem>
         </NCollapse>
         <NDivider title-placement="left">
@@ -136,7 +147,7 @@ watch(visible, () => {
         </NFormItem>
         <NCollapse>
           <NCollapseItem :title="$t('common.settings')">
-            <KVSettings v-model:settings="model.embeddingSettings" />
+            <KVSettings :key="kvEmbeddingSettingsKey" v-model:settings="model.embeddingSettings" />
           </NCollapseItem>
         </NCollapse>
         <NDivider title-placement="left">
@@ -152,7 +163,7 @@ watch(visible, () => {
         </NFormItem>
         <NCollapse>
           <NCollapseItem :title="$t('common.settings')">
-            <KVSettings v-model:settings="model.ingestorSettings" />
+            <KVSettings :key="kvIngestorSettingsKey" v-model:settings="model.ingestorSettings" />
           </NCollapseItem>
         </NCollapse>
       </NForm>
