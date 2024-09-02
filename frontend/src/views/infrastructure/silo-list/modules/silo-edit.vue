@@ -3,7 +3,6 @@ import { computed, reactive, watch } from 'vue';
 import { NIL as NIL_UUID } from 'uuid';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
 import { $t } from '@/locales';
-import { translateOptions } from '@/utils/common';
 import { embeddingModelOptions, ingestorLoaderOptions, vectorStoreOptions } from '@/constants/business';
 import { fetchUpsertSilo } from '@/service/api';
 import KVSettings from '../../../../components/custom/kv-settings.vue';
@@ -53,9 +52,9 @@ function createDefaultModel(): Api.SiloManage.Silo {
     vectorStore: null,
     embeddingModel: null,
     ingestorLoader: null,
-    vectorStoreSettings: null,
-    embeddingSettings: null,
-    ingestorSettings: null
+    vectorStoreSettings: [],
+    embeddingSettings: [],
+    ingestorSettings: []
   };
 }
 
@@ -115,7 +114,7 @@ watch(visible, () => {
           <NSelect
             v-model:value="model.vectorStore"
             :placeholder="$t('dRAGon.vectorStore')"
-            :options="translateOptions(vectorStoreOptions)"
+            :options="vectorStoreOptions"
             clearable
           />
         </NFormItem>
@@ -131,7 +130,7 @@ watch(visible, () => {
           <NSelect
             v-model:value="model.embeddingModel"
             :placeholder="$t('dRAGon.embeddingModel')"
-            :options="translateOptions(embeddingModelOptions)"
+            :options="embeddingModelOptions"
             clearable
           />
         </NFormItem>
@@ -147,7 +146,7 @@ watch(visible, () => {
           <NSelect
             v-model:value="model.ingestorLoader"
             :placeholder="$t('dRAGon.ingestorLoader')"
-            :options="translateOptions(ingestorLoaderOptions)"
+            :options="ingestorLoaderOptions"
             clearable
           />
         </NFormItem>

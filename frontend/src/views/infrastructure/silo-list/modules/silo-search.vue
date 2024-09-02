@@ -2,7 +2,6 @@
 import { $t } from '@/locales';
 import { useNaiveForm } from '@/hooks/common/form';
 import { vectorStoreOptions } from '@/constants/business';
-import { translateOptions } from '@/utils/common';
 
 defineOptions({
   name: 'SiloSearch'
@@ -44,7 +43,7 @@ async function search() {
           <NSelect
             v-model:value="model.vectorStore"
             :placeholder="$t('dRAGon.vectorStore')"
-            :options="translateOptions(vectorStoreOptions)"
+            :options="vectorStoreOptions"
             clearable
             @update-value="search"
           />

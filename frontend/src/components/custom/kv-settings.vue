@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { ref, watch } from 'vue';
+import debounce from 'lodash/debounce';
 import { $t } from '@/locales';
 
 defineOptions({
@@ -8,42 +9,57 @@ defineOptions({
 
 const settingsModel = defineModel<string[]>('settings', { required: true });
 
-const settings = computed({
-  get() {
-    // console.log(settingsModel.value);
-    if (!settingsModel.value) {
-      return [];
-    }
-
-    // Split settingsModel into key-value pairs
-    const test = settingsModel.value.map(item => {
-      const [key, value] = item.split('=');
-      return { key, value: value || '' };
-    });
-
-    // console.log(test);
-
-    return test;
-  },
-  set(newValue) {
-    // console.log(newValue);
-    settingsModel.value = newValue.map(item => (item ? `${item.key}=${item.value}` : ''));
+const parseSettingsModel = () => {
+  if (!settingsModel.value) {
+    return [];
   }
-});
+  return settingsModel.value.map(item => {
+    const [key, value] = item.split('=');
+    return { key, value: value || '' };
+  });
+};
+
+const settings = ref(parseSettingsModel());
+
+function onCreate() {
+  return {
+    key: '',
+    value: ''
+  };
+}
+
+const syncSettingsModel = debounce(() => {
+  settingsModel.value = settings.value
+    .map(item => {
+      if (item.key.trim() === '' || item.value.trim() === '') {
+        return '';
+      }
+      return `${item.key}=${item.value}`;
+    })
+    .filter(item => item !== '' && item !== '=');
+}, 300);
+
+watch(
+  settings,
+  () => {
+    syncSettingsModel();
+  },
+  { deep: true }
+);
 </script>
 
 <template>
-  <NDynamicInput v-model:value="settings">
+  <NDynamicInput v-model:value="settings" :on-create="onCreate">
     <template #create-button-default>
       {{ $t('common.add') }}
     </template>
     <template #default="{ index }">
       <div class="flex">
-        <NFormItem :path="`settings[${index}].key`" ignore-path-change :show-label="false" class="flex-auto">
+        <NFormItem zz:path="`settings[${index}].key`" ignore-path-change :show-label="false" class="flex-auto">
           <NInput v-model:value="settings[index].key" :placeholder="$t('common.key')" @keydown.enter.prevent />
         </NFormItem>
         <div class="mt-1 w-14 flex-auto text-center align-middle">=</div>
-        <NFormItem :path="`settings[${index}].value`" ignore-path-change :show-label="false" class="flex-auto">
+        <NFormItem zz:path="`settings[${index}].value`" ignore-path-change :show-label="false" class="flex-auto">
           <NInput v-model:value="settings[index].value" :placeholder="$t('common.value')" @keydown.enter.prevent />
         </NFormItem>
       </div>
