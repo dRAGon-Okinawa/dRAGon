@@ -133,6 +133,7 @@ const {
               {
                 label: $t('common.delete'),
                 icon: 'mdi--trash-can-outline',
+                confirmMessage: $t('common.confirmDelete'),
                 callback: () => {
                   edit(row.uuid);
                 }

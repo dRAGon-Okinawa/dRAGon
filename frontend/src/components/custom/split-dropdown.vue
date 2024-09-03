@@ -15,6 +15,7 @@ interface DropdownOption {
   icon?: string;
   isDivider?: boolean;
   callback?: () => void;
+  confirmMessage?: string;
 }
 
 const emit = defineEmits<Emits>();
@@ -37,7 +38,7 @@ const handleClickOutside = event => {
 };
 
 onMounted(() => {
-  document.removeEventListener('click', handleClickOutside); // Clean up to prevent duplicate events
+  document.removeEventListener('click', handleClickOutside);
 });
 
 onBeforeUnmount(() => {
@@ -57,7 +58,7 @@ const onOptionClick = (option: DropdownOption) => {
   if (option.isDivider) {
     return;
   }
-  isDropdownOpen.value = false; // Close dropdown after option click
+  isDropdownOpen.value = false;
   if (option.callback) {
     option.callback();
   }
@@ -67,14 +68,14 @@ const onOptionClick = (option: DropdownOption) => {
 <template>
   <div class="relative inline-flex">
     <button
-      class="border border-blue-500 rounded-l bg-blue-500 px-4 py-2 text-white font-semibold hover:bg-blue-600"
+      class="dropdown-split-main-button border border-primary-500 rounded-l bg-white px-4 py-2 text-primary font-semibold hover:bg-primary-500 hover:text-white"
       @click="onMainButtonClick"
     >
       <SvgIcon v-if="mainButtonIcon" :local-icon="mainButtonIcon" />
       {{ mainButtonLabel }}
     </button>
     <button
-      class="border border-l-0 border-blue-500 rounded-r bg-blue-500 px-2 py-2 text-white font-semibold hover:bg-blue-600"
+      class="border border-l-0 border-primary-500 rounded-r bg-primary-500 px-2 py-2 text-white font-semibold hover:bg-primary-600"
       @click="toggleDropdown"
     >
       <SvgIcon local-icon="mdi--arrow-down-drop-circle-outline" />
@@ -91,7 +92,14 @@ const onOptionClick = (option: DropdownOption) => {
             @click="onOptionClick(option)"
           >
             <SvgIcon v-if="option.icon" :local-icon="option.icon" class="mr-2" />
-            {{ option.label }}
+            <template v-if="option.confirmMessage">
+              <NPopconfirm :title="option.confirmMessage" @positive-click="() => onOptionClick(option)">
+                <NButton text>{{ option.label }}</NButton>
+              </NPopconfirm>
+            </template>
+            <template v-else>
+              <span @click="() => onOptionClick(option)">{{ option.label }}</span>
+            </template>
           </li>
           <li v-else class="my-1 border-t"></li>
         </template>
@@ -104,5 +112,9 @@ const onOptionClick = (option: DropdownOption) => {
 .main-button {
   display: flex;
   align-items: center;
+}
+
+.dropdown-split-main-button {
+  border-right: solid 1px #e2e8f0;
 }
 </style>
