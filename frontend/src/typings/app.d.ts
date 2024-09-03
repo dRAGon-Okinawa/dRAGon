@@ -246,14 +246,17 @@ declare namespace App {
 
     type Schema = {
       dRAGon: {
-        silo: string;
-        silos: string;
-        farm: string;
-        farms: string;
         document: string;
         documents: string;
+        embeddingModel: string;
+        farm: string;
+        farms: string;
         infrastructure: string;
         infrastructureDescription: string;
+        ingestorLoader: string;
+        silo: string;
+        silos: string;
+        vectorStore: string;
       };
       system: {
         title: string;
@@ -286,24 +289,29 @@ declare namespace App {
         error: string;
         help: string;
         index: string;
+        key: string;
         keywordSearch: string;
         logout: string;
         logoutConfirm: string;
         lookForward: string;
         modify: string;
         modifySuccess: string;
+        name: string;
         noData: string;
-        operate: string;
         pleaseCheckValue: string;
         refresh: string;
         reset: string;
+        settings: string;
         search: string;
+        sure: string;
         switch: string;
         tip: string;
         trigger: string;
+        type: string;
         update: string;
         updateSuccess: string;
         userCenter: string;
+        value: string;
         yesOrNo: {
           yes: string;
           no: string;
@@ -453,31 +461,6 @@ declare namespace App {
             editRole: string;
             menuAuth: string;
             buttonAuth: string;
-          };
-          user: {
-            title: string;
-            userName: string;
-            userGender: string;
-            nickName: string;
-            userPhone: string;
-            userEmail: string;
-            userStatus: string;
-            userRole: string;
-            form: {
-              userName: string;
-              userGender: string;
-              nickName: string;
-              userPhone: string;
-              userEmail: string;
-              userStatus: string;
-              userRole: string;
-            };
-            addUser: string;
-            editUser: string;
-            gender: {
-              male: string;
-              female: string;
-            };
           };
           menu: {
             title: string;

@@ -1,13 +1,16 @@
 const local: App.I18n.Schema = {
   dRAGon: {
-    silo: 'Silo',
-    silos: 'Silos',
-    farm: 'Farm',
-    farms: 'Farms',
     document: 'Document',
     documents: 'Documents',
+    embeddingModel: 'Embedding Model',
+    farm: 'Farm',
+    farms: 'Farms',
     infrastructure: 'Infrastructure',
-    infrastructureDescription: 'Overall situation of the dRAGon infrastructure'
+    infrastructureDescription: 'Overall situation of the dRAGon infrastructure',
+    ingestorLoader: 'Ingestor Loader',
+    silo: 'Silo',
+    silos: 'Silos',
+    vectorStore: 'Vector Store'
   },
   system: {
     title: 'dRAGon',
@@ -40,24 +43,29 @@ const local: App.I18n.Schema = {
     error: 'Error',
     help: 'Help',
     index: 'Index',
+    key: 'Key',
     keywordSearch: 'Please enter keyword',
     logout: 'Logout',
     logoutConfirm: 'Are you sure you want to log out?',
     lookForward: 'Coming soon',
     modify: 'Modify',
     modifySuccess: 'Modify Success',
+    name: 'Name',
     noData: 'No Data',
-    operate: 'Operate',
     pleaseCheckValue: 'Please check whether the value is valid',
     refresh: 'Refresh',
     reset: 'Reset',
     search: 'Search',
+    settings: 'Settings',
+    sure: 'Are you sure?',
     switch: 'Switch',
     tip: 'Tip',
     trigger: 'Trigger',
+    type: 'Type',
     update: 'Update',
     updateSuccess: 'Update Success',
     userCenter: 'User Center',
+    value: 'Value',
     yesOrNo: {
       yes: 'Yes',
       no: 'No'
@@ -257,31 +265,6 @@ const local: App.I18n.Schema = {
         },
         addRole: 'Add Role',
         editRole: 'Edit Role'
-      },
-      user: {
-        title: 'User List',
-        userName: 'User Name',
-        userGender: 'Gender',
-        nickName: 'Nick Name',
-        userPhone: 'Phone Number',
-        userEmail: 'Email',
-        userStatus: 'User Status',
-        userRole: 'User Role',
-        form: {
-          userName: 'Please enter user name',
-          userGender: 'Please select gender',
-          nickName: 'Please enter nick name',
-          userPhone: 'Please enter phone number',
-          userEmail: 'Please enter email',
-          userStatus: 'Please select user status',
-          userRole: 'Please select user role'
-        },
-        addUser: 'Add User',
-        editUser: 'Edit User',
-        gender: {
-          male: 'Male',
-          female: 'Female'
-        }
       },
       menu: {
         title: 'Menu List',

@@ -1,12 +1,12 @@
 <script setup lang="tsx">
-import { NButton, NPopconfirm, NTag } from 'naive-ui';
-import { fetchGetUserList } from '@/service/api';
+import { fetchDeleteMultipleSilos, fetchDeleteSilo, fetchGetSilosList } from '@/service/api';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
-import { enableStatusRecord, userGenderRecord } from '@/constants/business';
+import { embeddingModelRecord, ingestorLoaderRecord, vectoreStoreRecord } from '@/constants/business';
 import { useTable, useTableOperate } from '@/hooks/common/table';
-import UserOperateDrawer from './modules/user-operate-drawer.vue';
-import UserSearch from './modules/user-search.vue';
+import SplitDropdown from '@/components/custom/split-dropdown.vue';
+import SiloEdit from './modules/silo-edit.vue';
+import SiloSearch from './modules/silo-search.vue';
 
 const appStore = useAppStore();
 
@@ -21,19 +21,14 @@ const {
   searchParams,
   resetSearchParams
 } = useTable({
-  apiFn: fetchGetUserList,
+  apiFn: fetchGetSilosList,
   showTotal: true,
   apiParams: {
     current: 1,
     size: 10,
-    // if you want to use the searchParams in Form, you need to define the following properties, and the value is null
-    // the value can not be undefined, otherwise the property in Form will not be reactive
-    status: null,
-    userName: null,
-    userGender: null,
-    nickName: null,
-    userPhone: null,
-    userEmail: null
+    uuid: '',
+    name: '',
+    vectorStore: null
   },
   columns: () => [
     {
@@ -42,95 +37,110 @@ const {
       width: 48
     },
     {
-      key: 'index',
-      title: $t('common.index'),
+      key: 'uuid',
+      title: 'UUID',
       align: 'center',
-      width: 64
+      width: 90,
+      render: row => row.uuid.split('-')[0]
     },
     {
-      key: 'userName',
-      title: $t('page.manage.user.userName'),
+      key: 'name',
+      title: $t('common.name'),
       align: 'center',
       minWidth: 100
     },
     {
-      key: 'userGender',
-      title: $t('page.manage.user.userGender'),
+      key: 'vectorStore',
+      title: $t('dRAGon.vectorStore'),
       align: 'center',
       width: 100,
-      render: row => {
-        if (row.userGender === null) {
+      render: (row: Api.SiloManage.Silo) => {
+        if (row.vectorStore === null) {
           return null;
         }
 
-        const tagMap: Record<Api.SystemManage.UserGender, NaiveUI.ThemeColor> = {
-          1: 'primary',
-          2: 'error'
+        const tagMap: Record<Api.SiloManage.VectorStoreType, NaiveUI.ThemeColor> = {
+          PersistInMemoryEmbeddingStore: 'default',
+          InMemoryEmbeddingStore: 'default',
+          PGVectorEmbeddingStore: 'default'
         };
 
-        const label = $t(userGenderRecord[row.userGender]);
-
-        return <NTag type={tagMap[row.userGender]}>{label}</NTag>;
+        const label = vectoreStoreRecord[row.vectorStore];
+        return <NTag type={tagMap[row.vectorStore]}>{label}</NTag>;
       }
     },
     {
-      key: 'nickName',
-      title: $t('page.manage.user.nickName'),
+      key: 'embeddingModel',
+      title: $t('dRAGon.embeddingModel'),
       align: 'center',
-      minWidth: 100
-    },
-    {
-      key: 'userPhone',
-      title: $t('page.manage.user.userPhone'),
-      align: 'center',
-      width: 120
-    },
-    {
-      key: 'userEmail',
-      title: $t('page.manage.user.userEmail'),
-      align: 'center',
-      minWidth: 200
-    },
-    {
-      key: 'status',
-      title: $t('page.manage.user.userStatus'),
-      align: 'center',
-      width: 100,
-      render: row => {
-        if (row.status === null) {
+      minWidth: 100,
+      render: (row: Api.SiloManage.Silo) => {
+        if (row.embeddingModel === null) {
           return null;
         }
 
-        const tagMap: Record<Api.Common.EnableStatus, NaiveUI.ThemeColor> = {
-          1: 'success',
-          2: 'warning'
+        const tagMap: Record<Api.SiloManage.EmbeddingModelType, NaiveUI.ThemeColor> = {
+          BgeSmallEnV15QuantizedEmbeddingModel: 'default',
+          OpenAiEmbeddingAda002Model: 'default',
+          OpenAiEmbedding3SmallModel: 'default',
+          OpenAiEmbedding3LargeModel: 'default'
         };
 
-        const label = $t(enableStatusRecord[row.status]);
+        const label = embeddingModelRecord[row.embeddingModel];
+        return <NTag type={tagMap[row.embeddingModel]}>{label}</NTag>;
+      }
+    },
+    {
+      key: 'ingestorLoader',
+      title: $t('dRAGon.ingestorLoader'),
+      align: 'center',
+      width: 120,
+      render: (row: Api.SiloManage.Silo) => {
+        if (row.ingestorLoader === null) {
+          return null;
+        }
 
-        return <NTag type={tagMap[row.status]}>{label}</NTag>;
+        const tagMap: Record<Api.SiloManage.IngestorLoaderType, NaiveUI.ThemeColor> = {
+          None: 'default',
+          FileSystem: 'default',
+          URL: 'default'
+        };
+
+        const label = ingestorLoaderRecord[row.ingestorLoader];
+        return <NTag type={tagMap[row.ingestorLoader]}>{label}</NTag>;
       }
     },
     {
       key: 'operate',
-      title: $t('common.operate'),
+      title: $t('common.action'),
       align: 'center',
       width: 130,
-      render: row => (
+      render: (row: Api.SiloManage.Silo) => (
         <div class="flex-center gap-8px">
-          <NButton type="primary" ghost size="small" onClick={() => edit(row.id)}>
-            {$t('common.edit')}
-          </NButton>
-          <NPopconfirm onPositiveClick={() => handleDelete(row.id)}>
-            {{
-              default: () => $t('common.confirmDelete'),
-              trigger: () => (
-                <NButton type="error" ghost size="small">
-                  {$t('common.delete')}
-                </NButton>
-              )
-            }}
-          </NPopconfirm>
+          <SplitDropdown
+            main-button-icon="mdi--lead-pencil"
+            onMainAction={() => edit(row.uuid)}
+            options={[
+              {
+                label: $t('common.edit'),
+                icon: 'mdi--lead-pencil',
+                callback: () => {
+                  edit(row.uuid);
+                }
+              },
+              { isDivider: true },
+              {
+                label: $t('common.delete'),
+                icon: 'mdi--trash-can-outline',
+                confirmTitle: () => `${$t('common.confirm')} - ${row.name}`,
+                confirmMessage: $t('common.confirmDelete'),
+                confirmPositiveText: $t('common.delete'),
+                callback: () => {
+                  handleDelete(row.uuid);
+                }
+              }
+            ]}
+          />
         </div>
       )
     }
@@ -150,28 +160,35 @@ const {
 } = useTableOperate(data, getData);
 
 async function handleBatchDelete() {
-  // request
-  // console.log(checkedRowKeys.value);
-
-  onBatchDeleted();
+  fetchDeleteMultipleSilos(checkedRowKeys.value).then(response => {
+    if (response.error === null) {
+      onBatchDeleted();
+    }
+  });
 }
 
-function handleDelete(_id: number) {
-  // request
-  // console.log(id);
-
-  onDeleted();
+function handleDelete(_id: string) {
+  fetchDeleteSilo(_id).then(response => {
+    if (response.error === null) {
+      onDeleted();
+    }
+  });
 }
 
-function edit(id: number) {
+function handleReset() {
+  resetSearchParams();
+  getDataByPage();
+}
+
+function edit(id: string) {
   handleEdit(id);
 }
 </script>
 
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
-    <UserSearch v-model:model="searchParams" @reset="resetSearchParams" @search="getDataByPage" />
-    <NCard :title="$t('page.manage.user.title')" :bordered="false" size="small" class="sm:flex-1-hidden card-wrapper">
+    <SiloSearch v-model:model="searchParams" @reset="handleReset" @search="getDataByPage" />
+    <NCard :title="$t('dRAGon.silos')" :bordered="false" size="small" class="sm:flex-1-hidden card-wrapper">
       <template #header-extra>
         <TableHeaderOperation
           v-model:columns="columnChecks"
@@ -191,11 +208,11 @@ function edit(id: number) {
         :scroll-x="962"
         :loading="loading"
         remote
-        :row-key="row => row.id"
+        :row-key="row => row.uuid"
         :pagination="mobilePagination"
         class="sm:h-full"
       />
-      <UserOperateDrawer
+      <SiloEdit
         v-model:visible="drawerVisible"
         :operate-type="operateType"
         :row-data="editingData"

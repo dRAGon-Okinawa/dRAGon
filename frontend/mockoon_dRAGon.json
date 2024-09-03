@@ -37,7 +37,7 @@
       "children": [
         {
           "type": "route",
-          "uuid": "7cecfea6-ae8b-4eee-bfd9-06ab89e63e0c"
+          "uuid": "499cdef4-138c-41f4-801e-a110aaa3d48e"
         }
       ]
     },
@@ -81,35 +81,6 @@
     }
   ],
   "routes": [
-    {
-      "uuid": "7cecfea6-ae8b-4eee-bfd9-06ab89e63e0c",
-      "type": "crud",
-      "documentation": "Silo Repository Management API Endpoints",
-      "method": "",
-      "endpoint": "api/backend/repository/silo",
-      "responses": [
-        {
-          "uuid": "498f2b58-6986-464d-a922-a93fd0175d5b",
-          "body": "{}",
-          "latency": 0,
-          "statusCode": 200,
-          "label": "",
-          "headers": [],
-          "bodyType": "DATABUCKET",
-          "filePath": "",
-          "databucketID": "3ay2",
-          "sendFileAsBody": false,
-          "rules": [],
-          "rulesOperator": "OR",
-          "disableTemplating": false,
-          "fallbackTo404": false,
-          "default": true,
-          "crudKey": "uuid",
-          "callbacks": []
-        }
-      ],
-      "responseMode": null
-    },
     {
       "uuid": "f99db58b-e0b9-4142-9d81-bcc23f1f640e",
       "type": "http",
@@ -196,6 +167,35 @@
         }
       ],
       "responseMode": null
+    },
+    {
+      "uuid": "499cdef4-138c-41f4-801e-a110aaa3d48e",
+      "type": "http",
+      "documentation": "Search Silo entities stored in the database",
+      "method": "get",
+      "endpoint": "api/backend/repository/silo/",
+      "responses": [
+        {
+          "uuid": "4e6be41d-ee50-4e50-9dcd-4274d221b2e6",
+          "body": "{\n    \"data\": {\n        \"records\": {{data 'SILO_REPOSITORY'}},\n        \"current\": 1,\n        \"size\": 10,\n        \"total\": {{len (dataRaw 'SILO_REPOSITORY')}}\n    },\n    \"code\": \"0000\",\n    \"msg\": \"OK\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "3ay2",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
     }
   ],
   "rootChildren": [
@@ -253,7 +253,7 @@
       "id": "3ay2",
       "name": "SILO_REPOSITORY",
       "documentation": "",
-      "value": "[\n  {\n    \"uuid\": \"a994ff93-971e-4651-aa15-9ef747f16f6c\",\n    \"name\": \"FileSystem Silo\",\n    \"vectorStore\": \"PersistInMemoryEmbeddingStore\",\n    \"embeddingModel\": \"BgeSmallEnV15QuantizedEmbeddingModel\",\n    \"ingestorLoader\": \"FileSystem\",\n    \"vectorStoreSettings\": [\n      \"flushSecs=30\"\n    ],\n    \"embeddingSettings\": [\n      \"chunkSize=1000\",\n      \"chunkOverlap=100\"\n    ],\n    \"ingestorSettings\": [\n      \"schedule=00 08 * * MON-FRI\",\n      \"recursive=true\",\n      \"pathMatcher=glob:**.{pdf,doc,docx,ppt,pptx}\",\n      \"paths[]=/tmp/folder\"\n    ]\n  }\n]"
+      "value": "[\n  {\n    \"uuid\": \"a994ff93-971e-4651-aa15-9ef747f16f6c\",\n    \"name\": \"FileSystem Silo\",\n    \"vectorStore\": \"PersistInMemoryEmbeddingStore\",\n    \"embeddingModel\": \"BgeSmallEnV15QuantizedEmbeddingModel\",\n    \"ingestorLoader\": \"FileSystem\",\n    \"vectorStoreSettings\": [\n      \"flushSecs=30\"\n    ],\n    \"embeddingSettings\": [\n      \"chunkSize=1000\",\n      \"chunkOverlap=100\"\n    ],\n    \"ingestorSettings\": [\n      \"schedule=00 08 * * MON-FRI\",\n      \"recursive=true\",\n      \"pathMatcher=glob:**.{pdf,doc,docx,ppt,pptx}\",\n      \"paths[]=/tmp/folder\"\n    ]\n  },\n  {\n    \"uuid\": \"c58d733f-6eba-457d-99ff-4bd34eb0bcbb\",\n    \"name\": \"URL Memory Silo\",\n    \"vectorStore\": \"InMemoryEmbeddingStore\",\n    \"embeddingModel\": \"BgeSmallEnV15QuantizedEmbeddingModel\",\n    \"ingestorLoader\": \"URL\",\n    \"embeddingSettings\": [\n      \"chunkSize=1000\",\n      \"chunkOverlap=100\"\n    ],\n    \"ingestorSettings\": [\n      \"schedule=00 08 * * MON-FRI\",\n      \"urls[]=https://docs.dragon.okinawa\",\n      \"urls[]=https://docs.dragon.okinawa/getting-started\"\n    ]\n  }\n]"
     }
   ],
   "callbacks": []

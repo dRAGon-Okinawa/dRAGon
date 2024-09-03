@@ -1,8 +1,8 @@
 gradle
 .gradle
 bin
-.vscode
 .DS_Store
 *.class
 .pnpm-store
 .env.local
+.vscode/settings.json

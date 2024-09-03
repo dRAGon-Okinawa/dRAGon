@@ -1,22 +1,38 @@
 import { request } from '../request';
 
-/**
- * get all roles
- *
- * these roles are all enabled
- */
-export function fetchGetAllRoles() {
-  return request<Api.SystemManage.AllRole[]>({
-    url: '/systemManage/getAllRoles',
-    method: 'get'
+/** Get Silos List */
+export function fetchGetSilosList(params?: Api.SiloManage.SiloSearchParams) {
+  return request<Api.Common.PaginatingQueryRecord<Api.SiloManage.Silo>>({
+    url: '/api/backend/repository/silo/',
+    method: 'GET',
+    params
   });
 }
 
-/** get user list */
-export function fetchGetUserList(params?: Api.SystemManage.UserSearchParams) {
-  return request<Api.SystemManage.UserList>({
-    url: '/systemManage/getUserList',
-    method: 'get',
-    params
+/** Upsert Silo */
+export function fetchUpsertSilo(data: Api.SiloManage.Silo) {
+  return request<Api.SiloManage.Silo>({
+    url: `/api/backend/repository/silo/${data.uuid}`,
+    method: 'PUT',
+    data
+  });
+}
+
+/** Delete Silo */
+export function fetchDeleteSilo(uuid: string) {
+  return request<Api.Common.CommonRecord>({
+    url: `/api/backend/repository/silo/${uuid}`,
+    method: 'DELETE'
+  });
+}
+
+/** Delete Silos */
+export function fetchDeleteMultipleSilos(uuids: string[]) {
+  return request<Api.Common.CommonRecord>({
+    url: `/api/backend/repository/silo/deleteMultiple`,
+    method: 'DELETE',
+    data: {
+      uuids
+    }
   });
 }
