@@ -81,7 +81,6 @@ declare module 'vue' {
     ReloadButton: typeof import('./../components/common/reload-button.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    SoybeanAvatar: typeof import('./../components/custom/soybean-avatar.vue')['default']
     SplitDropdown: typeof import('./../components/custom/split-dropdown.vue')['default']
     SvgIcon: typeof import('./../components/custom/svg-icon.vue')['default']
     SystemLogo: typeof import('./../components/common/system-logo.vue')['default']

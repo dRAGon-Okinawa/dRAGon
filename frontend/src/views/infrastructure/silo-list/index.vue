@@ -118,14 +118,27 @@ const {
       width: 130,
       render: (row: Api.SiloManage.Silo) => (
         <div class="flex-center gap-8px">
-          <SplitDropdown main-button-icon="mdi--lead-pencil" onMainAction={() => edit(row.uuid)}>
-            <button class="block w-full px-4 py-2 text-left hover:bg-gray-200">Action 1</button>
-            <button class="block w-full px-4 py-2 text-left hover:bg-gray-200">Action 2</button>
-            <button class="block w-full px-4 py-2 text-left hover:bg-gray-200">Action 3</button>
-          </SplitDropdown>
-          <NButton type="primary" ghost size="small" onClick={() => edit(row.uuid)}>
-            {$t('common.edit')}
-          </NButton>
+          <SplitDropdown
+            main-button-icon="mdi--lead-pencil"
+            onMainAction={() => edit(row.uuid)}
+            options={[
+              {
+                label: $t('common.edit'),
+                icon: 'mdi--lead-pencil',
+                callback: () => {
+                  edit(row.uuid);
+                }
+              },
+              { isDivider: true },
+              {
+                label: $t('common.delete'),
+                icon: 'mdi--trash-can-outline',
+                callback: () => {
+                  edit(row.uuid);
+                }
+              }
+            ]}
+          />
           <NPopconfirm onPositiveClick={() => handleDelete(row.uuid)}>
             {{
               default: () => $t('common.confirmDelete'),

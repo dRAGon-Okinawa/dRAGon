@@ -9,10 +9,19 @@ interface Emits {
   (e: 'mainAction'): void;
 }
 
+interface DropdownOption {
+  label?: string;
+  value?: any;
+  icon?: string;
+  isDivider?: boolean;
+  callback?: () => void;
+}
+
 const emit = defineEmits<Emits>();
 
 const mainButtonLabel = defineModel<string>('mainButtonLabel', { default: '' });
 const mainButtonIcon = defineModel<string>('mainButtonIcon', { default: '' });
+const options = defineModel<DropdownOption[]>('options', { default: () => [] });
 
 const isDropdownOpen = ref(false);
 
@@ -43,6 +52,16 @@ const toggleDropdown = () => {
     document.removeEventListener('click', handleClickOutside);
   }
 };
+
+const onOptionClick = (option: DropdownOption) => {
+  if (option.isDivider) {
+    return;
+  }
+  isDropdownOpen.value = false; // Close dropdown after option click
+  if (option.callback) {
+    option.callback();
+  }
+};
 </script>
 
 <template>
@@ -64,9 +83,26 @@ const toggleDropdown = () => {
       v-if="isDropdownOpen"
       class="absolute right-0 z-10 mt-2 w-48 border border-gray-300 rounded bg-white shadow-md"
     >
-      <slot></slot>
+      <ul>
+        <template v-for="option in options" :key="option.value || option.label">
+          <li
+            v-if="!option.isDivider"
+            class="flex cursor-pointer items-center px-4 py-2 hover:bg-gray-200"
+            @click="onOptionClick(option)"
+          >
+            <SvgIcon v-if="option.icon" :local-icon="option.icon" class="mr-2" />
+            {{ option.label }}
+          </li>
+          <li v-else class="my-1 border-t"></li>
+        </template>
+      </ul>
     </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.main-button {
+  display: flex;
+  align-items: center;
+}
+</style>
