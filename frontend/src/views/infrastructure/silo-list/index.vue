@@ -5,6 +5,7 @@ import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
 import { embeddingModelRecord, ingestorLoaderRecord, vectoreStoreRecord } from '@/constants/business';
 import { useTable, useTableOperate } from '@/hooks/common/table';
+import SplitDropdown from '@/components/custom/split-dropdown.vue';
 import SiloEdit from './modules/silo-edit.vue';
 import SiloSearch from './modules/silo-search.vue';
 
@@ -117,6 +118,11 @@ const {
       width: 130,
       render: (row: Api.SiloManage.Silo) => (
         <div class="flex-center gap-8px">
+          <SplitDropdown main-button-icon="mdi--lead-pencil" onMainAction={() => edit(row.uuid)}>
+            <button class="block w-full px-4 py-2 text-left hover:bg-gray-200">Action 1</button>
+            <button class="block w-full px-4 py-2 text-left hover:bg-gray-200">Action 2</button>
+            <button class="block w-full px-4 py-2 text-left hover:bg-gray-200">Action 3</button>
+          </SplitDropdown>
           <NButton type="primary" ghost size="small" onClick={() => edit(row.uuid)}>
             {$t('common.edit')}
           </NButton>
