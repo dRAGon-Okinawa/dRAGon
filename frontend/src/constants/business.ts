@@ -1,28 +1,26 @@
 import { transformRecordToOption } from '@/utils/common';
 
-export const enableStatusRecord: Record<Api.Common.EnableStatus, App.I18n.I18nKey> = {
-  '1': 'page.manage.common.status.enable',
-  '2': 'page.manage.common.status.disable'
+export const vectoreStoreRecord: Record<Api.SiloManage.VectorStoreType, string> = {
+  PersistInMemoryEmbeddingStore: 'PERSISTANT MEMORY',
+  InMemoryEmbeddingStore: 'MEMORY',
+  PGVectorEmbeddingStore: 'PGVECTOR'
 };
 
-export const enableStatusOptions = transformRecordToOption(enableStatusRecord);
+export const vectorStoreOptions = transformRecordToOption(vectoreStoreRecord);
 
-export const userGenderRecord: Record<Api.SystemManage.UserGender, App.I18n.I18nKey> = {
-  '1': 'page.manage.user.gender.male',
-  '2': 'page.manage.user.gender.female'
+export const embeddingModelRecord: Record<Api.SiloManage.EmbeddingModelType, string> = {
+  BgeSmallEnV15QuantizedEmbeddingModel: 'BGE SMALL EN V15 QUANTIZED',
+  OpenAiEmbeddingAda002Model: 'OPENAI EMBEDDING ADA002',
+  OpenAiEmbedding3SmallModel: 'OPENAI EMBEDDING 3 SMALL',
+  OpenAiEmbedding3LargeModel: 'OPENAI EMBEDDING 3 LARGE'
 };
 
-export const userGenderOptions = transformRecordToOption(userGenderRecord);
+export const embeddingModelOptions = transformRecordToOption(embeddingModelRecord);
 
-export const menuTypeRecord: Record<Api.SystemManage.MenuType, App.I18n.I18nKey> = {
-  '1': 'page.manage.menu.type.directory',
-  '2': 'page.manage.menu.type.menu'
+export const ingestorLoaderRecord: Record<Api.SiloManage.IngestorLoaderType, string> = {
+  None: 'NONE',
+  FileSystem: 'FILE SYSTEM',
+  URL: 'URL'
 };
 
-export const menuTypeOptions = transformRecordToOption(menuTypeRecord);
-
-export const menuIconTypeRecord: Record<Api.SystemManage.IconType, App.I18n.I18nKey> = {
-  '2': 'page.manage.menu.iconType.local'
-};
-
-export const menuIconTypeOptions = transformRecordToOption(menuIconTypeRecord);
+export const ingestorLoaderOptions = transformRecordToOption(ingestorLoaderRecord);
