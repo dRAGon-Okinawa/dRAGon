@@ -18,12 +18,12 @@ import ai.dragon.repository.util.Pager;
 @ActiveProfiles("test")
 public class SiloBackendApiControllerTest {
     @AfterAll
-    static void beforeAll(@Autowired SiloRepository siloRepository) throws Exception {
+    static void beforeAll(@Autowired SiloRepository siloRepository) {
         siloRepository.deleteAll();
     }
 
     @BeforeEach
-    void beforeEach(@Autowired SiloRepository siloRepository) throws Exception {
+    void beforeEach(@Autowired SiloRepository siloRepository) {
         siloRepository.deleteAll();
     }
 
