@@ -1,5 +1,4 @@
 <script setup lang="tsx">
-import { NButton, NPopconfirm, NTag } from 'naive-ui';
 import { fetchDeleteMultipleSilos, fetchDeleteSilo, fetchGetSilosList } from '@/service/api';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
@@ -133,23 +132,15 @@ const {
               {
                 label: $t('common.delete'),
                 icon: 'mdi--trash-can-outline',
+                confirmTitle: () => `${$t('common.confirm')} - ${row.name}`,
                 confirmMessage: $t('common.confirmDelete'),
+                confirmPositiveText: $t('common.delete'),
                 callback: () => {
-                  edit(row.uuid);
+                  handleDelete(row.uuid);
                 }
               }
             ]}
           />
-          <NPopconfirm onPositiveClick={() => handleDelete(row.uuid)}>
-            {{
-              default: () => $t('common.confirmDelete'),
-              trigger: () => (
-                <NButton type="error" ghost size="small">
-                  {$t('common.delete')}
-                </NButton>
-              )
-            }}
-          </NPopconfirm>
         </div>
       )
     }

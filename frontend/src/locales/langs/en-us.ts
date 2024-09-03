@@ -57,6 +57,7 @@ const local: App.I18n.Schema = {
     reset: 'Reset',
     search: 'Search',
     settings: 'Settings',
+    sure: 'Are you sure?',
     switch: 'Switch',
     tip: 'Tip',
     trigger: 'Trigger',

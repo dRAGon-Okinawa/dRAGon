@@ -303,6 +303,7 @@ declare namespace App {
         reset: string;
         settings: string;
         search: string;
+        sure: string;
         switch: string;
         tip: string;
         trigger: string;

@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { useDialog } from 'naive-ui';
+import { $t } from '@/locales';
 
 defineOptions({
   name: 'SplitDropdown'
@@ -15,7 +17,10 @@ interface DropdownOption {
   icon?: string;
   isDivider?: boolean;
   callback?: () => void;
-  confirmMessage?: string;
+  confirmTitle?: string | (() => import('vue').VNodeChild);
+  confirmMessage?: string | (() => import('vue').VNodeChild);
+  confirmPositiveText?: string;
+  confirmNegativeText?: string;
 }
 
 const emit = defineEmits<Emits>();
@@ -54,11 +59,28 @@ const toggleDropdown = () => {
   }
 };
 
+const dialog = useDialog();
+
 const onOptionClick = (option: DropdownOption) => {
   if (option.isDivider) {
     return;
   }
   isDropdownOpen.value = false;
+  if (option.confirmTitle || option.confirmMessage || option.confirmPositiveText || option.confirmNegativeText) {
+    dialog.warning({
+      title: option.confirmTitle || $t('common.confirm'),
+      content: option.confirmMessage || $t('common.sure'),
+      positiveText: option.confirmPositiveText || $t('common.yesOrNo.yes'),
+      negativeText: option.confirmNegativeText || $t('common.yesOrNo.no'),
+      onPositiveClick: () => {
+        if (option.callback) {
+          option.callback();
+        }
+      },
+      onNegativeClick: () => {}
+    });
+    return;
+  }
   if (option.callback) {
     option.callback();
   }
@@ -91,15 +113,10 @@ const onOptionClick = (option: DropdownOption) => {
             class="flex cursor-pointer items-center px-4 py-2 hover:bg-gray-200"
             @click="onOptionClick(option)"
           >
-            <SvgIcon v-if="option.icon" :local-icon="option.icon" class="mr-2" />
-            <template v-if="option.confirmMessage">
-              <NPopconfirm :title="option.confirmMessage" @positive-click="() => onOptionClick(option)">
-                <NButton text>{{ option.label }}</NButton>
-              </NPopconfirm>
-            </template>
-            <template v-else>
+            <NDialogProvider>
+              <SvgIcon v-if="option.icon" :local-icon="option.icon" class="mr-2" />
               <span @click="() => onOptionClick(option)">{{ option.label }}</span>
-            </template>
+            </NDialogProvider>
           </li>
           <li v-else class="my-1 border-t"></li>
         </template>
