@@ -15,6 +15,9 @@ dRAGon is a multi-modal RAG engine which can search over multiple kind of docume
 
 ![dRAGon](https://raw.githubusercontent.com/dragon-okinawa/dragon/main/static/img/dragon_okinawa.jpg)
 
+## Screenshots
+![dRAGon - Infrastructure - Silos](https://raw.githubusercontent.com/dragon-okinawa/dragon/main/static/tour/dragon-infrastructure-silos.jpg)
+
 ## dRAGon is all of us
 dRAGon is an open-source project that thrives on community participation. We invite you to fork, extend, and contribute to its development.
 
