@@ -1,7 +1,6 @@
 package ai.dragon.dto.api;
 
-import java.util.List;
-
+import ai.dragon.dto.api.backend.PagerTableApiData;
 import ai.dragon.repository.util.Pager;
 import lombok.Builder;
 import lombok.Data;
@@ -19,27 +18,7 @@ public class DataTableApiResponse implements GenericApiResponse {
     private String msg = "OK";
 
     public static DataTableApiResponse fromPager(Pager<?> pager) {
-        TableApiData data = new TableApiData() {
-            @Override
-            public List<?> getRecords() {
-                return pager.getData();
-            }
-
-            @Override
-            public long getCurrent() {
-                return pager.getPage();
-            }
-
-            @Override
-            public long getSize() {
-                return pager.getSize();
-            }
-
-            @Override
-            public long getTotal() {
-                return pager.getTotal();
-            }
-        };
+        TableApiData data = new PagerTableApiData(pager);
         return DataTableApiResponse.builder().data(data).build();
     }
 }
