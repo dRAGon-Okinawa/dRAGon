@@ -49,16 +49,16 @@ watch(
 </script>
 
 <template>
-  <NDynamicInput v-model:value="settings" :on-create="onCreate">
+  <NDynamicInput v-model:value="settings" :on-create="onCreate" show-sort-button>
     <template #create-button-default>
       {{ $t('common.add') }}
     </template>
     <template #default="{ index }">
-      <div class="flex">
-        <NFormItem zz:path="`settings[${index}].key`" ignore-path-change :show-label="false" class="flex-auto">
+      <div class="w-full flex">
+        <NFormItem zz:path="`settings[${index}].key`" ignore-path-change :show-label="false" class="max-w-64 flex-auto">
           <NInput v-model:value="settings[index].key" :placeholder="$t('common.key')" @keydown.enter.prevent />
         </NFormItem>
-        <div class="mt-1 w-14 flex-auto text-center align-middle">=</div>
+        <div class="flex-0 mt-1 w-14 text-center align-middle">=</div>
         <NFormItem zz:path="`settings[${index}].value`" ignore-path-change :show-label="false" class="flex-auto">
           <NInput v-model:value="settings[index].value" :placeholder="$t('common.value')" @keydown.enter.prevent />
         </NFormItem>
