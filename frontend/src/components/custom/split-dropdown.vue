@@ -112,7 +112,7 @@ const onOptionClick = (option: DropdownOption) => {
           >
             <NDialogProvider>
               <SvgIcon v-if="option.icon" :local-icon="option.icon" class="mr-2" />
-              <span @click="() => onOptionClick(option)">{{ option.label }}</span>
+              <span>{{ option.label }}</span>
             </NDialogProvider>
           </li>
           <li v-else class="my-1 border-t dark:border-t-[#59595E]"></li>
