@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { fetchDeleteMultipleSilos, fetchDeleteSilo, fetchGetSilosList } from '@/service/api';
+import { fetchDeleteMultipleSilos, fetchDeleteSilo, fetchSilosSearch } from '@/service/api';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
 import { embeddingModelRecord, ingestorLoaderRecord, vectoreStoreRecord } from '@/constants/business';
@@ -21,7 +21,7 @@ const {
   searchParams,
   resetSearchParams
 } = useTable({
-  apiFn: fetchGetSilosList,
+  apiFn: fetchSilosSearch,
   showTotal: true,
   apiParams: {
     current: 1,

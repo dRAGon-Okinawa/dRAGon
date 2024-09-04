@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { fetchDeleteFarm, fetchDeleteMultipleFarms, fetchGetFarmsList } from '@/service/api';
+import { fetchDeleteFarm, fetchDeleteMultipleFarms, fetchFarmsSearch } from '@/service/api';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
 import { chatMemoryStrategyRecord, languageModelRecord } from '@/constants/business';
@@ -21,7 +21,7 @@ const {
   searchParams,
   resetSearchParams
 } = useTable({
-  apiFn: fetchGetFarmsList,
+  apiFn: fetchFarmsSearch,
   showTotal: true,
   apiParams: {
     current: 1,

@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue';
 import { NIL as NIL_UUID } from 'uuid';
+import type { SelectOption } from 'naive-ui';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
 import { $t } from '@/locales';
 import { chatMemoryStrategyOptions, languageModelOptions } from '@/constants/business';
-import { fetchUpsertFarm } from '@/service/api';
+import { fetchSilosSearch, fetchUpsertFarm } from '@/service/api';
 import KVSettings from '../../../../components/custom/kv-settings.vue';
 
 defineOptions({
@@ -29,6 +30,9 @@ const emit = defineEmits<Emits>();
 const visible = defineModel<boolean>('visible', {
   default: false
 });
+
+const silosLoadingRef = ref(false);
+const silosOptionsRef = ref<SelectOption[]>([]);
 
 const { formRef, validate, restoreValidation } = useNaiveForm();
 const { defaultRequiredRule, formRules } = useFormRules();
@@ -81,10 +85,39 @@ function handleInitModel() {
     Object.assign(model, props.rowData);
   }
   refreshKeyValueSettings();
+  initSilosOptions();
 }
 
 function closeDrawer() {
   visible.value = false;
+}
+
+function initSilosOptions() {
+  fetchSilosSearch({ current: 1, size: 100 }).then(response => {
+    if (response.error === null) {
+      silosOptionsRef.value = response.data.records.map(item => ({
+        label: item.name,
+        value: item.uuid
+      }));
+    }
+  });
+}
+
+function handleSearch(query: string) {
+  if (!query.length) {
+    silosOptionsRef.value = [];
+    return;
+  }
+  silosLoadingRef.value = true;
+  fetchSilosSearch({ name: query, current: 1, size: 10 }).then(response => {
+    if (response.error === null) {
+      silosOptionsRef.value = response.data.records.map(item => ({
+        label: item.name,
+        value: item.uuid
+      }));
+    }
+    silosLoadingRef.value = false;
+  });
 }
 
 async function handleSubmit() {
@@ -127,7 +160,20 @@ watch(visible, () => {
             clearable
           />
         </NFormItem>
-        SILOS SELECT
+        <NFormItem :label="$t('dRAGon.silos')" path="silos">
+          <NSelect
+            v-model:value="model.silos"
+            multiple
+            filterable
+            :placeholder="$t('dRAGon.silos')"
+            :options="silosOptionsRef"
+            :loading="silosLoadingRef"
+            clearable
+            remote
+            :clear-filter-after-select="true"
+            @search="handleSearch"
+          />
+        </NFormItem>
         <NDivider title-placement="left">
           {{ $t('dRAGon.languageModel') }}
         </NDivider>

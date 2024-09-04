@@ -1,7 +1,7 @@
 import { request } from '../request';
 
-/** Get Farms List */
-export function fetchGetFarmsList(params?: Api.FarmManage.FarmSearchParams) {
+/** Farms Search */
+export function fetchFarmsSearch(params?: Api.FarmManage.FarmSearchParams) {
   return request<Api.Common.PaginatingQueryRecord<Api.FarmManage.Farm>>({
     url: '/api/backend/repository/farm/',
     method: 'GET',
