@@ -22,6 +22,8 @@ declare namespace StorageType {
     themeColor: string;
     /** The theme settings */
     themeSettings: App.Theme.ThemeSetting;
+    /** The theme scheme */
+    themeScheme: string;
     /**
      * The override theme flags
      *
@@ -35,5 +37,7 @@ declare namespace StorageType {
       layout: UnionKey.ThemeLayoutMode;
       siderCollapse: boolean;
     };
+    /** The sider collapse status */
+    siderCollapseStatus: string;
   }
 }
