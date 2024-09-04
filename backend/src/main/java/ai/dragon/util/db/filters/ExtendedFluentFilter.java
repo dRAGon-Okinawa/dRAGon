@@ -5,8 +5,6 @@ import java.util.regex.Pattern;
 import org.dizitart.no2.filters.NitriteFilter;
 
 public class ExtendedFluentFilter {
-    public static ExtendedFluentFilter $ = where("$");
-
     private String field;
 
     private ExtendedFluentFilter() {

@@ -27,8 +27,8 @@ class ExtendedRegexFilter extends FieldBasedFilter {
         Document document = element.getSecond();
         Object fieldValue = document.get(getField());
         if (fieldValue != null) {
-            if (fieldValue instanceof String) {
-                Matcher matcher = pattern.matcher((String) fieldValue);
+            if (fieldValue instanceof String fieldValueString) {
+                Matcher matcher = pattern.matcher(fieldValueString);
                 if (matcher.find()) {
                     return true;
                 }
