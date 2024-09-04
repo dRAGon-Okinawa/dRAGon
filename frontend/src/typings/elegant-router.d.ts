@@ -28,6 +28,7 @@ declare module "@elegant-router/types" {
     "help": "/help";
     "iframe-page": "/iframe-page/:url";
     "infrastructure": "/infrastructure";
+    "infrastructure_farm-list": "/infrastructure/farm-list";
     "infrastructure_silo-list": "/infrastructure/silo-list";
     "login": "/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?";
     "operations-center": "/operations-center";
@@ -101,6 +102,7 @@ declare module "@elegant-router/types" {
     | "login"
     | "about"
     | "help"
+    | "infrastructure_farm-list"
     | "infrastructure_silo-list"
     | "operations-center"
     | "user-center"

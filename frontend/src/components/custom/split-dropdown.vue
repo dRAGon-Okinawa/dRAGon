@@ -131,7 +131,7 @@ const onOptionClick = (option: DropdownOption) => {
   align-items: center;
 }
 
-.dropdown-split-main-button {
+.dropdown-split-main-button:hover {
   border-right: solid 1px #e2e8f0;
 }
 </style>

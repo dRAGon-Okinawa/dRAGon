@@ -88,6 +88,19 @@ export const generatedRoutes: GeneratedRoute[] = [
     },
     children: [
       {
+        name: 'infrastructure_farm-list',
+        path: '/infrastructure/farm-list',
+        component: 'view.infrastructure_farm-list',
+        meta: {
+          title: 'infrastructure_farm-list',
+          i18nKey: 'route.infrastructure_farm-list',
+          localIcon: 'mdi--farm-home-outline',
+          order: 2,
+          roles: ['R_ADMIN'],
+          keepAlive: true
+        }
+      },
+      {
         name: 'infrastructure_silo-list',
         path: '/infrastructure/silo-list',
         component: 'view.infrastructure_silo-list',

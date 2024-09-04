@@ -122,8 +122,7 @@ public class SiloBackendApiController extends AbstractCrudBackendApiController<S
     }
 
     @DeleteMapping("/deleteMultiple")
-    @ApiResponse(responseCode = "200", description = "Silo has been successfully deleted.")
-    @ApiResponse(responseCode = "404", description = "Silo not found.", content = @Content)
+    @ApiResponse(responseCode = "200", description = "Silos have been successfully deleted.")
     @Operation(summary = "Delete multiple Silos", description = "Deletes one or more Silo entity from their UUID stored in the database.")
     public GenericApiResponse deleteMultipleSilos(@RequestBody UUIDsBatchRequest request) throws Exception {
         super.deleteMultiple(request.getUuids(), siloRepository);
