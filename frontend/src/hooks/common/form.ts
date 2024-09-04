@@ -1,7 +1,7 @@
 import { ref, toValue } from 'vue';
 import type { ComputedRef, Ref } from 'vue';
 import type { FormInst } from 'naive-ui';
-import { REG_CODE_SIX, REG_EMAIL, REG_PHONE, REG_PWD, REG_USER_NAME } from '@/constants/reg';
+import { REG_CODE_SIX, REG_EMAIL, REG_PHONE, REG_PWD, REG_RAAG_IDENTIFIER, REG_USER_NAME } from '@/constants/reg';
 import { $t } from '@/locales';
 
 export function useFormRules() {
@@ -30,6 +30,11 @@ export function useFormRules() {
       pattern: REG_EMAIL,
       message: $t('form.email.invalid'),
       trigger: 'change'
+    },
+    raagIdentifier: {
+      pattern: REG_RAAG_IDENTIFIER,
+      message: $t('form.raagIdentifier.invalid'),
+      trigger: 'change'
     }
   } satisfies Record<string, App.Global.FormRule>;
 
@@ -38,7 +43,8 @@ export function useFormRules() {
     phone: [createRequiredRule($t('form.phone.required')), patternRules.phone],
     pwd: [createRequiredRule($t('form.pwd.required')), patternRules.pwd],
     code: [createRequiredRule($t('form.code.required')), patternRules.code],
-    email: [createRequiredRule($t('form.email.required')), patternRules.email]
+    email: [createRequiredRule($t('form.email.required')), patternRules.email],
+    raagIdentifier: [createRequiredRule($t('form.raagIdentifier.required')), patternRules.raagIdentifier]
   } satisfies Record<string, App.Global.FormRule[]>;
 
   /** the default required rule */

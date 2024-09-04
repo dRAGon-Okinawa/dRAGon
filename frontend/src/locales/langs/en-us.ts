@@ -362,6 +362,10 @@ const local: App.I18n.Schema = {
     email: {
       required: 'Please enter email',
       invalid: 'Email format is incorrect'
+    },
+    raagIdentifier: {
+      required: 'Please enter RaaG Identifier',
+      invalid: 'Must be alphanumeric, hyphens allowed'
     }
   },
   dropdown: {

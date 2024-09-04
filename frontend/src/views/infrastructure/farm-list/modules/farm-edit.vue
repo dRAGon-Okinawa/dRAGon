@@ -31,7 +31,7 @@ const visible = defineModel<boolean>('visible', {
 });
 
 const { formRef, validate, restoreValidation } = useNaiveForm();
-const { defaultRequiredRule } = useFormRules();
+const { defaultRequiredRule, formRules } = useFormRules();
 
 const title = computed(() => {
   const titles: Record<NaiveUI.TableOperateType, string> = {
@@ -62,7 +62,7 @@ type RuleKey = Extract<keyof Model, 'name' | 'raagIdentifier' | 'languageModel' 
 
 const rules: Record<RuleKey, App.Global.FormRule> = {
   name: defaultRequiredRule,
-  raagIdentifier: defaultRequiredRule,
+  raagIdentifier: formRules.raagIdentifier,
   languageModel: defaultRequiredRule,
   chatMemoryStrategy: defaultRequiredRule
 };

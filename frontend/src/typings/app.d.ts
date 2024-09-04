@@ -541,6 +541,7 @@ declare namespace App {
         confirmPwd: FormMsg;
         code: FormMsg;
         email: FormMsg;
+        raagIdentifier: FormMsg;
       };
       dropdown: Record<Global.DropdownKey, string>;
       icon: {
