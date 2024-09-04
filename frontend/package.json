@@ -86,7 +86,7 @@
     "sass": "1.77.8",
     "tsx": "4.19.0",
     "typescript": "5.5.4",
-    "unplugin-icons": "0.19.2",
+    "unplugin-icons": "0.19.3",
     "unplugin-vue-components": "0.27.4",
     "vite": "5.4.2",
     "vite-plugin-progress": "0.0.7",
