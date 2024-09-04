@@ -5,7 +5,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.dizitart.no2.filters.Filter;
-import org.dizitart.no2.filters.FluentFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +27,7 @@ import ai.dragon.entity.FarmEntity;
 import ai.dragon.repository.FarmRepository;
 import ai.dragon.repository.util.Pager;
 import ai.dragon.util.UUIDUtil;
+import ai.dragon.util.db.filters.ExtendedFluentFilter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -47,10 +47,13 @@ public class FarmBackendApiController extends AbstractCrudBackendApiController<F
     public GenericApiResponse searchFarms(@RequestParam(name = "current", defaultValue = "1") int page,
             @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestParam(name = "uuid", required = false) String uuid,
-            @RequestParam(name = "name", required = false) String name) {
-        Filter filter = FluentFilter
-                .where("uuid").regex(String.format("^%s", Optional.ofNullable(uuid).orElse("")))
-                .and(FluentFilter.where("name").regex(Optional.ofNullable(name).orElse("")));
+            @RequestParam(name = "name", required = false) String name,
+            @RequestParam(name = "raagIdentifier", required = false) String raagIdentifier) {
+        Filter filter = ExtendedFluentFilter
+                .where("uuid").nonsensitiveRegex(String.format("^%s", Optional.ofNullable(uuid).orElse("")))
+                .and(ExtendedFluentFilter.where("name").nonsensitiveRegex(Optional.ofNullable(name).orElse(""))
+                        .and(ExtendedFluentFilter.where("raagIdentifier")
+                                .nonsensitiveRegex(Optional.ofNullable(raagIdentifier).orElse(""))));
         Pager<FarmEntity> pager = super.page(farmRepository, filter, page, size);
         return DataTableApiResponse.fromPager(pager);
     }

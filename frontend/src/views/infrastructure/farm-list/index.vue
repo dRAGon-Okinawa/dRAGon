@@ -27,7 +27,8 @@ const {
     current: 1,
     size: 10,
     uuid: '',
-    name: ''
+    name: '',
+    raagIdentifier: ''
   },
   columns: () => [
     {

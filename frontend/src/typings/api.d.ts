@@ -175,7 +175,7 @@ declare namespace Api {
 
     /** Farm Search Params */
     type FarmSearchParams = CommonType.RecordNullable<
-      Pick<Api.FarmManage.Farm, 'name' | 'uuid'> & Common.CommonSearchParams
+      Pick<Api.FarmManage.Farm, 'name' | 'uuid' | 'raagIdentifier'> & Common.CommonSearchParams
     >;
 
     /** Farm */

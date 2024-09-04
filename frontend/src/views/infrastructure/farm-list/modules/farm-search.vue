@@ -38,6 +38,13 @@ async function search() {
         <NFormItemGi span="24 s:12 m:6" :label="$t('common.name')" path="name" class="pr-24px">
           <NInput v-model:value="model.name" :placeholder="$t('common.name')" @keyup.enter="search" />
         </NFormItemGi>
+        <NFormItemGi span="24 s:12 m:6" :label="$t('dRAGon.raagIdentifier')" path="raagIdentifier" class="pr-24px">
+          <NInput
+            v-model:value="model.raagIdentifier"
+            :placeholder="$t('dRAGon.raagIdentifier')"
+            @keyup.enter="search"
+          />
+        </NFormItemGi>
         <NFormItemGi span="24 s:12 m:6" class="pr-24px">
           <NSpace class="w-full" justify="end">
             <NButton @click="reset">
