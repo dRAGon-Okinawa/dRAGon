@@ -10,6 +10,7 @@ const local: App.I18n.Schema = {
     infrastructureDescription: 'Overall situation of the dRAGon infrastructure',
     ingestorLoader: 'Ingestor Loader',
     languageModel: 'Language Model',
+    provider: 'Provider',
     raagIdentifier: 'RaaG Identifier',
     retrievalAugmentor: 'Retrieval Augmentor',
     silo: 'Silo',
@@ -365,7 +366,7 @@ const local: App.I18n.Schema = {
     },
     raagIdentifier: {
       required: 'Please enter RaaG Identifier',
-      invalid: 'Must be alphanumeric, hyphens allowed'
+      invalid: 'Must be alphanumeric (lowercased), hyphens allowed'
     }
   },
   dropdown: {

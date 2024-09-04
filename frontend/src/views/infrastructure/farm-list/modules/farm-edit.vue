@@ -53,7 +53,7 @@ function createDefaultModel(): Api.FarmManage.Farm {
   return {
     uuid: NIL_UUID,
     name: '',
-    raagIdentifier: null,
+    raagIdentifier: '',
     silos: [],
     languageModel: null,
     languageModelSettings: [],
@@ -177,10 +177,10 @@ watch(visible, () => {
         <NDivider title-placement="left">
           {{ $t('dRAGon.languageModel') }}
         </NDivider>
-        <NFormItem :label="$t('common.type')" path="languageModel">
+        <NFormItem :label="$t('dRAGon.provider')" path="languageModel">
           <NSelect
             v-model:value="model.languageModel"
-            :placeholder="$t('dRAGon.languageModel')"
+            :placeholder="$t('dRAGon.provider')"
             :options="languageModelOptions"
             clearable
           />

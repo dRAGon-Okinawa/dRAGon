@@ -256,6 +256,7 @@ declare namespace App {
         infrastructure: string;
         infrastructureDescription: string;
         ingestorLoader: string;
+        provider: string;
         raagIdentifier: string;
         retrievalAugmentor: string;
         silo: string;
