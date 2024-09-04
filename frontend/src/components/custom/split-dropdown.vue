@@ -90,27 +90,24 @@ const onOptionClick = (option: DropdownOption) => {
 <template>
   <div class="relative inline-flex">
     <button
-      class="dropdown-split-main-button border border-primary-500 rounded-l bg-white px-4 py-2 text-primary font-semibold hover:bg-primary-500 hover:text-white"
+      class="dropdown-split-main-button border border-primary-500 rounded-l bg-inherit px-4 py-2 text-primary font-semibold hover:bg-primary-500 hover:text-white"
       @click="onMainButtonClick"
     >
       <SvgIcon v-if="mainButtonIcon" :local-icon="mainButtonIcon" />
       {{ mainButtonLabel }}
     </button>
     <button
-      class="border border-l-0 border-primary-500 rounded-r bg-primary-500 px-2 py-2 text-white font-semibold hover:bg-primary-600"
+      class="border border-l-0 border-primary-500 rounded-r bg-primary-500 px-2 py-2 text-gray-100 font-semibold hover:bg-primary-600"
       @click="toggleDropdown"
     >
       <SvgIcon local-icon="mdi--arrow-down-drop-circle-outline" />
     </button>
-    <div
-      v-if="isDropdownOpen"
-      class="absolute right-0 z-10 mt-2 w-48 border border-gray-300 rounded bg-white shadow-md"
-    >
+    <div v-if="isDropdownOpen" class="absolute right-0 z-10 mt-2 w-48 rounded bg-white shadow-md dark:bg-[#48484E]">
       <ul>
         <template v-for="option in options" :key="option.value || option.label">
           <li
             v-if="!option.isDivider"
-            class="flex cursor-pointer items-center px-4 py-2 hover:bg-gray-200"
+            class="m-1 flex cursor-pointer items-center rounded-md px-4 py-2 hover:bg-gray-200 dark:hover:bg-[#59595E]"
             @click="onOptionClick(option)"
           >
             <NDialogProvider>
@@ -118,7 +115,7 @@ const onOptionClick = (option: DropdownOption) => {
               <span @click="() => onOptionClick(option)">{{ option.label }}</span>
             </NDialogProvider>
           </li>
-          <li v-else class="my-1 border-t"></li>
+          <li v-else class="my-1 border-t dark:border-t-[#59595E]"></li>
         </template>
       </ul>
     </div>
