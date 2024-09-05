@@ -70,7 +70,7 @@
     "@sa/uno-preset": "workspace:*",
     "@soybeanjs/eslint-config": "1.4.0",
     "@types/lodash-es": "4.17.12",
-    "@types/node": "22.5.2",
+    "@types/node": "22.5.4",
     "@types/nprogress": "0.2.3",
     "@unocss/eslint-config": "0.62.3",
     "@unocss/preset-icons": "0.62.3",
