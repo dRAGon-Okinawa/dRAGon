@@ -146,12 +146,16 @@ watch(visible, () => {
         <NDivider title-placement="left">
           {{ $t('dRAGon.farm') }}
         </NDivider>
-        <NFormItem :label="$t('common.name')" path="name">
+        <FormItemWithHelp :label="$t('common.name')" path="name" :help-text="$t('help.farm.name')">
           <NInput v-model:value="model.name" :placeholder="$t('common.name')" />
-        </NFormItem>
-        <NFormItem :label="$t('dRAGon.raagIdentifier')" path="raagIdentifier">
+        </FormItemWithHelp>
+        <FormItemWithHelp
+          :label="$t('dRAGon.raagIdentifier')"
+          path="raagIdentifier"
+          :help-text="$t('help.farm.raagIdentifier')"
+        >
           <NInput v-model:value="model.raagIdentifier" :placeholder="$t('dRAGon.raagIdentifier')" />
-        </NFormItem>
+        </FormItemWithHelp>
         <NFormItem :label="$t('dRAGon.chatMemoryStrategy')" path="chatMemoryStrategy">
           <NSelect
             v-model:value="model.chatMemoryStrategy"

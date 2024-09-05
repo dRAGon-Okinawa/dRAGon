@@ -322,6 +322,12 @@ declare namespace App {
           no: string;
         };
       };
+      help: {
+        farm: {
+          name: string;
+          raagIdentifier: string;
+        };
+      };
       request: {
         logout: string;
         logoutMsg: string;
