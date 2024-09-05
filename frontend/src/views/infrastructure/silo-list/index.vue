@@ -5,6 +5,7 @@ import { useAppStore } from '@/store/modules/app';
 import { embeddingModelRecord, ingestorLoaderRecord, vectoreStoreRecord } from '@/constants/business';
 import { useTable, useTableOperate } from '@/hooks/common/table';
 import SplitDropdown from '@/components/custom/split-dropdown.vue';
+import TagRenderer from '@/components/custom/tag-renderer.vue';
 import SiloEdit from './modules/silo-edit.vue';
 import SiloSearch from './modules/silo-search.vue';
 
@@ -54,61 +55,52 @@ const {
       title: $t('dRAGon.vectorStore'),
       align: 'center',
       width: 100,
-      render: (row: Api.SiloManage.Silo) => {
-        if (row.vectorStore === null) {
-          return null;
-        }
-
-        const tagMap: Record<Api.SiloManage.VectorStoreType, NaiveUI.ThemeColor> = {
-          PersistInMemoryEmbeddingStore: 'default',
-          InMemoryEmbeddingStore: 'default',
-          PGVectorEmbeddingStore: 'default'
-        };
-
-        const label = vectoreStoreRecord[row.vectorStore];
-        return <NTag type={tagMap[row.vectorStore]}>{label}</NTag>;
-      }
+      render: (row: Api.SiloManage.Silo) => (
+        <TagRenderer
+          value={row.vectorStore}
+          tagMap={{
+            PersistInMemoryEmbeddingStore: 'default',
+            InMemoryEmbeddingStore: 'default',
+            PGVectorEmbeddingStore: 'default'
+          }}
+          labelMap={vectoreStoreRecord}
+        />
+      )
     },
     {
       key: 'embeddingModel',
       title: $t('dRAGon.embeddingModel'),
       align: 'center',
       minWidth: 100,
-      render: (row: Api.SiloManage.Silo) => {
-        if (row.embeddingModel === null) {
-          return null;
-        }
-
-        const tagMap: Record<Api.SiloManage.EmbeddingModelType, NaiveUI.ThemeColor> = {
-          BgeSmallEnV15QuantizedEmbeddingModel: 'default',
-          OpenAiEmbeddingAda002Model: 'default',
-          OpenAiEmbedding3SmallModel: 'default',
-          OpenAiEmbedding3LargeModel: 'default'
-        };
-
-        const label = embeddingModelRecord[row.embeddingModel];
-        return <NTag type={tagMap[row.embeddingModel]}>{label}</NTag>;
-      }
+      render: (row: Api.SiloManage.Silo) => (
+        <TagRenderer
+          value={row.embeddingModel}
+          tagMap={{
+            BgeSmallEnV15QuantizedEmbeddingModel: 'default',
+            OpenAiEmbeddingAda002Model: 'default',
+            OpenAiEmbedding3SmallModel: 'default',
+            OpenAiEmbedding3LargeModel: 'default'
+          }}
+          labelMap={embeddingModelRecord}
+        />
+      )
     },
     {
       key: 'ingestorLoader',
       title: $t('dRAGon.ingestorLoader'),
       align: 'center',
       width: 120,
-      render: (row: Api.SiloManage.Silo) => {
-        if (row.ingestorLoader === null) {
-          return null;
-        }
-
-        const tagMap: Record<Api.SiloManage.IngestorLoaderType, NaiveUI.ThemeColor> = {
-          None: 'default',
-          FileSystem: 'default',
-          URL: 'default'
-        };
-
-        const label = ingestorLoaderRecord[row.ingestorLoader];
-        return <NTag type={tagMap[row.ingestorLoader]}>{label}</NTag>;
-      }
+      render: (row: Api.SiloManage.Silo) => (
+        <TagRenderer
+          value={row.ingestorLoader}
+          tagMap={{
+            None: 'default',
+            FileSystem: 'default',
+            URL: 'default'
+          }}
+          labelMap={ingestorLoaderRecord}
+        />
+      )
     },
     {
       key: 'operate',

@@ -5,6 +5,7 @@ import { useAppStore } from '@/store/modules/app';
 import { chatMemoryStrategyRecord, languageModelRecord } from '@/constants/business';
 import { useTable, useTableOperate } from '@/hooks/common/table';
 import SplitDropdown from '@/components/custom/split-dropdown.vue';
+import TagRenderer from '@/components/custom/tag-renderer.vue';
 import FarmEdit from './modules/farm-edit.vue';
 import FarmSearch from './modules/farm-search.vue';
 
@@ -58,36 +59,30 @@ const {
       key: 'chatMemoryStrategy',
       title: $t('dRAGon.chatMemoryStrategy'),
       align: 'center',
-      render: (row: Api.FarmManage.Farm) => {
-        if (row.chatMemoryStrategy === null) {
-          return null;
-        }
-
-        const tagMap: Record<Api.FarmManage.ChatMemoryStrategyType, NaiveUI.ThemeColor> = {
-          MaxMessages: 'default',
-          MaxTokens: 'default'
-        };
-
-        const label = chatMemoryStrategyRecord[row.chatMemoryStrategy];
-        return <NTag type={tagMap[row.chatMemoryStrategy]}>{label}</NTag>;
-      }
+      render: (row: Api.FarmManage.Farm) => (
+        <TagRenderer
+          value={row.chatMemoryStrategy}
+          tagMap={{
+            MaxMessages: 'default',
+            MaxTokens: 'default'
+          }}
+          labelMap={chatMemoryStrategyRecord}
+        />
+      )
     },
     {
       key: 'languageModel',
       title: $t('dRAGon.languageModel'),
       align: 'center',
-      render: (row: Api.FarmManage.Farm) => {
-        if (row.languageModel === null) {
-          return null;
-        }
-
-        const tagMap: Record<Api.FarmManage.LanguageModelType, NaiveUI.ThemeColor> = {
-          OpenAiModel: 'default'
-        };
-
-        const label = languageModelRecord[row.languageModel];
-        return <NTag type={tagMap[row.languageModel]}>{label}</NTag>;
-      }
+      render: (row: Api.FarmManage.Farm) => (
+        <TagRenderer
+          value={row.languageModel}
+          tagMap={{
+            OpenAiModel: 'default'
+          }}
+          labelMap={languageModelRecord}
+        />
+      )
     },
     {
       key: 'operate',
