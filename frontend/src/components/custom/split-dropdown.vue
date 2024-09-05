@@ -97,7 +97,7 @@ const onOptionClick = (option: DropdownOption) => {
       {{ mainButtonLabel }}
     </button>
     <button
-      class="border border-l-0 border-primary-500 rounded-r bg-primary-500 px-2 py-2 text-gray-100 font-semibold hover:bg-primary-600"
+      class="border border-l-0 border-primary-500 rounded-r bg-[#ede7fe] px-2 py-2 text-primary font-semibold dark:bg-[#38363d] hover:bg-primary-600 hover:text-white"
       @click="toggleDropdown"
     >
       <SvgIcon local-icon="mdi--arrow-down-drop-circle-outline" />
