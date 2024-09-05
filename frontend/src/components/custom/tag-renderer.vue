@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { NTag } from 'naive-ui';
-
 interface Props {
   value: string | null;
   tagMap: Record<string, NaiveUI.ThemeColor>;

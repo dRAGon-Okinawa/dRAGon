@@ -76,6 +76,13 @@ const local: App.I18n.Schema = {
       no: 'No'
     }
   },
+  help: {
+    farm: {
+      name: 'Name of the Farm. Must be unique.',
+      raagIdentifier:
+        'Identifier of the RaaG (RAG as a GPT). Must be unique. Used as the model name for your API calls.'
+    }
+  },
   request: {
     logout: 'Logout user after request failed',
     logoutMsg: 'User status is invalid, please log in again',
