@@ -1,5 +1,6 @@
 package ai.dragon.job.silo.ingestor.loader;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,8 +59,8 @@ public class URLIngestorLoader extends ImplAbstractSiloIngestorLoader {
         urlsToIngest.clear();
         for (String url : urls) {
             try {
-                URL urlToIngest = new URL(url);
-                urlToIngest.toURI();
+                URI uri = new URI(url);
+                URL urlToIngest = uri.toURL();
                 urlsToIngest.add(urlToIngest);
             } catch (Exception ex) {
                 logger.error("Error parsing URL '{}'", url, ex);
