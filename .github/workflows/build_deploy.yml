@@ -73,11 +73,16 @@ jobs:
           fi
       - name: Display Version Incrementer
         run: echo "Version Incrementer == ${{ env.versionIncrementer }}"
-      - name: Create Release
+
+      # Create Release
+      - name: Create Release (if main branch)
         if: |
           github.ref == 'refs/heads/main' &&
           github.repository == 'dragon-okinawa/dragon'
         run: gradle createRelease -Prelease.versionIncrementer=${{ env.versionIncrementer }}
+      - name: Create Release (if not main branch)
+        if: github.ref != 'refs/heads/main'
+        run: gradle createRelease -Prelease.forceVersion=0.0.0
 
       # Set Frontend Version
       - name: Set Frontend Version
