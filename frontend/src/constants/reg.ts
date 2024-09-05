@@ -23,3 +23,6 @@ export const REG_CODE_FOUR = /^\d{4}$/;
 /** Url reg */
 export const REG_URL =
   /(((^https?:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+(?::\d+)?|(?:www.|[-;:&=+$,\w]+@)[A-Za-z0-9.-]+)((?:\/[+~%/.\w-_]*)?\??(?:[-+=&;%@.\w_]*)#?(?:[\w]*))?)$/;
+
+/** Raag identifier reg */
+export const REG_RAAG_IDENTIFIER = /^[a-z0-9\\-]+$/;

@@ -74,10 +74,34 @@ export const useAppStore = defineStore(SetupStoreId.App, () => {
 
   function init() {
     setDayjsLocale(locale.value);
+
+    if (localStg.get('siderCollapseStatus') === 'collapsed') {
+      setSiderCollapse(true);
+    }
+
+    const themeScheme = localStg.get('themeScheme');
+    if (themeScheme) {
+      themeStore.setThemeScheme(themeScheme as UnionKey.ThemeScheme);
+    }
   }
 
   // watch store
   scope.run(() => {
+    // watch siderCollapse, if siderCollapse, save to localStorage
+    watch(siderCollapse, value => {
+      if (value) {
+        localStg.set('siderCollapseStatus', 'collapsed');
+      } else {
+        localStg.remove('siderCollapseStatus');
+      }
+    });
+
+    watch(themeStore, value => {
+      if (value) {
+        localStg.set('themeScheme', themeStore.themeScheme);
+      }
+    });
+
     // watch isMobile, if is mobile, collapse sider
     watch(
       isMobile,

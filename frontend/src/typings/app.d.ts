@@ -246,14 +246,19 @@ declare namespace App {
 
     type Schema = {
       dRAGon: {
+        chatMemoryStrategy: string;
         document: string;
         documents: string;
         embeddingModel: string;
         farm: string;
         farms: string;
+        languageModel: string;
         infrastructure: string;
         infrastructureDescription: string;
         ingestorLoader: string;
+        provider: string;
+        raagIdentifier: string;
+        retrievalAugmentor: string;
         silo: string;
         silos: string;
         vectorStore: string;
@@ -537,6 +542,7 @@ declare namespace App {
         confirmPwd: FormMsg;
         code: FormMsg;
         email: FormMsg;
+        raagIdentifier: FormMsg;
       };
       dropdown: Record<Global.DropdownKey, string>;
       icon: {

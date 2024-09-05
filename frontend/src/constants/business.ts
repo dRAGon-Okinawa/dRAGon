@@ -5,7 +5,6 @@ export const vectoreStoreRecord: Record<Api.SiloManage.VectorStoreType, string> 
   InMemoryEmbeddingStore: 'MEMORY',
   PGVectorEmbeddingStore: 'PGVECTOR'
 };
-
 export const vectorStoreOptions = transformRecordToOption(vectoreStoreRecord);
 
 export const embeddingModelRecord: Record<Api.SiloManage.EmbeddingModelType, string> = {
@@ -14,7 +13,6 @@ export const embeddingModelRecord: Record<Api.SiloManage.EmbeddingModelType, str
   OpenAiEmbedding3SmallModel: 'OPENAI EMBEDDING 3 SMALL',
   OpenAiEmbedding3LargeModel: 'OPENAI EMBEDDING 3 LARGE'
 };
-
 export const embeddingModelOptions = transformRecordToOption(embeddingModelRecord);
 
 export const ingestorLoaderRecord: Record<Api.SiloManage.IngestorLoaderType, string> = {
@@ -22,5 +20,15 @@ export const ingestorLoaderRecord: Record<Api.SiloManage.IngestorLoaderType, str
   FileSystem: 'FILE SYSTEM',
   URL: 'URL'
 };
-
 export const ingestorLoaderOptions = transformRecordToOption(ingestorLoaderRecord);
+
+export const languageModelRecord: Record<Api.FarmManage.LanguageModelType, string> = {
+  OpenAiModel: 'OPENAI'
+};
+export const languageModelOptions = transformRecordToOption(languageModelRecord);
+
+export const chatMemoryStrategyRecord: Record<Api.FarmManage.ChatMemoryStrategyType, string> = {
+  MaxMessages: 'MAX MESSAGES',
+  MaxTokens: 'MAX TOKENS'
+};
+export const chatMemoryStrategyOptions = transformRecordToOption(chatMemoryStrategyRecord);

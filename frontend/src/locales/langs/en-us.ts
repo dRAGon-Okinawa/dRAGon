@@ -1,5 +1,6 @@
 const local: App.I18n.Schema = {
   dRAGon: {
+    chatMemoryStrategy: 'Chat Memory Strategy',
     document: 'Document',
     documents: 'Documents',
     embeddingModel: 'Embedding Model',
@@ -8,6 +9,10 @@ const local: App.I18n.Schema = {
     infrastructure: 'Infrastructure',
     infrastructureDescription: 'Overall situation of the dRAGon infrastructure',
     ingestorLoader: 'Ingestor Loader',
+    languageModel: 'Language Model',
+    provider: 'Provider',
+    raagIdentifier: 'RaaG Identifier',
+    retrievalAugmentor: 'Retrieval Augmentor',
     silo: 'Silo',
     silos: 'Silos',
     vectorStore: 'Vector Store'
@@ -176,7 +181,7 @@ const local: App.I18n.Schema = {
     help: 'Help',
     infrastructure: 'Infrastructure',
     'infrastructure_silo-list': 'Silos',
-    'infrastructure_silo-detail': 'Silo Detail',
+    'infrastructure_farm-list': 'Farms',
     exception: 'Exception',
     exception_403: '403',
     exception_404: '404',
@@ -358,6 +363,10 @@ const local: App.I18n.Schema = {
     email: {
       required: 'Please enter email',
       invalid: 'Email format is incorrect'
+    },
+    raagIdentifier: {
+      required: 'Please enter RaaG Identifier',
+      invalid: 'Must be alphanumeric (lowercased), hyphens allowed'
     }
   },
   dropdown: {
