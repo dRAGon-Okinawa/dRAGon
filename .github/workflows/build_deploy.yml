@@ -86,7 +86,7 @@ jobs:
 
       # Set Frontend Version
       - name: Set Frontend Version
-        run: pnpm version from-git --no-git-tag-version --prefix frontend
+        run: pnpm version from-git --no-git-tag-version --prefix frontend --allow-same-version
 
       # Lint Frontend and Backend
       - name: Lint Frontend
