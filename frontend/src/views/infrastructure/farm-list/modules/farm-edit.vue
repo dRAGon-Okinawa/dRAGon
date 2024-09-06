@@ -4,7 +4,7 @@ import { NIL as NIL_UUID } from 'uuid';
 import type { SelectOption } from 'naive-ui';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
 import { $t } from '@/locales';
-import { chatMemoryStrategyOptions, languageModelOptions } from '@/constants/business';
+import { chatMemoryStrategyOptions, languageModelOptions, queryRouterOptions } from '@/constants/business';
 import { fetchSilosSearch, fetchUpsertFarm } from '@/service/api';
 import KVSettings from '../../../../components/custom/kv-settings.vue';
 
@@ -58,17 +58,19 @@ function createDefaultModel(): Api.FarmManage.Farm {
     languageModel: null,
     languageModelSettings: [],
     chatMemoryStrategy: null,
-    retrievalAugmentorSettings: []
+    retrievalAugmentorSettings: [],
+    queryRouter: null
   };
 }
 
-type RuleKey = Extract<keyof Model, 'name' | 'raagIdentifier' | 'languageModel' | 'chatMemoryStrategy'>;
+type RuleKey = Extract<keyof Model, 'name' | 'raagIdentifier' | 'languageModel' | 'chatMemoryStrategy' | 'queryRouter'>;
 
 const rules: Record<RuleKey, App.Global.FormRule> = {
   name: defaultRequiredRule,
   raagIdentifier: formRules.raagIdentifier,
   languageModel: defaultRequiredRule,
-  chatMemoryStrategy: defaultRequiredRule
+  chatMemoryStrategy: defaultRequiredRule,
+  queryRouter: defaultRequiredRule
 };
 
 const kvLanguageModelSettingsKey = ref(0);
@@ -170,15 +172,7 @@ watch(visible, () => {
         >
           <NInput v-model:value="model.raagIdentifier" :placeholder="$t('dRAGon.raagIdentifier')" />
         </FormItemWithHelp>
-        <NFormItem :label="$t('dRAGon.chatMemoryStrategy')" path="chatMemoryStrategy">
-          <NSelect
-            v-model:value="model.chatMemoryStrategy"
-            :placeholder="$t('dRAGon.chatMemoryStrategy')"
-            :options="chatMemoryStrategyOptions"
-            clearable
-          />
-        </NFormItem>
-        <NFormItem :label="$t('dRAGon.silos')" path="silos">
+        <FormItemWithHelp :label="$t('dRAGon.silos')" path="silos" :help-text="$t('help.farm.silos')">
           <NSelect
             v-model:value="model.silos"
             multiple
@@ -191,7 +185,7 @@ watch(visible, () => {
             :clear-filter-after-select="true"
             @search="handleSearch"
           />
-        </NFormItem>
+        </FormItemWithHelp>
         <NDivider title-placement="left">
           {{ $t('dRAGon.languageModel') }}
         </NDivider>
@@ -211,6 +205,22 @@ watch(visible, () => {
         <NDivider title-placement="left">
           {{ $t('dRAGon.retrievalAugmentor') }}
         </NDivider>
+        <NFormItem :label="$t('dRAGon.chatMemoryStrategy')" path="chatMemoryStrategy">
+          <NSelect
+            v-model:value="model.chatMemoryStrategy"
+            :placeholder="$t('dRAGon.chatMemoryStrategy')"
+            :options="chatMemoryStrategyOptions"
+            clearable
+          />
+        </NFormItem>
+        <NFormItem :label="$t('dRAGon.queryRouter')" path="queryRouter">
+          <NSelect
+            v-model:value="model.queryRouter"
+            :placeholder="$t('dRAGon.queryRouter')"
+            :options="queryRouterOptions"
+            clearable
+          />
+        </NFormItem>
         <NCollapse>
           <NCollapseItem :title="$t('common.settings')">
             <KVSettings :key="kvRetrievalAugmentorSettingsKey" v-model:settings="model.retrievalAugmentorSettings" />

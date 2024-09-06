@@ -173,6 +173,9 @@ declare namespace Api {
     /** Chat Memory Strategy Type */
     type ChatMemoryStrategyType = 'MaxMessages' | 'MaxTokens';
 
+    /** Query Router Type */
+    type QueryRouterType = 'Default' | 'LanguageModel';
+
     /** Farm Search Params */
     type FarmSearchParams = CommonType.RecordNullable<
       Pick<Api.FarmManage.Farm, 'name' | 'uuid' | 'raagIdentifier'> & Common.CommonSearchParams
@@ -192,6 +195,8 @@ declare namespace Api {
       languageModelSettings: string[] | null;
       /** Chat Memory Strategy */
       chatMemoryStrategy: ChatMemoryStrategyType | null;
+      /** Query Router Type */
+      queryRouter: QueryRouterType | null;
       /** Retrieval Augmentor Settings */
       retrievalAugmentorSettings: string[] | null;
     }>;

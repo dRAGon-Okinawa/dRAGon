@@ -11,6 +11,7 @@ const local: App.I18n.Schema = {
     ingestorLoader: 'Ingestor Loader',
     languageModel: 'Language Model',
     provider: 'Provider',
+    queryRouter: 'Query Router',
     raagIdentifier: 'RaaG Identifier',
     retrievalAugmentor: 'Retrieval Augmentor',
     silo: 'Silo',
@@ -80,7 +81,10 @@ const local: App.I18n.Schema = {
     farm: {
       name: 'Name of the Farm. Must be unique.',
       raagIdentifier:
-        'Identifier of the RaaG (RAG as a GPT). Must be unique. Used as the model name for your API calls.'
+        'Identifier of the RaaG (RAG as a GPT). Must be unique. Used as the model name for your API calls.',
+      silos: `Silos that are part of this Farm.
+        Depending on the Query Router, Silos will be queried or not based on the user query. 
+        When no Silo specified, query will be sent directly to AI model.`
     },
     integrationExample: 'Integration Example'
   },

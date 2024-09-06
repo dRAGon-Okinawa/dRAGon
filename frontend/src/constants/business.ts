@@ -32,3 +32,9 @@ export const chatMemoryStrategyRecord: Record<Api.FarmManage.ChatMemoryStrategyT
   MaxTokens: 'MAX TOKENS'
 };
 export const chatMemoryStrategyOptions = transformRecordToOption(chatMemoryStrategyRecord);
+
+export const queryRouterRecord: Record<Api.FarmManage.QueryRouterType, string> = {
+  Default: 'DEFAULT',
+  LanguageModel: 'LANGUAGE MODEL'
+};
+export const queryRouterOptions = transformRecordToOption(queryRouterRecord);

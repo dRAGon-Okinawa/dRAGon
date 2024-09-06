@@ -257,6 +257,7 @@ declare namespace App {
         infrastructureDescription: string;
         ingestorLoader: string;
         provider: string;
+        queryRouter: string;
         raagIdentifier: string;
         retrievalAugmentor: string;
         silo: string;
@@ -326,6 +327,7 @@ declare namespace App {
         farm: {
           name: string;
           raagIdentifier: string;
+          silos: string;
         };
         integrationExample: string;
       };
