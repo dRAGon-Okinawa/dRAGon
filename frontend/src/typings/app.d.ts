@@ -328,6 +328,7 @@ declare namespace App {
           name: string;
           raagIdentifier: string;
           silos: string;
+          chatMemoryStrategy: string;
         };
         integrationExample: string;
       };

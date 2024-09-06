@@ -211,14 +211,19 @@ watch(visible, () => {
         <NDivider title-placement="left">
           {{ $t('dRAGon.retrievalAugmentor') }}
         </NDivider>
-        <NFormItem :label="$t('dRAGon.chatMemoryStrategy')" path="chatMemoryStrategy">
+        <FormItemWithHelp
+          :label="$t('dRAGon.chatMemoryStrategy')"
+          path="chatMemoryStrategy"
+          :help-text="$t('help.farm.chatMemoryStrategy')"
+          help-link="https://docs.dragon.okinawa/about-dragon/glossary/farm-glossary/chat-memory-strategy"
+        >
           <NSelect
             v-model:value="model.chatMemoryStrategy"
             :placeholder="$t('dRAGon.chatMemoryStrategy')"
             :options="chatMemoryStrategyOptions"
             clearable
           />
-        </NFormItem>
+        </FormItemWithHelp>
         <NFormItem :label="$t('dRAGon.queryRouter')" path="queryRouter">
           <NSelect
             v-model:value="model.queryRouter"

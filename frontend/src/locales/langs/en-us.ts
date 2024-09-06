@@ -84,7 +84,8 @@ const local: App.I18n.Schema = {
         'Identifier of the RaaG (RAG as a GPT). Must be unique. Used as the model name for your API calls.',
       silos: `Silos that are part of this Farm.
         Depending on the Query Router, Silos will be queried or not based on the user query. 
-        When no Silo specified, query will be sent directly to AI model.`
+        When no Silo specified, query will be sent directly to AI model.`,
+      chatMemoryStrategy: 'Evicts old messages or tokens based on the strategy.'
     },
     integrationExample: 'Integration Example'
   },
