@@ -162,7 +162,12 @@ watch(visible, () => {
         <NDivider title-placement="left">
           {{ $t('dRAGon.farm') }}
         </NDivider>
-        <FormItemWithHelp :label="$t('common.name')" path="name" :help-text="$t('help.farm.name')">
+        <FormItemWithHelp
+          :label="$t('common.name')"
+          path="name"
+          :help-text="$t('help.farm.name')"
+          help-link="https://docs.dragon.okinawa/about-dragon/glossary/whats-a-farm"
+        >
           <NInput v-model:value="model.name" :placeholder="$t('common.name')" />
         </FormItemWithHelp>
         <FormItemWithHelp
