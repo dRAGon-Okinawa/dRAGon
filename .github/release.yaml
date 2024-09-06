@@ -2,7 +2,6 @@ changelog:
   exclude:
     labels:
       - skip-changelog
-      - wontfix
   categories:
     - title: 🔨 Breaking Changes
       labels:
