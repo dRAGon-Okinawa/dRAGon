@@ -90,6 +90,8 @@ llm.invoke(prompt)
 `;
 });
 
+const docBaseUrl = ref(import.meta.env.VITE_DOC_BASE_URL);
+
 function refreshKeyValueSettings() {
   kvLanguageModelSettingsKey.value += 1;
   kvRetrievalAugmentorSettingsKey.value += 1;
@@ -169,7 +171,7 @@ watch(visible, () => {
           :label="$t('dRAGon.raagIdentifier')"
           path="raagIdentifier"
           :help-text="$t('help.farm.raagIdentifier')"
-          help-link="https://docs.dragon.okinawa/about-dragon/glossary/farm-glossary/raag-identifier"
+          :help-link="docBaseUrl + '/about-dragon/glossary/farm-glossary/raag-identifier'"
         >
           <NInput v-model:value="model.raagIdentifier" :placeholder="$t('dRAGon.raagIdentifier')" />
         </FormItemWithHelp>
@@ -177,7 +179,7 @@ watch(visible, () => {
           :label="$t('dRAGon.silos')"
           path="silos"
           :help-text="$t('help.farm.silos')"
-          help-link="https://docs.dragon.okinawa/about-dragon/glossary/whats-a-farm"
+          :help-link="docBaseUrl + '/about-dragon/glossary/whats-a-farm'"
         >
           <NSelect
             v-model:value="model.silos"
@@ -215,7 +217,7 @@ watch(visible, () => {
           :label="$t('dRAGon.chatMemoryStrategy')"
           path="chatMemoryStrategy"
           :help-text="$t('help.farm.chatMemoryStrategy.tooltip')"
-          help-link="https://docs.dragon.okinawa/about-dragon/glossary/farm-glossary/chat-memory-strategy"
+          :help-link="docBaseUrl + '/about-dragon/glossary/farm-glossary/chat-memory-strategy'"
         >
           <SelectWithHint
             v-model="model.chatMemoryStrategy"
