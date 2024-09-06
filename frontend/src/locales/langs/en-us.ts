@@ -85,7 +85,13 @@ const local: App.I18n.Schema = {
       silos: `Silos that are part of this Farm.
         Depending on the Query Router, Silos will be queried or not based on the user query. 
         When no Silo specified, query will be sent directly to AI model.`,
-      chatMemoryStrategy: 'Evicts old messages or tokens based on the strategy.'
+      chatMemoryStrategy: {
+        tooltip: 'Evicts old messages or tokens based on the strategy.',
+        maxMessagesHint:
+          'To define MAX MESSAGES value (default to 10), add this Retrieval Augmentor setting key : historyMaxMessages',
+        maxTokensHint:
+          'To define MAX TOKENS value (default to 3000), add this Retrieval Augmentor setting key : historyMaxTokens'
+      }
     },
     integrationExample: 'Integration Example'
   },

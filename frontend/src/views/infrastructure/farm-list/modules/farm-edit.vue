@@ -214,11 +214,11 @@ watch(visible, () => {
         <FormItemWithHelp
           :label="$t('dRAGon.chatMemoryStrategy')"
           path="chatMemoryStrategy"
-          :help-text="$t('help.farm.chatMemoryStrategy')"
+          :help-text="$t('help.farm.chatMemoryStrategy.tooltip')"
           help-link="https://docs.dragon.okinawa/about-dragon/glossary/farm-glossary/chat-memory-strategy"
         >
-          <NSelect
-            v-model:value="model.chatMemoryStrategy"
+          <SelectWithHint
+            v-model="model.chatMemoryStrategy"
             :placeholder="$t('dRAGon.chatMemoryStrategy')"
             :options="chatMemoryStrategyOptions"
             clearable

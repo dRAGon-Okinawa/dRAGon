@@ -37,6 +37,15 @@ declare namespace Api {
     } & T;
   }
 
+  type SelectOptionItem = {
+    /** value */
+    value?: string;
+    /** label */
+    label: string;
+    /** hint */
+    hint?: string;
+  };
+
   /**
    * namespace Auth
    *
