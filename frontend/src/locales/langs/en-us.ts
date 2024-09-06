@@ -81,7 +81,8 @@ const local: App.I18n.Schema = {
       name: 'Name of the Farm. Must be unique.',
       raagIdentifier:
         'Identifier of the RaaG (RAG as a GPT). Must be unique. Used as the model name for your API calls.'
-    }
+    },
+    integrationExample: 'Integration Example'
   },
   request: {
     logout: 'Logout user after request failed',

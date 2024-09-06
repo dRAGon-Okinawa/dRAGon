@@ -74,6 +74,20 @@ const rules: Record<RuleKey, App.Global.FormRule> = {
 const kvLanguageModelSettingsKey = ref(0);
 const kvRetrievalAugmentorSettingsKey = ref(0);
 
+const integrationExampleCode = computed(() => {
+  return `
+from langchain_openai import OpenAI
+
+llm = OpenAI(
+    model_name="${model.raagIdentifier}",
+    openai_api_base="http://your.dragon.host:1985/api/raag/v1",
+)
+
+prompt = "What's dRAGon?"
+llm.invoke(prompt)
+`;
+});
+
 function refreshKeyValueSettings() {
   kvLanguageModelSettingsKey.value += 1;
   kvRetrievalAugmentorSettingsKey.value += 1;
@@ -202,6 +216,10 @@ watch(visible, () => {
             <KVSettings :key="kvRetrievalAugmentorSettingsKey" v-model:settings="model.retrievalAugmentorSettings" />
           </NCollapseItem>
         </NCollapse>
+        <NDivider title-placement="left">
+          {{ $t('help.integrationExample') }}
+        </NDivider>
+        <NCode :code="integrationExampleCode" language="python" word-wrap />
       </NForm>
       <template #footer>
         <NSpace :size="16">

@@ -327,6 +327,7 @@ declare namespace App {
           name: string;
           raagIdentifier: string;
         };
+        integrationExample: string;
       };
       request: {
         logout: string;
