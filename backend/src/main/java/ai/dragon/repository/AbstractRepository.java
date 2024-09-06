@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.collection.FindOptions;
@@ -14,6 +15,8 @@ import org.dizitart.no2.filters.Filter;
 import org.dizitart.no2.filters.FluentFilter;
 import org.dizitart.no2.repository.Cursor;
 import org.dizitart.no2.repository.ObjectRepository;
+import org.dizitart.no2.transaction.Session;
+import org.dizitart.no2.transaction.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -22,6 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ai.dragon.entity.AbstractEntity;
 import ai.dragon.listener.EntityChangeListener;
 import ai.dragon.service.DatabaseService;
+import ai.dragon.util.ThrowingFunction;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -30,6 +34,44 @@ import jakarta.validation.Validator;
 public abstract class AbstractRepository<T extends AbstractEntity> {
     @Autowired
     private DatabaseService databaseService;
+
+    private ObjectRepository<T> repository;
+
+    public void executeTransaction(Consumer<AbstractRepository<T>> transactionConsumer) {
+        Nitrite db = databaseService.getNitriteDB();
+        try (Session session = db.createSession()) {
+            try (Transaction transaction = session.beginTransaction()) {
+                ObjectRepository<T> standardRepository = repository;
+                ObjectRepository<T> transactionRepository = transaction.getRepository(getGenericSuperclass());
+                this.repository = transactionRepository;
+                try {
+                    transactionConsumer.accept(this);
+                    transaction.commit();
+                } finally {
+                    this.repository = standardRepository;
+                }
+            }
+        }
+    }
+
+    public <R> R queryTransaction(ThrowingFunction<AbstractRepository<T>, R> transactionFunction) throws Exception {
+        Nitrite db = databaseService.getNitriteDB();
+        try (Session session = db.createSession()) {
+            try (Transaction transaction = session.beginTransaction()) {
+                ObjectRepository<T> standardRepository = repository;
+                ObjectRepository<T> transactionRepository = transaction.getRepository(getGenericSuperclass());
+                this.repository = transactionRepository;
+                R result = null;
+                try {
+                    result = transactionFunction.apply(this);
+                    transaction.commit();
+                } finally {
+                    this.repository = standardRepository;
+                }
+                return result;
+            }
+        }
+    }
 
     @SuppressWarnings("unchecked")
     public void save(T entity) {
@@ -44,8 +86,7 @@ public abstract class AbstractRepository<T extends AbstractEntity> {
         // Throws an exception if the entity is not valid :
         this.validate(entity);
 
-        Nitrite db = databaseService.getNitriteDB();
-        ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
+        ObjectRepository<T> repository = getObjectRepository();
 
         if (exists(entity.getUuid())) {
             repository.update(entity);
@@ -67,14 +108,12 @@ public abstract class AbstractRepository<T extends AbstractEntity> {
     }
 
     public Optional<T> getByUuid(UUID uuid) {
-        Nitrite db = databaseService.getNitriteDB();
-        ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
+        ObjectRepository<T> repository = getObjectRepository();
         return Optional.ofNullable(repository.getById(uuid));
     }
 
     public Cursor<T> find() {
-        Nitrite db = databaseService.getNitriteDB();
-        ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
+        ObjectRepository<T> repository = getObjectRepository();
         return repository.find();
     }
 
@@ -83,8 +122,7 @@ public abstract class AbstractRepository<T extends AbstractEntity> {
     }
 
     public Cursor<T> findWithFilter(Filter filter, FindOptions findOptions) {
-        Nitrite db = databaseService.getNitriteDB();
-        ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
+        ObjectRepository<T> repository = getObjectRepository();
         return repository.find(filter, findOptions);
     }
 
@@ -126,26 +164,22 @@ public abstract class AbstractRepository<T extends AbstractEntity> {
     }
 
     public void delete(T entity) {
-        Nitrite db = databaseService.getNitriteDB();
-        ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
+        ObjectRepository<T> repository = getObjectRepository();
         repository.remove(entity);
     }
 
     public void deleteAll() {
-        Nitrite db = databaseService.getNitriteDB();
-        ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
+        ObjectRepository<T> repository = getObjectRepository();
         repository.clear();
     }
 
     public long countAll() {
-        Nitrite db = databaseService.getNitriteDB();
-        ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
+        ObjectRepository<T> repository = getObjectRepository();
         return repository.size();
     }
 
     public EntityChangeListener<T> subscribe(EntityChangeListener<T> listener) {
-        Nitrite db = databaseService.getNitriteDB();
-        ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
+        ObjectRepository<T> repository = getObjectRepository();
         repository.subscribe(listener);
         return listener;
     }
@@ -163,8 +197,7 @@ public abstract class AbstractRepository<T extends AbstractEntity> {
     }
 
     public void unsubscribe(EntityChangeListener<T> listener) {
-        Nitrite db = databaseService.getNitriteDB();
-        ObjectRepository<T> repository = db.getRepository(getGenericSuperclass());
+        ObjectRepository<T> repository = getObjectRepository();
         repository.unsubscribe(listener);
     }
 
@@ -196,5 +229,16 @@ public abstract class AbstractRepository<T extends AbstractEntity> {
         if (!constraintViolations.isEmpty()) {
             throw new IllegalArgumentException(String.join(", ", contraintMessages));
         }
+    }
+
+    private ObjectRepository<T> getObjectRepository() {
+        if (repository != null) {
+            return repository;
+        }
+
+        Nitrite db = databaseService.getNitriteDB();
+        repository = db.getRepository(getGenericSuperclass());
+
+        return repository;
     }
 }

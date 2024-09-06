@@ -101,14 +101,17 @@ public class FarmBackendApiController extends AbstractCrudBackendApiController<F
     public GenericApiResponse upsertFarm(
             @PathVariable("uuid") @Parameter(description = "Identifier of the Farm", required = false) String uuid,
             @RequestBody Map<String, Object> fields) throws Exception {
-        if (uuid == null || UUIDUtil.zeroUUIDString().equals(uuid)) {
-            fields.remove("uuid");
-            uuid = super.create(farmRepository).getUuid().toString();
-        }
-        return SuccessApiResponse
-                .builder()
-                .data(super.update(uuid, fields, farmRepository))
-                .build();
+        return farmRepository.queryTransaction(transactionRepository -> {
+            String farmUUID = uuid;
+            if (farmUUID == null || UUIDUtil.zeroUUIDString().equals(farmUUID)) {
+                fields.remove("uuid");
+                farmUUID = super.create(farmRepository).getUuid().toString();
+            }
+            return SuccessApiResponse
+                    .builder()
+                    .data(super.update(farmUUID, fields, farmRepository))
+                    .build();
+        });
     }
 
     @DeleteMapping("/{uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}")
