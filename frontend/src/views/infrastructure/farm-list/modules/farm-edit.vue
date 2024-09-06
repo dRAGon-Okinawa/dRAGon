@@ -162,22 +162,23 @@ watch(visible, () => {
         <NDivider title-placement="left">
           {{ $t('dRAGon.farm') }}
         </NDivider>
-        <FormItemWithHelp
-          :label="$t('common.name')"
-          path="name"
-          :help-text="$t('help.farm.name')"
-          help-link="https://docs.dragon.okinawa/about-dragon/glossary/whats-a-farm"
-        >
+        <FormItemWithHelp :label="$t('common.name')" path="name" :help-text="$t('help.farm.name')">
           <NInput v-model:value="model.name" :placeholder="$t('common.name')" />
         </FormItemWithHelp>
         <FormItemWithHelp
           :label="$t('dRAGon.raagIdentifier')"
           path="raagIdentifier"
           :help-text="$t('help.farm.raagIdentifier')"
+          help-link="https://docs.dragon.okinawa/about-dragon/glossary/farm-glossary/raag-identifier"
         >
           <NInput v-model:value="model.raagIdentifier" :placeholder="$t('dRAGon.raagIdentifier')" />
         </FormItemWithHelp>
-        <FormItemWithHelp :label="$t('dRAGon.silos')" path="silos" :help-text="$t('help.farm.silos')">
+        <FormItemWithHelp
+          :label="$t('dRAGon.silos')"
+          path="silos"
+          :help-text="$t('help.farm.silos')"
+          help-link="https://docs.dragon.okinawa/about-dragon/glossary/whats-a-farm"
+        >
           <NSelect
             v-model:value="model.silos"
             multiple
