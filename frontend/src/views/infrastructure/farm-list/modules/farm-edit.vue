@@ -221,6 +221,7 @@ watch(visible, () => {
         >
           <SelectWithHint
             v-model="model.chatMemoryStrategy"
+            v-model:value="model.chatMemoryStrategy"
             :placeholder="$t('dRAGon.chatMemoryStrategy')"
             :options="chatMemoryStrategyOptions"
             clearable
