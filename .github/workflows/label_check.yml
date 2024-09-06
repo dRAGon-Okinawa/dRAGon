@@ -16,5 +16,5 @@ jobs:
       - name: Check Release Labels
         uses: docker://agilepathway/pull-request-label-checker:latest
         with:
-          one_of: breaking-change,bug,dependency,documentation,enhancement,skip-changelog,wontfix,cicd
+          one_of: breaking-change,bug,dependency,documentation,enhancement,skip-changelog,wontfix,cicd,test
           repo_token: ${{ secrets.GITHUB_TOKEN }}
