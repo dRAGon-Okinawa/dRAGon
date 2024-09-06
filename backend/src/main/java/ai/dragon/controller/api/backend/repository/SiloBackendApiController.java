@@ -5,7 +5,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.dizitart.no2.filters.Filter;
-import org.dizitart.no2.filters.FluentFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +27,7 @@ import ai.dragon.entity.SiloEntity;
 import ai.dragon.repository.SiloRepository;
 import ai.dragon.repository.util.Pager;
 import ai.dragon.util.UUIDUtil;
+import ai.dragon.util.db.filters.ExtendedFluentFilter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -49,10 +49,11 @@ public class SiloBackendApiController extends AbstractCrudBackendApiController<S
             @RequestParam(name = "uuid", required = false) String uuid,
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "vectorStore", required = false) String vectorStore) {
-        Filter filter = FluentFilter
-                .where("uuid").regex(String.format("^%s", Optional.ofNullable(uuid).orElse("")))
-                .and(FluentFilter.where("name").regex(Optional.ofNullable(name).orElse(""))
-                        .and(FluentFilter.where("vectorStore").regex(Optional.ofNullable(vectorStore).orElse(""))));
+        Filter filter = ExtendedFluentFilter
+                .where("uuid").nonsensitiveRegex(String.format("^%s", Optional.ofNullable(uuid).orElse("")))
+                .and(ExtendedFluentFilter.where("name").nonsensitiveRegex(Optional.ofNullable(name).orElse(""))
+                        .and(ExtendedFluentFilter.where("vectorStore")
+                                .nonsensitiveRegex(Optional.ofNullable(vectorStore).orElse(""))));
         Pager<SiloEntity> pager = super.page(siloRepository, filter, page, size);
         return DataTableApiResponse.fromPager(pager);
     }
@@ -122,8 +123,7 @@ public class SiloBackendApiController extends AbstractCrudBackendApiController<S
     }
 
     @DeleteMapping("/deleteMultiple")
-    @ApiResponse(responseCode = "200", description = "Silo has been successfully deleted.")
-    @ApiResponse(responseCode = "404", description = "Silo not found.", content = @Content)
+    @ApiResponse(responseCode = "200", description = "Silos have been successfully deleted.")
     @Operation(summary = "Delete multiple Silos", description = "Deletes one or more Silo entity from their UUID stored in the database.")
     public GenericApiResponse deleteMultipleSilos(@RequestBody UUIDsBatchRequest request) throws Exception {
         super.deleteMultiple(request.getUuids(), siloRepository);

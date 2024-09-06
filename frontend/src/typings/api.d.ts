@@ -115,9 +115,9 @@ declare namespace Api {
   }
 
   /**
-   * namespace SystemManage
+   * namespace SiloManage
    *
-   * backend api module: "systemManage"
+   * backend api module: "siloManage"
    */
   namespace SiloManage {
     type CommonSearchParams = Pick<Common.PaginatingCommonParams, 'current' | 'size'>;
@@ -156,6 +156,44 @@ declare namespace Api {
       embeddingSettings: string[] | null;
       /* Ingestor Settings */
       ingestorSettings: string[] | null;
+    }>;
+  }
+
+  /**
+   * namespace FarmManage
+   *
+   * backend api module: "farmManage"
+   */
+  namespace FarmManage {
+    type CommonSearchParams = Pick<Common.PaginatingCommonParams, 'current' | 'size'>;
+
+    /** Language Model Type */
+    type LanguageModelType = 'OpenAiModel';
+
+    /** Chat Memory Strategy Type */
+    type ChatMemoryStrategyType = 'MaxMessages' | 'MaxTokens';
+
+    /** Farm Search Params */
+    type FarmSearchParams = CommonType.RecordNullable<
+      Pick<Api.FarmManage.Farm, 'name' | 'uuid' | 'raagIdentifier'> & Common.CommonSearchParams
+    >;
+
+    /** Farm */
+    type Farm = Common.CommonRecord<{
+      /** Farm Name */
+      name: string;
+      /** RaaG Identifier */
+      raagIdentifier: string;
+      /** Linked Silos */
+      silos: string[];
+      /** Language Model */
+      languageModel: LanguageModelType | null;
+      /** Language Model Settings */
+      languageModelSettings: string[] | null;
+      /** Chat Memory Strategy */
+      chatMemoryStrategy: ChatMemoryStrategyType | null;
+      /** Retrieval Augmentor Settings */
+      retrievalAugmentorSettings: string[] | null;
     }>;
   }
 

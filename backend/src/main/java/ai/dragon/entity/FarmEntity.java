@@ -37,7 +37,7 @@ public class FarmEntity implements AbstractEntity {
     private String name;
 
     @Schema(description = "Identifier for the 'Raag Model' to be used for the RaaG API. Must be unique")
-    @Pattern(regexp = "^[a-z0-9\\-]+$", message = "Must be alphanumeric, hyphens allowed")
+    @Pattern(regexp = "^[a-z0-9\\-]+$", message = "Must be alphanumeric (lowercased), hyphens allowed")
     private String raagIdentifier;
 
     @Schema(description = """
