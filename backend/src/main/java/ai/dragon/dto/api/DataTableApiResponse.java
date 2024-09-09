@@ -1,6 +1,7 @@
 package ai.dragon.dto.api;
 
 import ai.dragon.dto.api.backend.PagerTableApiData;
+import ai.dragon.enumeration.ApiResponseCode;
 import ai.dragon.repository.util.Pager;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +13,7 @@ public class DataTableApiResponse implements GenericApiResponse {
     private TableApiData data = null;
 
     @Builder.Default
-    private String code = "0000";
+    private String code = ApiResponseCode.SUCCESS.toString();
 
     @Builder.Default
     private String msg = "OK";

@@ -38,7 +38,7 @@ public abstract class AbstractRepository<T extends AbstractEntity> {
     private ObjectRepository<T> repository;
 
     public void executeTransaction(Consumer<AbstractRepository<T>> transactionConsumer) {
-        if(this instanceof TransactionalRepository) {
+        if (this instanceof TransactionalRepository) {
             throw new IllegalStateException("Nested transactions are not allowed");
         }
         Nitrite db = databaseService.getNitriteDB();
@@ -59,7 +59,7 @@ public abstract class AbstractRepository<T extends AbstractEntity> {
     }
 
     public <R> R queryTransaction(ThrowingFunction<AbstractRepository<T>, R> transactionFunction) throws Exception {
-        if(this instanceof TransactionalRepository) {
+        if (this instanceof TransactionalRepository) {
             throw new IllegalStateException("Nested transactions are not allowed");
         }
         Nitrite db = databaseService.getNitriteDB();
@@ -213,6 +213,9 @@ public abstract class AbstractRepository<T extends AbstractEntity> {
     public Class<T> getGenericSuperclass() {
         ParameterizedType superclass = (ParameterizedType) getClass().getGenericSuperclass();
 
+        System.out.println("superclass: " + superclass);
+        System.out.println("superclass.getActualTypeArguments(): " + superclass.getActualTypeArguments());
+
         return (Class<T>) superclass.getActualTypeArguments()[0];
     }
 
@@ -253,16 +256,23 @@ public abstract class AbstractRepository<T extends AbstractEntity> {
     // Inner class to handle transactional operations
     private static class TransactionalRepository<T extends AbstractEntity> extends AbstractRepository<T> {
         private final ObjectRepository<T> repository;
+        private final Class<T> type;
 
         TransactionalRepository(ObjectRepository<T> repository, Class<T> type, DatabaseService databaseService) {
             super();
             this.repository = repository;
             this.databaseService = databaseService;
+            this.type = type;
         }
 
         @Override
         protected ObjectRepository<T> getObjectRepository() {
             return this.repository;
+        }
+
+        @Override
+        public Class<T> getGenericSuperclass() {
+            return this.type;
         }
     }
 }
