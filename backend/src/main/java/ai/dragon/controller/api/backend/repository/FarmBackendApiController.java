@@ -105,11 +105,11 @@ public class FarmBackendApiController extends AbstractCrudBackendApiController<F
             String farmUUID = uuid;
             if (farmUUID == null || UUIDUtil.zeroUUIDString().equals(farmUUID)) {
                 fields.remove("uuid");
-                farmUUID = super.create(farmRepository).getUuid().toString();
+                farmUUID = super.create(transactionRepository).getUuid().toString();
             }
             return SuccessApiResponse
                     .builder()
-                    .data(super.update(farmUUID, fields, farmRepository))
+                    .data(super.update(farmUUID, fields, transactionRepository))
                     .build();
         });
     }
