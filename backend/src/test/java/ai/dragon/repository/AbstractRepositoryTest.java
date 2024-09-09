@@ -22,8 +22,7 @@ public class AbstractRepositoryTest {
     private SiloRepository siloRepository;
 
     @Test
-    void rollbackSilos() throws Exception {
-        // No transaction insert :
+    void noTransactionInsert() throws Exception {
         siloRepository.deleteAll();
         SiloEntity silo = new SiloEntity();
         silo.setUuid(UUID.randomUUID());
@@ -32,8 +31,10 @@ public class AbstractRepositoryTest {
         SiloEntity retrievedSilo = siloRepository.getByUuid(silo.getUuid()).orElseThrow();
         assertNotNull(siloRepository.getByUuid(retrievedSilo.getUuid()));
         assertEquals(1, siloRepository.countAll());
+    }
 
-        // Transaction insert :
+    @Test
+    void transactionInsert() throws Exception {
         siloRepository.deleteAll();
         SiloEntity transactionSilo = new SiloEntity();
         transactionSilo.setUuid(UUID.randomUUID());
@@ -44,8 +45,10 @@ public class AbstractRepositoryTest {
         SiloEntity retrievedTransactionSilo = siloRepository.getByUuid(transactionSilo.getUuid()).orElseThrow();
         assertNotNull(siloRepository.getByUuid(retrievedTransactionSilo.getUuid()));
         assertEquals(1, siloRepository.countAll());
+    }
 
-        // Transaction rollback :
+    @Test
+    void transactionRollback() throws Exception {
         siloRepository.deleteAll();
         SiloEntity transactionRollbackSilo = new SiloEntity();
         transactionRollbackSilo.setUuid(UUID.randomUUID());
@@ -61,15 +64,15 @@ public class AbstractRepositoryTest {
                 .orElse(null);
         assertNull(retrievedTransactionRollbackSilo);
         assertEquals(0, siloRepository.countAll());
+    }
 
-        // No transaction insert again :
-        siloRepository.deleteAll();
-        SiloEntity siloNoTransaction = new SiloEntity();
-        siloNoTransaction.setUuid(UUID.randomUUID());
-        siloNoTransaction.setName("dRAGon is awesome");
-        siloRepository.save(siloNoTransaction);
-        SiloEntity retrievedSiloNoTransaction = siloRepository.getByUuid(siloNoTransaction.getUuid()).orElseThrow();
-        assertNotNull(siloRepository.getByUuid(retrievedSiloNoTransaction.getUuid()));
-        assertEquals(1, siloRepository.countAll());
+    @Test
+    void avoidNestedTransactions() {
+        siloRepository.executeTransaction(transactionRepository -> {
+            assertThrows(IllegalStateException.class, () -> {
+                transactionRepository.executeTransaction(innerTransactionRepository -> {
+                });
+            });
+        });
     }
 }

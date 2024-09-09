@@ -33,40 +33,48 @@ import jakarta.validation.Validator;
 @Component
 public abstract class AbstractRepository<T extends AbstractEntity> {
     @Autowired
-    private DatabaseService databaseService;
+    protected DatabaseService databaseService;
 
     private ObjectRepository<T> repository;
 
     public void executeTransaction(Consumer<AbstractRepository<T>> transactionConsumer) {
+        if(this instanceof TransactionalRepository) {
+            throw new IllegalStateException("Nested transactions are not allowed");
+        }
         Nitrite db = databaseService.getNitriteDB();
         try (Session session = db.createSession()) {
             try (Transaction transaction = session.beginTransaction()) {
-                ObjectRepository<T> standardRepository = repository;
                 ObjectRepository<T> transactionRepository = transaction.getRepository(getGenericSuperclass());
-                this.repository = transactionRepository;
+                AbstractRepository<T> transactionalRepository = new TransactionalRepository<>(transactionRepository,
+                        getGenericSuperclass(), databaseService);
                 try {
-                    transactionConsumer.accept(this);
+                    transactionConsumer.accept(transactionalRepository);
                     transaction.commit();
-                } finally {
-                    this.repository = standardRepository;
+                } catch (Exception e) {
+                    transaction.rollback();
+                    throw e;
                 }
             }
         }
     }
 
     public <R> R queryTransaction(ThrowingFunction<AbstractRepository<T>, R> transactionFunction) throws Exception {
+        if(this instanceof TransactionalRepository) {
+            throw new IllegalStateException("Nested transactions are not allowed");
+        }
         Nitrite db = databaseService.getNitriteDB();
         try (Session session = db.createSession()) {
             try (Transaction transaction = session.beginTransaction()) {
-                ObjectRepository<T> standardRepository = repository;
                 ObjectRepository<T> transactionRepository = transaction.getRepository(getGenericSuperclass());
-                this.repository = transactionRepository;
+                AbstractRepository<T> transactionalRepository = new TransactionalRepository<>(transactionRepository,
+                        getGenericSuperclass(), databaseService);
                 R result = null;
                 try {
-                    result = transactionFunction.apply(this);
+                    result = transactionFunction.apply(transactionalRepository);
                     transaction.commit();
-                } finally {
-                    this.repository = standardRepository;
+                } catch (Exception e) {
+                    transaction.rollback();
+                    throw e;
                 }
                 return result;
             }
@@ -231,7 +239,7 @@ public abstract class AbstractRepository<T extends AbstractEntity> {
         }
     }
 
-    private ObjectRepository<T> getObjectRepository() {
+    protected ObjectRepository<T> getObjectRepository() {
         if (repository != null) {
             return repository;
         }
@@ -240,5 +248,21 @@ public abstract class AbstractRepository<T extends AbstractEntity> {
         repository = db.getRepository(getGenericSuperclass());
 
         return repository;
+    }
+
+    // Inner class to handle transactional operations
+    private static class TransactionalRepository<T extends AbstractEntity> extends AbstractRepository<T> {
+        private final ObjectRepository<T> repository;
+
+        TransactionalRepository(ObjectRepository<T> repository, Class<T> type, DatabaseService databaseService) {
+            super();
+            this.repository = repository;
+            this.databaseService = databaseService;
+        }
+
+        @Override
+        protected ObjectRepository<T> getObjectRepository() {
+            return this.repository;
+        }
     }
 }
