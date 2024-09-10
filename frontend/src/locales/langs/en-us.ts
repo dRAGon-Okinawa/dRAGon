@@ -44,6 +44,7 @@ const local: App.I18n.Schema = {
     confirm: 'Confirm',
     delete: 'Delete',
     deleteSuccess: 'Delete Success',
+    description: 'Description',
     confirmDelete: 'Are you sure you want to delete?',
     edit: 'Edit',
     error: 'Error',
@@ -92,6 +93,11 @@ const local: App.I18n.Schema = {
         maxTokensHint:
           'To define MAX TOKENS value (default to 3000), add this Retrieval Augmentor setting key : historyMaxTokens'
       }
+    },
+    silo: {
+      name: 'Name of the Silo. Must be unique.',
+      description:
+        'Description of the Silo. Optional. Used by the Language Query Router to choose the best Silo among Farm chain.'
     },
     integrationExample: 'Integration Example'
   },

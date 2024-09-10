@@ -290,6 +290,7 @@ declare namespace App {
         confirm: string;
         delete: string;
         deleteSuccess: string;
+        description: string;
         confirmDelete: string;
         edit: string;
         error: string;
@@ -333,6 +334,10 @@ declare namespace App {
             maxMessagesHint: string;
             maxTokensHint: string;
           };
+        };
+        silo: {
+          name: string;
+          description: string;
         };
         integrationExample: string;
       };

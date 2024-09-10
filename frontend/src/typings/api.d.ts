@@ -153,6 +153,8 @@ declare namespace Api {
     type Silo = Common.CommonRecord<{
       /** Silo Name */
       name: string;
+      /** Silo Description */
+      description: string;
       /** Vector Store Type */
       vectorStore: VectorStoreType | null;
       /** Embedding Model */
