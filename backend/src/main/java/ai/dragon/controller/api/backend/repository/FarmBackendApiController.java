@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import ai.dragon.aspect.api.GenericApiExceptionHandling;
 import ai.dragon.dto.api.DataTableApiResponse;
-import ai.dragon.dto.api.DuplicatesApiResponse;
 import ai.dragon.dto.api.GenericApiResponse;
 import ai.dragon.dto.api.SuccessApiResponse;
 import ai.dragon.dto.api.backend.UUIDsBatchRequest;
@@ -29,7 +29,6 @@ import ai.dragon.repository.FarmRepository;
 import ai.dragon.repository.util.Pager;
 import ai.dragon.util.UUIDUtil;
 import ai.dragon.util.db.filters.ExtendedFluentFilter;
-import ai.dragon.util.fluenttry.Try;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -96,6 +95,7 @@ public class FarmBackendApiController extends AbstractCrudBackendApiController<F
                 .build();
     }
 
+    @GenericApiExceptionHandling
     @PutMapping("/{uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}")
     @ApiResponse(responseCode = "200", description = "Farm has been successfully updated.")
     @ApiResponse(responseCode = "404", description = "Farm not found.", content = @Content)
@@ -103,25 +103,17 @@ public class FarmBackendApiController extends AbstractCrudBackendApiController<F
     public GenericApiResponse upsertFarm(
             @PathVariable("uuid") @Parameter(description = "Identifier of the Farm", required = false) String uuid,
             @RequestBody Map<String, Object> fields) throws Exception {
-        return Try
-                .<GenericApiResponse>withFallback((Throwable exception) -> {
-                    return DuplicatesApiResponse
-                            .builder()
-                            .msg(exception.getMessage())
-                            .build();
-                }).run(() -> {
-                    return farmRepository.queryTransaction(transactionRepository -> {
-                        String farmUUID = uuid;
-                        if (farmUUID == null || UUIDUtil.zeroUUIDString().equals(farmUUID)) {
-                            fields.remove("uuid");
-                            farmUUID = super.create(transactionRepository).getUuid().toString();
-                        }
-                        return SuccessApiResponse
-                                .builder()
-                                .data(super.update(farmUUID, fields, transactionRepository))
-                                .build();
-                    });
-                });
+        return farmRepository.queryTransaction(transactionRepository -> {
+            String farmUUID = uuid;
+            if (farmUUID == null || UUIDUtil.zeroUUIDString().equals(farmUUID)) {
+                fields.remove("uuid");
+                farmUUID = super.create(transactionRepository).getUuid().toString();
+            }
+            return SuccessApiResponse
+                    .builder()
+                    .data(super.update(farmUUID, fields, transactionRepository))
+                    .build();
+        });
     }
 
     @DeleteMapping("/{uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}")

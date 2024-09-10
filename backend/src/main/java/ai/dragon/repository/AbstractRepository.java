@@ -212,10 +212,6 @@ public abstract class AbstractRepository<T extends AbstractEntity> {
     @SuppressWarnings("unchecked")
     public Class<T> getGenericSuperclass() {
         ParameterizedType superclass = (ParameterizedType) getClass().getGenericSuperclass();
-
-        System.out.println("superclass: " + superclass);
-        System.out.println("superclass.getActualTypeArguments(): " + superclass.getActualTypeArguments());
-
         return (Class<T>) superclass.getActualTypeArguments()[0];
     }
 

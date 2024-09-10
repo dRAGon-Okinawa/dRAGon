@@ -13,7 +13,7 @@ export function getContentType(config: InternalAxiosRequestConfig) {
  */
 export function isHttpSuccess(status: number) {
   const isSuccessCode = status >= 200 && status < 300;
-  return isSuccessCode || status === 304;
+  return isSuccessCode || status === 304 || status === 422;
 }
 
 /**

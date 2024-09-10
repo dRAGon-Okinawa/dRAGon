@@ -2,7 +2,8 @@ package ai.dragon.enumeration;
 
 public enum ApiResponseCode {
     SUCCESS("0000"),
-    DUPLICATES("0422");
+    DUPLICATES("0422"),
+    INTERNAL_SERVER_ERROR("0500");
 
     private String value;
 
