@@ -91,7 +91,7 @@
     "vite": "5.4.3",
     "vite-plugin-progress": "0.0.7",
     "vite-plugin-svg-icons": "2.0.1",
-    "vite-plugin-vue-devtools": "7.4.4",
+    "vite-plugin-vue-devtools": "7.4.6",
     "vue-eslint-parser": "9.4.3",
     "vue-tsc": "2.1.6"
   },
