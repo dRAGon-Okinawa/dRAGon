@@ -97,9 +97,36 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
                 "pathMatcher=glob:**.{pdf,doc,docx,ppt,pptx}"));
         siloRepository.save(sunspotsSilo);
 
-        // Launching ingestion of documents inside the Silo
+        // Launching ingestion of documents inside the Silo "Sunspots"
         ingestorService.runSiloIngestion(sunspotsSilo, ingestProgress -> {
-            System.out.println("Ingest progress: " + ingestProgress);
+            System.out.println("Sunspots Silo Ingest progress: " + ingestProgress);
+        }, ingestLogMessage -> {
+            System.out.println(ingestLogMessage.getMessage());
+        });
+
+        // Silo about "WebSSH"
+        // The "awesome" iOS / macOS SSH, SFTP and Port Forwarding client since 2012!
+        SiloEntity websshSilo = new SiloEntity();
+        websshSilo.setUuid(UUID.randomUUID());
+        websshSilo.setName("WebSSH Silo");
+        websshSilo.setEmbeddingModel(EmbeddingModelType.BgeSmallEnV15QuantizedEmbeddingModel);
+        websshSilo.setEmbeddingSettings(List.of(
+                "chunkSize=1000",
+                "chunkOverlap=100"));
+        websshSilo.setVectorStore(VectorStoreType.InMemoryEmbeddingStore);
+        websshSilo.setIngestorLoader(IngestorLoaderType.URL);
+        websshSilo.setIngestorSettings(List.of(
+                "urls[]=https://webssh.net",
+                "https://webssh.net/documentation/help/networking/dynamic-port-forwarding/",
+                "https://webssh.net/documentation/mashREPL/",
+                "https://webssh.net/documentation/web-browser/",
+                "https://webssh.net/documentation/pricing/",
+                "https://webssh.net/documentation/help/SSH/terrapin-attack/"));
+        siloRepository.save(websshSilo);
+
+        // Launching ingestion of documents inside the Silo "WebSSH"
+        ingestorService.runSiloIngestion(websshSilo, ingestProgress -> {
+            System.out.println("WebSSH Silo Ingest progress: " + ingestProgress);
         }, ingestLogMessage -> {
             System.out.println(ingestLogMessage.getMessage());
         });
