@@ -33,7 +33,7 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
 
-	implementation 'dev.langchain4j:langchain4j:0.33.0'
+	implementation 'dev.langchain4j:langchain4j:0.35.0'
     implementation 'dev.langchain4j:langchain4j-core:0.33.0'
     implementation 'dev.langchain4j:langchain4j-embeddings:0.33.0'
     implementation 'dev.langchain4j:langchain4j-pgvector:0.33.0'
