@@ -32,6 +32,7 @@ import ai.dragon.entity.SiloEntity;
 import ai.dragon.enumeration.EmbeddingModelType;
 import ai.dragon.enumeration.IngestorLoaderType;
 import ai.dragon.enumeration.LanguageModelType;
+import ai.dragon.enumeration.QueryRouterType;
 import ai.dragon.enumeration.VectorStoreType;
 import ai.dragon.junit.AbstractTest;
 import ai.dragon.junit.extension.retry.RetryOnExceptions;
@@ -66,7 +67,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
 
         // OpenAI settings for RaaG
         String apiKeySetting = String.format("apiKey=%s", openaiApiKey);
-        String omniModelNameSetting = "modelName=gpt-4o-mini";
+        String omniModelNameSetting = "modelName=gpt-4o-mini-2024-07-18";
 
         // Farm with no silo
         FarmEntity farmWithoutSilo = new FarmEntity();
@@ -85,6 +86,8 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
         SiloEntity sunspotsSilo = new SiloEntity();
         sunspotsSilo.setUuid(UUID.randomUUID());
         sunspotsSilo.setName("Sunspots Silo");
+        sunspotsSilo.setDescription(
+                "Documents about Sunspots and their effects on Earth : Carrington Event, Solar Activity, etc.");
         sunspotsSilo.setEmbeddingModel(EmbeddingModelType.BgeSmallEnV15QuantizedEmbeddingModel);
         sunspotsSilo.setEmbeddingSettings(List.of(
                 "chunkSize=1000",
@@ -109,6 +112,8 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
         SiloEntity websshSilo = new SiloEntity();
         websshSilo.setUuid(UUID.randomUUID());
         websshSilo.setName("WebSSH Silo");
+        websshSilo.setDescription(
+                "Documents about WebSSH, the iOS / macOS SSH, SFTP and Port Forwarding client since 2012!");
         websshSilo.setEmbeddingModel(EmbeddingModelType.BgeSmallEnV15QuantizedEmbeddingModel);
         websshSilo.setEmbeddingSettings(List.of(
                 "chunkSize=1000",
@@ -117,11 +122,12 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
         websshSilo.setIngestorLoader(IngestorLoaderType.URL);
         websshSilo.setIngestorSettings(List.of(
                 "urls[]=https://webssh.net",
-                "https://webssh.net/documentation/help/networking/dynamic-port-forwarding/",
-                "https://webssh.net/documentation/mashREPL/",
-                "https://webssh.net/documentation/web-browser/",
-                "https://webssh.net/documentation/pricing/",
-                "https://webssh.net/documentation/help/SSH/terrapin-attack/"));
+                "urls[]=https://webssh.net/documentation/help/networking/dynamic-port-forwarding/",
+                "urls[]=https://webssh.net/documentation/mashREPL/",
+                "urls[]=https://webssh.net/documentation/web-browser/",
+                "urls[]=https://webssh.net/documentation/pricing/",
+                "urls[]=https://webssh.net/documentation/help/SSH/terrapin-attack/",
+                "urls[]=https://webssh.net/support/"));
         siloRepository.save(websshSilo);
 
         // Launching ingestion of documents inside the Silo "WebSSH"
@@ -160,11 +166,14 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
         farmRepository.save(farmWithSunspotsSiloAndQueryRewritingOmni);
 
         // Farm with two Silos : Sunspots and WebSSH
+        // Language Model Router is used to route the request to the right Silo
         FarmEntity farmWithSunspotsAndWebSSHSilos = new FarmEntity();
         farmWithSunspotsAndWebSSHSilos.setRaagIdentifier("sunspots-webssh-raag");
         farmWithSunspotsAndWebSSHSilos.setLanguageModel(LanguageModelType.OpenAiModel);
         farmWithSunspotsAndWebSSHSilos.setLanguageModelSettings(List.of(apiKeySetting, omniModelNameSetting));
         farmWithSunspotsAndWebSSHSilos.setSilos(List.of(sunspotsSilo.getUuid(), websshSilo.getUuid()));
+        farmWithSunspotsAndWebSSHSilos.setQueryRouter(QueryRouterType.LanguageModel);
+        farmWithSunspotsAndWebSSHSilos.setRetrievalAugmentorSettings(List.of("languageQueryRouterFallbackStrategy=FAIL"));
         farmRepository.save(farmWithSunspotsAndWebSSHSilos);
     }
 
@@ -387,5 +396,23 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
         assertNotNull(response.choices());
         assertNotEquals(0, response.choices().size());
         assertEquals("SUN", response.content());
+    }
+
+    @Test
+    @EnabledIf("canRunOpenAiRelatedTests")
+    @RetryOnExceptions(value = 2, onExceptions = { InterruptedIOException.class, SocketTimeoutException.class })
+    void testFarmLanguageQueryRouterOpenAI() {
+        OpenAiClient client = createOpenAiClientBuilder().build();
+        CompletionRequest request = CompletionRequest.builder()
+                .model("sunspots-webssh-raag")
+                .prompt("Who is the maintainer of WebSSH? Reply only with the nickname.")
+                .stream(false)
+                .temperature(0.0)
+                .build();
+        CompletionResponse response = client.completion(request).execute();
+        assertNotNull(response);
+        assertNotNull(response.choices());
+        assertNotEquals(0, response.choices().size());
+        assertEquals("isontheline", response.choices().get(0).text());
     }
 }
