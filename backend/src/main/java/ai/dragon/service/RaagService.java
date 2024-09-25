@@ -321,15 +321,15 @@ public class RaagService {
             } else {
                 retrievalAugmentorBuilder.queryRouter(new DefaultQueryRouter(retrievers.keySet()));
             }
+            if (Boolean.TRUE.equals(retrievalSettings.getRewriteQuery())
+                    && openAiRequest instanceof OpenAiChatCompletionRequest) {
+                // Query Rewriting => Improve RAG Performance and Accuracy
+                // => Uses Chat History.
+                CompressingQueryTransformer compressingQueryTransformer = new EnhancedCompressingQueryTransformer(
+                        chatLanguageModel);
+                retrievalAugmentorBuilder.queryTransformer(compressingQueryTransformer);
+            }
+            assistantBuilder.retrievalAugmentor(retrievalAugmentorBuilder.build());
         }
-        if (Boolean.TRUE.equals(retrievalSettings.getRewriteQuery())
-                && openAiRequest instanceof OpenAiChatCompletionRequest) {
-            // Query Rewriting => Improve RAG Performance and Accuracy
-            // => Uses Chat History.
-            CompressingQueryTransformer compressingQueryTransformer = new EnhancedCompressingQueryTransformer(
-                    chatLanguageModel);
-            retrievalAugmentorBuilder.queryTransformer(compressingQueryTransformer);
-        }
-        assistantBuilder.retrievalAugmentor(retrievalAugmentorBuilder.build());
     }
 }

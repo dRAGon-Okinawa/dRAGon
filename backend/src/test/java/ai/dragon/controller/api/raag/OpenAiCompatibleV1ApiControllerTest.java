@@ -158,6 +158,14 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
         farmWithSunspotsSiloAndQueryRewritingOmni.setSilos(List.of(sunspotsSilo.getUuid()));
         farmWithSunspotsSiloAndQueryRewritingOmni.setRetrievalAugmentorSettings(List.of("rewriteQuery=true"));
         farmRepository.save(farmWithSunspotsSiloAndQueryRewritingOmni);
+
+        // Farm with two Silos : Sunspots and WebSSH
+        FarmEntity farmWithSunspotsAndWebSSHSilos = new FarmEntity();
+        farmWithSunspotsAndWebSSHSilos.setRaagIdentifier("sunspots-webssh-raag");
+        farmWithSunspotsAndWebSSHSilos.setLanguageModel(LanguageModelType.OpenAiModel);
+        farmWithSunspotsAndWebSSHSilos.setLanguageModelSettings(List.of(apiKeySetting, omniModelNameSetting));
+        farmWithSunspotsAndWebSSHSilos.setSilos(List.of(sunspotsSilo.getUuid(), websshSilo.getUuid()));
+        farmRepository.save(farmWithSunspotsAndWebSSHSilos);
     }
 
     @AfterAll
@@ -175,10 +183,10 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
         return OpenAiClient.builder()
                 .openAiApiKey("TODO_PUT_KEY_HERE")
                 .baseUrl(String.format("http://localhost:%d/api/raag/v1/", serverPort))
-                .callTimeout(Duration.ofSeconds(10))
-                .readTimeout(Duration.ofSeconds(10))
-                .writeTimeout(Duration.ofSeconds(10))
-                .connectTimeout(Duration.ofSeconds(10));
+                .callTimeout(Duration.ofSeconds(15))
+                .readTimeout(Duration.ofSeconds(15))
+                .writeTimeout(Duration.ofSeconds(15))
+                .connectTimeout(Duration.ofSeconds(15));
     }
 
     @SuppressWarnings("rawtypes")
@@ -186,7 +194,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
         return MistralAiClient.builder()
                 .apiKey("TODO_PUT_KEY_HERE")
                 .baseUrl(String.format("http://localhost:%d/api/raag/v1/", serverPort))
-                .timeout(Duration.ofSeconds(10))
+                .timeout(Duration.ofSeconds(15))
                 .logRequests(false)
                 .logResponses(false);
     }
