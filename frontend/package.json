@@ -54,7 +54,7 @@
     "echarts": "5.5.1",
     "highlight.js": "^11.10.0",
     "lodash-es": "4.17.21",
-    "naive-ui": "2.39.0",
+    "naive-ui": "2.40.1",
     "nprogress": "0.2.0",
     "pinia": "2.2.2",
     "tailwind-merge": "2.5.2",
