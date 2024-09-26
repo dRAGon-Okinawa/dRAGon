@@ -257,6 +257,7 @@ declare namespace App {
         infrastructureDescription: string;
         ingestorLoader: string;
         provider: string;
+        queryRouter: string;
         raagIdentifier: string;
         retrievalAugmentor: string;
         silo: string;
@@ -289,6 +290,7 @@ declare namespace App {
         confirm: string;
         delete: string;
         deleteSuccess: string;
+        description: string;
         confirmDelete: string;
         edit: string;
         error: string;
@@ -326,7 +328,19 @@ declare namespace App {
         farm: {
           name: string;
           raagIdentifier: string;
+          silos: string;
+          chatMemoryStrategy: {
+            tooltip: string;
+            maxMessagesHint: string;
+            maxTokensHint: string;
+          };
+          queryRouter: string;
         };
+        silo: {
+          name: string;
+          description: string;
+        };
+        integrationExample: string;
       };
       request: {
         logout: string;

@@ -9,6 +9,7 @@ import java.util.Collections;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ActiveProfiles;
 
+import ai.dragon.enumeration.ApiResponseCode;
 import ai.dragon.repository.util.Pager;
 
 @ActiveProfiles("test")
@@ -28,7 +29,7 @@ public class DataTableApiResponseTest {
 
         // Assert
         assertNotNull(response);
-        assertEquals("0000", response.getCode());
+        assertEquals(ApiResponseCode.SUCCESS.toString(), response.getCode());
         assertEquals("OK", response.getMsg());
         assertNotNull(response.getData());
         assertEquals(3, response.getData().getRecords().size());
@@ -52,7 +53,7 @@ public class DataTableApiResponseTest {
 
         // Assert
         assertNotNull(response);
-        assertEquals("0000", response.getCode());
+        assertEquals(ApiResponseCode.SUCCESS.toString(), response.getCode());
         assertEquals("OK", response.getMsg());
         assertNotNull(response.getData());
         assertEquals(0, response.getData().getRecords().size());
@@ -76,7 +77,7 @@ public class DataTableApiResponseTest {
 
         // Assert
         assertNotNull(response);
-        assertEquals("0000", response.getCode());
+        assertEquals(ApiResponseCode.SUCCESS.toString(), response.getCode());
         assertEquals("OK", response.getMsg());
         assertNotNull(response.getData());
         assertEquals(0, response.getData().getRecords().size());

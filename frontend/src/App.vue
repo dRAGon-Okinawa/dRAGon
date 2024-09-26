@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { NConfigProvider, darkTheme } from 'naive-ui';
+import hljs from 'highlight.js/lib/core';
+import python from 'highlight.js/lib/languages/python';
 import { useAppStore } from './store/modules/app';
 import { useThemeStore } from './store/modules/theme';
 import { naiveDateLocales, naiveLocales } from './locales/naive';
+
+hljs.registerLanguage('python', python);
 
 defineOptions({
   name: 'App'
@@ -29,6 +33,7 @@ const naiveDateLocale = computed(() => {
     :theme-overrides="themeStore.naiveTheme"
     :locale="naiveLocale"
     :date-locale="naiveDateLocale"
+    :hljs="hljs"
     class="h-full"
   >
     <AppProvider>

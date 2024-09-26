@@ -17,6 +17,8 @@ declare namespace Env {
     readonly VITE_APP_DESC: string;
     /** The router history mode */
     readonly VITE_ROUTER_HISTORY_MODE?: RouterHistoryMode;
+    /** The base url of the documentation */
+    readonly VITE_DOC_BASE_URL: string;
     /**
      * The prefix of the local icon
      *

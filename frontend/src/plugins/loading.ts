@@ -25,7 +25,7 @@ export function setupLoading() {
 
   const loading = `
 <div class="fixed-center flex-col" style="${primaryColor}">
-  <img src="${dragonLogoUrl}" class="size-180px" />
+  <img src="${dragonLogoUrl}" class="size-90px" />
   <div class="w-56px h-56px my-36px">
     <div class="relative h-full animate-spin">
       ${dot}

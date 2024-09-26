@@ -7,6 +7,8 @@ defineOptions({ name: 'SvgIcon', inheritAttrs: false });
 interface Props {
   /** Local svg icon name */
   localIcon?: string;
+  /** Click event handler */
+  onClick?: (event: MouseEvent) => void;
 }
 
 const props = defineProps<Props>();
@@ -27,10 +29,16 @@ const symbolId = computed(() => {
 
   return `#${prefix}-${icon}`;
 });
+
+const handleClick = (event: MouseEvent) => {
+  if (props.onClick) {
+    props.onClick(event);
+  }
+};
 </script>
 
 <template>
-  <svg aria-hidden="true" width="1em" height="1em" v-bind="bindAttrs">
+  <svg aria-hidden="true" width="1em" height="1em" v-bind="bindAttrs" @click="handleClick">
     <use :xlink:href="symbolId" fill="currentColor" />
   </svg>
 </template>

@@ -4,7 +4,7 @@ import { NIL as NIL_UUID } from 'uuid';
 import type { SelectOption } from 'naive-ui';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
 import { $t } from '@/locales';
-import { chatMemoryStrategyOptions, languageModelOptions } from '@/constants/business';
+import { chatMemoryStrategyOptions, languageModelOptions, queryRouterOptions } from '@/constants/business';
 import { fetchSilosSearch, fetchUpsertFarm } from '@/service/api';
 import KVSettings from '../../../../components/custom/kv-settings.vue';
 
@@ -58,21 +58,41 @@ function createDefaultModel(): Api.FarmManage.Farm {
     languageModel: null,
     languageModelSettings: [],
     chatMemoryStrategy: null,
-    retrievalAugmentorSettings: []
+    retrievalAugmentorSettings: [],
+    queryRouter: null
   };
 }
 
-type RuleKey = Extract<keyof Model, 'name' | 'raagIdentifier' | 'languageModel' | 'chatMemoryStrategy'>;
+type RuleKey = Extract<keyof Model, 'name' | 'raagIdentifier' | 'languageModel' | 'chatMemoryStrategy' | 'queryRouter'>;
 
 const rules: Record<RuleKey, App.Global.FormRule> = {
   name: defaultRequiredRule,
   raagIdentifier: formRules.raagIdentifier,
   languageModel: defaultRequiredRule,
-  chatMemoryStrategy: defaultRequiredRule
+  chatMemoryStrategy: defaultRequiredRule,
+  queryRouter: defaultRequiredRule
 };
 
 const kvLanguageModelSettingsKey = ref(0);
 const kvRetrievalAugmentorSettingsKey = ref(0);
+
+const docBaseUrl = ref(import.meta.env.VITE_DOC_BASE_URL);
+
+const integrationExampleCode = computed(() => {
+  return `
+from langchain_openai import OpenAI
+
+llm = OpenAI(
+    # Model name is your Raag Identifier :
+    model_name="${model.raagIdentifier || 'your-raag-idenfifier-goes-here'}",
+    # Replace 'your.dragon.host:1985' with your server host details :
+    openai_api_base="http://your.dragon.host:1985/api/raag/v1",
+)
+
+prompt = "What's dRAGon?"
+llm.invoke(prompt)
+`;
+});
 
 function refreshKeyValueSettings() {
   kvLanguageModelSettingsKey.value += 1;
@@ -153,18 +173,16 @@ watch(visible, () => {
           :label="$t('dRAGon.raagIdentifier')"
           path="raagIdentifier"
           :help-text="$t('help.farm.raagIdentifier')"
+          :help-link="docBaseUrl + '/about-dragon/glossary/farm-glossary/raag-identifier'"
         >
           <NInput v-model:value="model.raagIdentifier" :placeholder="$t('dRAGon.raagIdentifier')" />
         </FormItemWithHelp>
-        <NFormItem :label="$t('dRAGon.chatMemoryStrategy')" path="chatMemoryStrategy">
-          <NSelect
-            v-model:value="model.chatMemoryStrategy"
-            :placeholder="$t('dRAGon.chatMemoryStrategy')"
-            :options="chatMemoryStrategyOptions"
-            clearable
-          />
-        </NFormItem>
-        <NFormItem :label="$t('dRAGon.silos')" path="silos">
+        <FormItemWithHelp
+          :label="$t('dRAGon.silos')"
+          path="silos"
+          :help-text="$t('help.farm.silos')"
+          :help-link="docBaseUrl + '/about-dragon/glossary/whats-a-farm'"
+        >
           <NSelect
             v-model:value="model.silos"
             multiple
@@ -177,7 +195,7 @@ watch(visible, () => {
             :clear-filter-after-select="true"
             @search="handleSearch"
           />
-        </NFormItem>
+        </FormItemWithHelp>
         <NDivider title-placement="left">
           {{ $t('dRAGon.languageModel') }}
         </NDivider>
@@ -197,11 +215,42 @@ watch(visible, () => {
         <NDivider title-placement="left">
           {{ $t('dRAGon.retrievalAugmentor') }}
         </NDivider>
+        <FormItemWithHelp
+          :label="$t('dRAGon.chatMemoryStrategy')"
+          path="chatMemoryStrategy"
+          :help-text="$t('help.farm.chatMemoryStrategy.tooltip')"
+          :help-link="docBaseUrl + '/about-dragon/glossary/farm-glossary/chat-memory-strategy'"
+        >
+          <SelectWithHint
+            v-model="model.chatMemoryStrategy"
+            v-model:value="model.chatMemoryStrategy"
+            :placeholder="$t('dRAGon.chatMemoryStrategy')"
+            :options="chatMemoryStrategyOptions"
+            clearable
+          />
+        </FormItemWithHelp>
+        <FormItemWithHelp
+          :label="$t('dRAGon.queryRouter')"
+          path="queryRouter"
+          :help-text="$t('help.farm.queryRouter')"
+          :help-link="docBaseUrl + '/about-dragon/glossary/farm-glossary/query-router'"
+        >
+          <NSelect
+            v-model:value="model.queryRouter"
+            :placeholder="$t('dRAGon.queryRouter')"
+            :options="queryRouterOptions"
+            clearable
+          />
+        </FormItemWithHelp>
         <NCollapse>
           <NCollapseItem :title="$t('common.settings')">
             <KVSettings :key="kvRetrievalAugmentorSettingsKey" v-model:settings="model.retrievalAugmentorSettings" />
           </NCollapseItem>
         </NCollapse>
+        <NDivider title-placement="left">
+          {{ $t('help.integrationExample') }}
+        </NDivider>
+        <NCode :code="integrationExampleCode" language="python" word-wrap />
       </NForm>
       <template #footer>
         <NSpace :size="16">

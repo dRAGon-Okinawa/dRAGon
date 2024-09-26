@@ -33,6 +33,8 @@ const visible = defineModel<boolean>('visible', {
 const { formRef, validate, restoreValidation } = useNaiveForm();
 const { defaultRequiredRule } = useFormRules();
 
+const docBaseUrl = ref(import.meta.env.VITE_DOC_BASE_URL);
+
 const title = computed(() => {
   const titles: Record<NaiveUI.TableOperateType, string> = {
     add: $t('common.add'),
@@ -49,6 +51,7 @@ function createDefaultModel(): Api.SiloManage.Silo {
   return {
     uuid: NIL_UUID,
     name: '',
+    description: '',
     vectorStore: null,
     embeddingModel: null,
     ingestorLoader: null,
@@ -115,9 +118,22 @@ watch(visible, () => {
         <NDivider title-placement="left">
           {{ $t('dRAGon.silo') }}
         </NDivider>
-        <NFormItem :label="$t('common.name')" path="name">
+        <FormItemWithHelp :label="$t('common.name')" path="name" :help-text="$t('help.silo.name')">
           <NInput v-model:value="model.name" :placeholder="$t('common.name')" />
-        </NFormItem>
+        </FormItemWithHelp>
+        <FormItemWithHelp
+          :label="$t('common.description')"
+          path="description"
+          :help-text="$t('help.silo.description')"
+          :help-link="docBaseUrl + '/about-dragon/glossary/silo-glossary/silo-description'"
+        >
+          <NInput
+            v-model:value="model.description"
+            :placeholder="$t('common.description')"
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 5 }"
+          />
+        </FormItemWithHelp>
         <NDivider title-placement="left">
           {{ $t('dRAGon.vectorStore') }}
         </NDivider>
