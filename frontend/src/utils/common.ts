@@ -18,11 +18,13 @@ import { $t } from '@/locales';
  *
  * @param record
  */
-export function transformRecordToOption<T extends Record<string, string>>(record: T) {
-  return Object.entries(record).map(([value, label]) => ({
-    value,
-    label
-  })) as CommonType.Option<keyof T>[];
+export function transformRecordToOption<T extends Record<string, string | Api.SelectOptionItem>>(record: T) {
+  return Object.entries(record).map(([key, value]) => {
+    if (typeof value === 'string') {
+      return { value: key, label: value };
+    }
+    return { value: value.value || key, label: value.label, hint: value.hint };
+  }) as Array<Api.SelectOptionItem & { hint?: string }>;
 }
 
 /**

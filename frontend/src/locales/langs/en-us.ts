@@ -11,6 +11,7 @@ const local: App.I18n.Schema = {
     ingestorLoader: 'Ingestor Loader',
     languageModel: 'Language Model',
     provider: 'Provider',
+    queryRouter: 'Query Router',
     raagIdentifier: 'RaaG Identifier',
     retrievalAugmentor: 'Retrieval Augmentor',
     silo: 'Silo',
@@ -43,6 +44,7 @@ const local: App.I18n.Schema = {
     confirm: 'Confirm',
     delete: 'Delete',
     deleteSuccess: 'Delete Success',
+    description: 'Description',
     confirmDelete: 'Are you sure you want to delete?',
     edit: 'Edit',
     error: 'Error',
@@ -80,8 +82,25 @@ const local: App.I18n.Schema = {
     farm: {
       name: 'Name of the Farm. Must be unique.',
       raagIdentifier:
-        'Identifier of the RaaG (RAG as a GPT). Must be unique. Used as the model name for your API calls.'
-    }
+        'Identifier of the RaaG (RAG as a GPT). Must be unique. Used as the model name for your API calls.',
+      silos: `Silos that are part of this Farm.
+        Depending on the Query Router, Silos will be queried or not based on the user query. 
+        When no Silo specified, query will be sent directly to AI model.`,
+      chatMemoryStrategy: {
+        tooltip: 'Evicts old messages or tokens based on the strategy.',
+        maxMessagesHint:
+          'To define MAX MESSAGES value (default to 10), add this Retrieval Augmentor setting key : historyMaxMessages',
+        maxTokensHint:
+          'To define MAX TOKENS value (default to 3000), add this Retrieval Augmentor setting key : historyMaxTokens'
+      },
+      queryRouter: 'Query Router to best choose Silos based on the user request.'
+    },
+    silo: {
+      name: 'Name of the Silo. Must be unique.',
+      description:
+        'Description of the Silo. Optional. Used by the Language Query Router to choose the best Silo among Farm chain.'
+    },
+    integrationExample: 'Integration Example'
   },
   request: {
     logout: 'Logout user after request failed',

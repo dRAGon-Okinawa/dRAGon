@@ -1,3 +1,4 @@
+import { $t } from '@/locales';
 import { transformRecordToOption } from '@/utils/common';
 
 export const vectoreStoreRecord: Record<Api.SiloManage.VectorStoreType, string> = {
@@ -27,8 +28,20 @@ export const languageModelRecord: Record<Api.FarmManage.LanguageModelType, strin
 };
 export const languageModelOptions = transformRecordToOption(languageModelRecord);
 
-export const chatMemoryStrategyRecord: Record<Api.FarmManage.ChatMemoryStrategyType, string> = {
-  MaxMessages: 'MAX MESSAGES',
-  MaxTokens: 'MAX TOKENS'
+export const chatMemoryStrategyRecord: Record<Api.FarmManage.ChatMemoryStrategyType, string | Api.SelectOptionItem> = {
+  MaxMessages: {
+    label: 'MAX MESSAGES',
+    hint: $t('help.farm.chatMemoryStrategy.maxMessagesHint')
+  },
+  MaxTokens: {
+    label: 'MAX TOKENS',
+    hint: $t('help.farm.chatMemoryStrategy.maxTokensHint')
+  }
 };
 export const chatMemoryStrategyOptions = transformRecordToOption(chatMemoryStrategyRecord);
+
+export const queryRouterRecord: Record<Api.FarmManage.QueryRouterType, string> = {
+  Default: 'DEFAULT',
+  LanguageModel: 'LANGUAGE MODEL'
+};
+export const queryRouterOptions = transformRecordToOption(queryRouterRecord);

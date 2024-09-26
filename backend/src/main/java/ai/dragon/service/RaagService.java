@@ -1,7 +1,8 @@
 package ai.dragon.service;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,6 +22,7 @@ import ai.dragon.dto.openai.completion.OpenAiRequest;
 import ai.dragon.dto.openai.model.OpenAiModel;
 import ai.dragon.entity.FarmEntity;
 import ai.dragon.entity.SiloEntity;
+import ai.dragon.enumeration.QueryRouterType;
 import ai.dragon.properties.embedding.LanguageModelSettings;
 import ai.dragon.properties.raag.RetrievalAugmentorSettings;
 import ai.dragon.repository.FarmRepository;
@@ -41,6 +43,7 @@ import dev.langchain4j.rag.DefaultRetrievalAugmentor.DefaultRetrievalAugmentorBu
 import dev.langchain4j.rag.content.retriever.ContentRetriever;
 import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
 import dev.langchain4j.rag.query.router.DefaultQueryRouter;
+import dev.langchain4j.rag.query.router.LanguageModelQueryRouter;
 import dev.langchain4j.rag.query.transformer.CompressingQueryTransformer;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.Result;
@@ -96,27 +99,31 @@ public class RaagService {
 
     public Object makeChatCompletionResponse(FarmEntity farm, OpenAiChatCompletionRequest chatCompletionRequest,
             HttpServletRequest servletRequest) throws Exception {
+        ChatLanguageModel chatLanguageModel = this.buildChatLanguageModel(farm, chatCompletionRequest);
         return Boolean.TRUE.equals(chatCompletionRequest.getStream())
-                ? this.streamChatCompletionResponse(farm, chatCompletionRequest, servletRequest)
-                : this.chatCompletionResponse(farm, chatCompletionRequest, servletRequest);
+                ? this.streamChatCompletionResponse(farm, chatCompletionRequest, chatLanguageModel, servletRequest)
+                : this.chatCompletionResponse(farm, chatCompletionRequest, chatLanguageModel, servletRequest);
     }
 
-    public List<ContentRetriever> buildRetrieverList(FarmEntity farm, HttpServletRequest servletRequest) {
-        List<ContentRetriever> retrievers = new ArrayList<>();
+    public Map<ContentRetriever, String> buildRetrieverMap(FarmEntity farm, HttpServletRequest servletRequest) {
+        Map<ContentRetriever, String> retrievers = new HashMap<>();
         if (farm.getSilos() == null || farm.getSilos().isEmpty()) {
-            logger.info("No Silos found for Farm '{}' (RaaG Identifier '{}'), no content retrieve will be made",
+            logger.info("No Silos found for Farm '{}' (RaaG Identifier '{}'), no content retriever will be made",
                     farm.getUuid(), farm.getRaagIdentifier());
             return retrievers;
         }
         farm.getSilos().forEach(siloUuid -> {
             try {
                 SiloEntity silo = siloRepository.getByUuid(siloUuid).orElseThrow();
-                this.buildSiloRetriever(silo, servletRequest).ifPresent(retrievers::add);
+                String siloDescription = silo.getDescription();
+                this.buildSiloRetriever(silo, servletRequest).ifPresent(retriever -> {
+                    retrievers.put(retriever, siloDescription);
+                });
             } catch (Exception ex) {
                 logger.error("Error building Content Retriever for Silo '{}'", siloUuid, ex);
             }
         });
-        // TODO Granaries
+        // TODO Put also Granaries in the retrievers
         return retrievers;
     }
 
@@ -175,9 +182,11 @@ public class RaagService {
     }
 
     private OpenAiChatCompletionResponse chatCompletionResponse(FarmEntity farm,
-            OpenAiChatCompletionRequest chatCompletionRequest, HttpServletRequest servletRequest)
+            OpenAiChatCompletionRequest chatCompletionRequest, ChatLanguageModel chatLanguageModel,
+            HttpServletRequest servletRequest)
             throws Exception {
-        AiAssistant assistant = this.makeChatAssistant(farm, chatCompletionRequest, servletRequest, false);
+        AiAssistant assistant = this.makeChatAssistant(farm, chatCompletionRequest, chatLanguageModel, servletRequest,
+                false);
         OpenAiCompletionMessage lastCompletionMessage = chatCompletionRequest.getMessages()
                 .get(chatCompletionRequest.getMessages().size() - 1);
         ChatMessage lastChatMessage = ChatMessageUtil.convertToChatMessage(lastCompletionMessage)
@@ -187,9 +196,10 @@ public class RaagService {
     }
 
     private SseEmitter streamChatCompletionResponse(FarmEntity farm, OpenAiChatCompletionRequest chatCompletionRequest,
-            HttpServletRequest servletRequest)
+            ChatLanguageModel chatLanguageModel, HttpServletRequest servletRequest)
             throws Exception {
-        AiAssistant assistant = this.makeChatAssistant(farm, chatCompletionRequest, servletRequest, true);
+        AiAssistant assistant = this.makeChatAssistant(farm, chatCompletionRequest, chatLanguageModel, servletRequest,
+                true);
         OpenAiCompletionMessage lastCompletionMessage = chatCompletionRequest.getMessages()
                 .get(chatCompletionRequest.getMessages().size() - 1);
         ChatMessage lastChatMessage = ChatMessageUtil.convertToChatMessage(lastCompletionMessage)
@@ -216,7 +226,7 @@ public class RaagService {
     }
 
     private AiAssistant makeChatAssistant(FarmEntity farm, OpenAiChatCompletionRequest chatCompletionRequest,
-            HttpServletRequest servletRequest, boolean stream)
+            ChatLanguageModel chatLanguageModel, HttpServletRequest servletRequest, boolean stream)
             throws Exception {
         AiServices<AiAssistant> assistantBuilder = this.makeAssistantBuilder(farm, chatCompletionRequest,
                 servletRequest, stream);
@@ -225,7 +235,7 @@ public class RaagService {
             assistantBuilder
                     .streamingChatLanguageModel(this.buildStreamingChatLanguageModel(farm, chatCompletionRequest));
         } else {
-            assistantBuilder.chatLanguageModel(this.buildChatLanguageModel(farm, chatCompletionRequest));
+            assistantBuilder.chatLanguageModel(chatLanguageModel);
         }
         return assistantBuilder.build();
     }
@@ -239,12 +249,13 @@ public class RaagService {
     private AiServices<AiAssistant> makeAssistantBuilder(FarmEntity farm, OpenAiRequest openAiRequest,
             HttpServletRequest servletRequest, boolean stream)
             throws Exception {
+        ChatLanguageModel chatLanguageModel = this.buildChatLanguageModel(farm, openAiRequest);
         AiServices<AiAssistant> assistantBuilder = AiServices.builder(AiAssistant.class);
-        this.buildRetrievalAugmentor(assistantBuilder, farm, openAiRequest, servletRequest);
+        this.buildRetrievalAugmentor(assistantBuilder, farm, openAiRequest, chatLanguageModel, servletRequest);
         if (stream) {
             assistantBuilder.streamingChatLanguageModel(this.buildStreamingChatLanguageModel(farm, openAiRequest));
         } else {
-            assistantBuilder.chatLanguageModel(this.buildChatLanguageModel(farm, openAiRequest));
+            assistantBuilder.chatLanguageModel(chatLanguageModel);
         }
         return assistantBuilder;
     }
@@ -295,21 +306,27 @@ public class RaagService {
     }
 
     private void buildRetrievalAugmentor(AiServices<AiAssistant> assistantBuilder, FarmEntity farm,
-            OpenAiRequest openAiRequest, HttpServletRequest servletRequest) throws Exception {
+            OpenAiRequest openAiRequest, ChatLanguageModel chatLanguageModel, HttpServletRequest servletRequest)
+            throws Exception {
         RetrievalAugmentorSettings retrievalSettings = KVSettingUtil.kvSettingsToObject(
                 farm.getRetrievalAugmentorSettings(),
                 RetrievalAugmentorSettings.class);
-        // TODO Enhanced Query Router : langchain4j => LanguageModelQueryRouter
         DefaultRetrievalAugmentorBuilder retrievalAugmentorBuilder = DefaultRetrievalAugmentor.builder();
-        List<ContentRetriever> retrievers = this.buildRetrieverList(farm, servletRequest);
+        Map<ContentRetriever, String> retrievers = this.buildRetrieverMap(farm, servletRequest);
         if (retrievers != null && !retrievers.isEmpty()) {
-            retrievalAugmentorBuilder.queryRouter(new DefaultQueryRouter(retrievers));
+            if (QueryRouterType.LANGUAGE_MODEL.equals(farm.getQueryRouter())) {
+                retrievalAugmentorBuilder.queryRouter(new LanguageModelQueryRouter(chatLanguageModel, retrievers,
+                        retrievalSettings.getLanguageQueryRouterPromptTemplate(),
+                        retrievalSettings.getLanguageQueryRouterFallbackStrategy()));
+            } else {
+                retrievalAugmentorBuilder.queryRouter(new DefaultQueryRouter(retrievers.keySet()));
+            }
             if (Boolean.TRUE.equals(retrievalSettings.getRewriteQuery())
                     && openAiRequest instanceof OpenAiChatCompletionRequest) {
                 // Query Rewriting => Improve RAG Performance and Accuracy
                 // => Uses Chat History.
                 CompressingQueryTransformer compressingQueryTransformer = new EnhancedCompressingQueryTransformer(
-                        this.buildChatLanguageModel(farm, openAiRequest));
+                        chatLanguageModel);
                 retrievalAugmentorBuilder.queryTransformer(compressingQueryTransformer);
             }
             assistantBuilder.retrievalAugmentor(retrievalAugmentorBuilder.build());

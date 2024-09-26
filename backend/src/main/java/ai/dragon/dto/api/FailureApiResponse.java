@@ -6,13 +6,13 @@ import lombok.Data;
 
 @Builder
 @Data
-public class SuccessApiResponse implements GenericApiResponse {
+public class FailureApiResponse implements GenericApiResponse {
     @Builder.Default
     private Object data = null;
 
     @Builder.Default
-    private String code = ApiResponseCode.SUCCESS.toString();
+    private String code = ApiResponseCode.INTERNAL_SERVER_ERROR.toString();
 
     @Builder.Default
-    private String msg = "OK";
+    private String msg = "Internal Server Error";
 }

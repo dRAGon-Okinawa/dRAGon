@@ -6,56 +6,71 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
-public class Try {
+public class Try<T> {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private Integer timeout;
     private TimeUnit timeUnit;
     private Level logLevel;
     private Boolean rethrow;
+    private Function<Throwable, T> fallback;
 
     private Try() {
         timeout = null;
         logLevel = Level.ERROR;
     }
 
-    public static Try withLogLevel(Level logLevel) {
-        return new Try().logLevel(logLevel);
+    public static <T> Try<T> withFallback(Function<Throwable, T> fallback) {
+        return new Try<T>().fallback(fallback);
     }
 
-    public Try logLevel(Level logLevel) {
+    public Try<T> fallback(Function<Throwable, T> fallback) {
+        this.fallback = fallback;
+        return this;
+    }
+
+    public static <T> Try<T> withLogLevel(Level logLevel) {
+        return new Try<T>().logLevel(logLevel);
+    }
+
+    public Try<T> logLevel(Level logLevel) {
         this.logLevel = logLevel;
         return this;
     }
 
-    public static Try withTimeout(Integer timeout, TimeUnit timeUnit) {
-        return new Try().timeout(timeout, timeUnit);
+    public static <T> Try<T> withTimeout(Integer timeout, TimeUnit timeUnit) {
+        return new Try<T>().timeout(timeout, timeUnit);
     }
 
-    public Try timeout(Integer timeout, TimeUnit timeUnit) {
+    public Try<T> timeout(Integer timeout, TimeUnit timeUnit) {
         this.timeout = timeout;
         this.timeUnit = timeUnit;
 
         return this;
     }
 
-    public static Try withRethrow(Boolean rethrow) {
-        return new Try().rethrow(rethrow);
+    public static <T> Try<T> withRethrow(Boolean rethrow) {
+        return new Try<T>().rethrow(rethrow);
     }
 
-    public Try rethrow(Boolean rethrow) {
+    public Try<T> rethrow(Boolean rethrow) {
         this.rethrow = rethrow;
 
         return this;
     }
 
-    public static void thisBlock(ExceptionalRunnable runnable) {
-        new Try().run(runnable);
+    public static <T> T thisBlock(Callable<T> callable) {
+        return new Try<T>().run(callable);
+    }
+
+    public static <T> void thisBlock(ExceptionalRunnable runnable) {
+        new Try<T>().run(runnable);
     }
 
     // Accept a Runnable and return void
@@ -68,14 +83,10 @@ public class Try {
         });
     }
 
-    public static <T> T thisBlock(Callable<T> callable) {
-        return new Try().run(callable);
-    }
-
     // Accept a Callable and return the result of the Callable
     // If an exception is thrown, log it and return null
     // If timeout occurs, log it and return null
-    public <T> T run(Callable<T> callable) {
+    public T run(Callable<T> callable) {
         T result = null;
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         Exception ex = null;
@@ -103,6 +114,9 @@ public class Try {
             throw new RuntimeException(ex);
         }
         executorService.shutdown();
+        if (ex != null && fallback != null) {
+            return fallback.apply(ex);
+        }
         return result;
     }
 }

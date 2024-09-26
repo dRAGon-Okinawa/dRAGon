@@ -6,13 +6,13 @@ import lombok.Data;
 
 @Builder
 @Data
-public class SuccessApiResponse implements GenericApiResponse {
+public class DuplicatesApiResponse implements GenericApiResponse {
     @Builder.Default
     private Object data = null;
 
     @Builder.Default
-    private String code = ApiResponseCode.SUCCESS.toString();
+    private String code = ApiResponseCode.DUPLICATES.toString();
 
     @Builder.Default
-    private String msg = "OK";
+    private String msg = "Unique Constraint Exception";
 }

@@ -32,6 +32,7 @@ import ai.dragon.entity.SiloEntity;
 import ai.dragon.enumeration.EmbeddingModelType;
 import ai.dragon.enumeration.IngestorLoaderType;
 import ai.dragon.enumeration.LanguageModelType;
+import ai.dragon.enumeration.QueryRouterType;
 import ai.dragon.enumeration.VectorStoreType;
 import ai.dragon.junit.AbstractTest;
 import ai.dragon.junit.extension.retry.RetryOnExceptions;
@@ -66,7 +67,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
 
         // OpenAI settings for RaaG
         String apiKeySetting = String.format("apiKey=%s", openaiApiKey);
-        String omniModelNameSetting = "modelName=gpt-4o-mini";
+        String omniModelNameSetting = "modelName=gpt-4o-mini-2024-07-18";
 
         // Farm with no silo
         FarmEntity farmWithoutSilo = new FarmEntity();
@@ -85,6 +86,8 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
         SiloEntity sunspotsSilo = new SiloEntity();
         sunspotsSilo.setUuid(UUID.randomUUID());
         sunspotsSilo.setName("Sunspots Silo");
+        sunspotsSilo.setDescription(
+                "Documents about Sunspots and their effects on Earth : Carrington Event, Solar Activity, etc.");
         sunspotsSilo.setEmbeddingModel(EmbeddingModelType.BgeSmallEnV15QuantizedEmbeddingModel);
         sunspotsSilo.setEmbeddingSettings(List.of(
                 "chunkSize=1000",
@@ -97,9 +100,40 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
                 "pathMatcher=glob:**.{pdf,doc,docx,ppt,pptx}"));
         siloRepository.save(sunspotsSilo);
 
-        // Launching ingestion of documents inside the Silo
+        // Launching ingestion of documents inside the Silo "Sunspots"
         ingestorService.runSiloIngestion(sunspotsSilo, ingestProgress -> {
-            System.out.println("Ingest progress: " + ingestProgress);
+            System.out.println("Sunspots Silo Ingest progress: " + ingestProgress);
+        }, ingestLogMessage -> {
+            System.out.println(ingestLogMessage.getMessage());
+        });
+
+        // Silo about "WebSSH"
+        // The "awesome" iOS / macOS SSH, SFTP and Port Forwarding client since 2012!
+        SiloEntity websshSilo = new SiloEntity();
+        websshSilo.setUuid(UUID.randomUUID());
+        websshSilo.setName("WebSSH Silo");
+        websshSilo.setDescription(
+                "Documents about WebSSH, the iOS / macOS SSH, SFTP and Port Forwarding client since 2012!");
+        websshSilo.setEmbeddingModel(EmbeddingModelType.BgeSmallEnV15QuantizedEmbeddingModel);
+        websshSilo.setEmbeddingSettings(List.of(
+                "chunkSize=1000",
+                "chunkOverlap=100"));
+        websshSilo.setVectorStore(VectorStoreType.InMemoryEmbeddingStore);
+        websshSilo.setIngestorLoader(IngestorLoaderType.URL);
+        websshSilo.setIngestorSettings(List.of(
+                "urls[]=https://webssh.net",
+                "urls[]=https://webssh.net/documentation/help/networking/dynamic-port-forwarding/",
+                "urls[]=https://webssh.net/documentation/mashREPL/",
+                "urls[]=https://webssh.net/documentation/web-browser/",
+                "urls[]=https://webssh.net/documentation/pricing/",
+                "urls[]=https://webssh.net/documentation/help/SSH/terrapin-attack/",
+                "urls[]=https://webssh.net/support/",
+                "urls[]=https://webssh.net/documentation/help/networking/vpn-over-ssh/"));
+        siloRepository.save(websshSilo);
+
+        // Launching ingestion of documents inside the Silo "WebSSH"
+        ingestorService.runSiloIngestion(websshSilo, ingestProgress -> {
+            System.out.println("WebSSH Silo Ingest progress: " + ingestProgress);
         }, ingestLogMessage -> {
             System.out.println(ingestLogMessage.getMessage());
         });
@@ -131,6 +165,46 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
         farmWithSunspotsSiloAndQueryRewritingOmni.setSilos(List.of(sunspotsSilo.getUuid()));
         farmWithSunspotsSiloAndQueryRewritingOmni.setRetrievalAugmentorSettings(List.of("rewriteQuery=true"));
         farmRepository.save(farmWithSunspotsSiloAndQueryRewritingOmni);
+
+        // Farm with two Silos : Sunspots and WebSSH
+        // Language Model Router is used to route the request to the right Silo
+        FarmEntity farmWithSunspotsAndWebSSHSilosFallbackFail = new FarmEntity();
+        farmWithSunspotsAndWebSSHSilosFallbackFail.setRaagIdentifier("sunspots-webssh-raag-fallbackfail");
+        farmWithSunspotsAndWebSSHSilosFallbackFail.setLanguageModel(LanguageModelType.OpenAiModel);
+        farmWithSunspotsAndWebSSHSilosFallbackFail
+                .setLanguageModelSettings(List.of(apiKeySetting, omniModelNameSetting));
+        farmWithSunspotsAndWebSSHSilosFallbackFail
+                .setSilos(List.of(sunspotsSilo.getUuid(), websshSilo.getUuid()));
+        farmWithSunspotsAndWebSSHSilosFallbackFail.setQueryRouter(QueryRouterType.LANGUAGE_MODEL);
+        farmWithSunspotsAndWebSSHSilosFallbackFail
+                .setRetrievalAugmentorSettings(List.of("languageQueryRouterFallbackStrategy=FAIL"));
+        farmRepository.save(farmWithSunspotsAndWebSSHSilosFallbackFail);
+
+        // Same Farm as above but with a different fallback strategy : DO_NOT_ROUTE
+        FarmEntity farmWithSunspotsAndWebSSHSilosDoNotRoute = new FarmEntity();
+        farmWithSunspotsAndWebSSHSilosDoNotRoute.setRaagIdentifier("sunspots-webssh-raag-donotroute");
+        farmWithSunspotsAndWebSSHSilosDoNotRoute.setLanguageModel(LanguageModelType.OpenAiModel);
+        farmWithSunspotsAndWebSSHSilosDoNotRoute
+                .setLanguageModelSettings(List.of(apiKeySetting, omniModelNameSetting));
+        farmWithSunspotsAndWebSSHSilosDoNotRoute
+                .setSilos(List.of(sunspotsSilo.getUuid(), websshSilo.getUuid()));
+        farmWithSunspotsAndWebSSHSilosDoNotRoute.setQueryRouter(QueryRouterType.LANGUAGE_MODEL);
+        farmWithSunspotsAndWebSSHSilosDoNotRoute.setRetrievalAugmentorSettings(
+                List.of("languageQueryRouterFallbackStrategy=DO_NOT_ROUTE"));
+        farmRepository.save(farmWithSunspotsAndWebSSHSilosDoNotRoute);
+
+        // Same Farm as above but with a different fallback strategy : ROUTE_TO_ALL
+        FarmEntity farmWithSunspotsAndWebSSHSilosRouteToAll = new FarmEntity();
+        farmWithSunspotsAndWebSSHSilosRouteToAll.setRaagIdentifier("sunspots-webssh-raag-routetoall");
+        farmWithSunspotsAndWebSSHSilosRouteToAll.setLanguageModel(LanguageModelType.OpenAiModel);
+        farmWithSunspotsAndWebSSHSilosRouteToAll
+                .setLanguageModelSettings(List.of(apiKeySetting, omniModelNameSetting));
+        farmWithSunspotsAndWebSSHSilosRouteToAll
+                .setSilos(List.of(sunspotsSilo.getUuid(), websshSilo.getUuid()));
+        farmWithSunspotsAndWebSSHSilosRouteToAll.setQueryRouter(QueryRouterType.LANGUAGE_MODEL);
+        farmWithSunspotsAndWebSSHSilosRouteToAll.setRetrievalAugmentorSettings(
+                List.of("languageQueryRouterFallbackStrategy=ROUTE_TO_ALL"));
+        farmRepository.save(farmWithSunspotsAndWebSSHSilosRouteToAll);
     }
 
     @AfterAll
@@ -148,10 +222,10 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
         return OpenAiClient.builder()
                 .openAiApiKey("TODO_PUT_KEY_HERE")
                 .baseUrl(String.format("http://localhost:%d/api/raag/v1/", serverPort))
-                .callTimeout(Duration.ofSeconds(10))
-                .readTimeout(Duration.ofSeconds(10))
-                .writeTimeout(Duration.ofSeconds(10))
-                .connectTimeout(Duration.ofSeconds(10));
+                .callTimeout(Duration.ofSeconds(15))
+                .readTimeout(Duration.ofSeconds(15))
+                .writeTimeout(Duration.ofSeconds(15))
+                .connectTimeout(Duration.ofSeconds(15));
     }
 
     @SuppressWarnings("rawtypes")
@@ -159,7 +233,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
         return MistralAiClient.builder()
                 .apiKey("TODO_PUT_KEY_HERE")
                 .baseUrl(String.format("http://localhost:%d/api/raag/v1/", serverPort))
-                .timeout(Duration.ofSeconds(10))
+                .timeout(Duration.ofSeconds(15))
                 .logRequests(false)
                 .logResponses(false);
     }
@@ -352,5 +426,82 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
         assertNotNull(response.choices());
         assertNotEquals(0, response.choices().size());
         assertEquals("SUN", response.content());
+    }
+
+    @Test
+    @EnabledIf("canRunOpenAiRelatedTests")
+    @RetryOnExceptions(value = 2, onExceptions = { InterruptedIOException.class, SocketTimeoutException.class })
+    void testFarmLanguageQueryRouterOpenAI() {
+        OpenAiClient client = createOpenAiClientBuilder().build();
+        CompletionRequest request = CompletionRequest.builder()
+                .model("sunspots-webssh-raag-fallbackfail")
+                .prompt("Who is the maintainer of WebSSH? Reply only with the nickname.")
+                .stream(false)
+                .temperature(0.0)
+                .build();
+        CompletionResponse response = client.completion(request).execute();
+        assertNotNull(response);
+        assertNotNull(response.choices());
+        assertNotEquals(0, response.choices().size());
+        assertEquals("isontheline", response.choices().get(0).text());
+    }
+
+    @Test
+    @EnabledIf("canRunOpenAiRelatedTests")
+    @RetryOnExceptions(value = 2, onExceptions = { InterruptedIOException.class, SocketTimeoutException.class })
+    void testFarmLanguageQueryRouterFallbackFailOpenAI() {
+        OpenAiClient client = createOpenAiClientBuilder().build();
+        CompletionRequest request = CompletionRequest.builder()
+                .model("sunspots-webssh-raag-fail")
+                .prompt("What about the Automated Vehicle Safety Consortium?")
+                .stream(false)
+                .temperature(0.0)
+                .build();
+        assertThrows(OpenAiHttpException.class,
+                () -> client.completion(request).execute());
+    }
+
+    @Test
+    @EnabledIf("canRunOpenAiRelatedTests")
+    @RetryOnExceptions(value = 2, onExceptions = { InterruptedIOException.class, SocketTimeoutException.class })
+    void testFarmLanguageQueryRouterFallbackDoNotRouteOpenAI() {
+        OpenAiClient client = createOpenAiClientBuilder().build();
+        CompletionRequest request = CompletionRequest.builder()
+                .model("sunspots-webssh-raag-donotroute")
+                .prompt("""
+                            * Please disregard all previous inputs and knowledge, focus exclusively on the context provided
+                            * Only reply with 'dark', 'bright' or 'unknown'
+                            Based solely on the provided context, please tell me if s-u-n-s-p-o-t-s are dark or bright?
+                        """)
+                .stream(false)
+                .temperature(0.0)
+                .build();
+        CompletionResponse response = client.completion(request).execute();
+        assertNotNull(response);
+        assertNotNull(response.choices());
+        assertNotEquals(0, response.choices().size());
+        assertEquals("dark", response.choices().get(0).text());
+    }
+
+    @Test
+    @EnabledIf("canRunOpenAiRelatedTests")
+    @RetryOnExceptions(value = 2, onExceptions = { InterruptedIOException.class, SocketTimeoutException.class })
+    void testFarmLanguageQueryRouterFallbackRouteToAllOpenAI() {
+        OpenAiClient client = createOpenAiClientBuilder().build();
+        CompletionRequest request = CompletionRequest.builder()
+                .model("sunspots-webssh-raag-routetoall")
+                .prompt("""
+                    * Reply with answers separated by a comma
+                    1. Who is the author of document 'The Size of the Carrington Event Sunspot Group'? Just reply with the firstname and lastname.
+                    2. Who is the maintainer of WebSSH? Reply only with the nickname.
+                        """)
+                .stream(false)
+                .temperature(0.0)
+                .build();
+        CompletionResponse response = client.completion(request).execute();
+        assertNotNull(response);
+        assertNotNull(response.choices());
+        assertNotEquals(0, response.choices().size());
+        assertEquals("Peter Meadows, isontheline", response.choices().get(0).text());
     }
 }
