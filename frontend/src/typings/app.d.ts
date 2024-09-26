@@ -334,6 +334,7 @@ declare namespace App {
             maxMessagesHint: string;
             maxTokensHint: string;
           };
+          queryRouter: string;
         };
         silo: {
           name: string;

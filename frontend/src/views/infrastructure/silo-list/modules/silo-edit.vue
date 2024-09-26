@@ -33,6 +33,8 @@ const visible = defineModel<boolean>('visible', {
 const { formRef, validate, restoreValidation } = useNaiveForm();
 const { defaultRequiredRule } = useFormRules();
 
+const docBaseUrl = ref(import.meta.env.VITE_DOC_BASE_URL);
+
 const title = computed(() => {
   const titles: Record<NaiveUI.TableOperateType, string> = {
     add: $t('common.add'),
@@ -119,7 +121,12 @@ watch(visible, () => {
         <FormItemWithHelp :label="$t('common.name')" path="name" :help-text="$t('help.silo.name')">
           <NInput v-model:value="model.name" :placeholder="$t('common.name')" />
         </FormItemWithHelp>
-        <FormItemWithHelp :label="$t('common.description')" path="description" :help-text="$t('help.silo.description')">
+        <FormItemWithHelp
+          :label="$t('common.description')"
+          path="description"
+          :help-text="$t('help.silo.description')"
+          :help-link="docBaseUrl + '/about-dragon/glossary/silo-glossary/silo-description'"
+        >
           <NInput
             v-model:value="model.description"
             :placeholder="$t('common.description')"

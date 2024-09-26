@@ -92,7 +92,8 @@ const local: App.I18n.Schema = {
           'To define MAX MESSAGES value (default to 10), add this Retrieval Augmentor setting key : historyMaxMessages',
         maxTokensHint:
           'To define MAX TOKENS value (default to 3000), add this Retrieval Augmentor setting key : historyMaxTokens'
-      }
+      },
+      queryRouter: 'Query Router to best choose Silos based on the user request.'
     },
     silo: {
       name: 'Name of the Silo. Must be unique.',

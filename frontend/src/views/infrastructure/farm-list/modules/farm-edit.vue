@@ -227,14 +227,19 @@ watch(visible, () => {
             clearable
           />
         </FormItemWithHelp>
-        <NFormItem :label="$t('dRAGon.queryRouter')" path="queryRouter">
+        <FormItemWithHelp
+          :label="$t('dRAGon.queryRouter')"
+          path="queryRouter"
+          :help-text="$t('help.farm.queryRouter')"
+          :help-link="docBaseUrl + '/about-dragon/glossary/farm-glossary/query-router'"
+        >
           <NSelect
             v-model:value="model.queryRouter"
             :placeholder="$t('dRAGon.queryRouter')"
             :options="queryRouterOptions"
             clearable
           />
-        </NFormItem>
+        </FormItemWithHelp>
         <NCollapse>
           <NCollapseItem :title="$t('common.settings')">
             <KVSettings :key="kvRetrievalAugmentorSettingsKey" v-model:settings="model.retrievalAugmentorSettings" />
