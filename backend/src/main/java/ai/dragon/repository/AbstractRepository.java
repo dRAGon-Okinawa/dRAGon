@@ -35,7 +35,7 @@ public abstract class AbstractRepository<T extends AbstractEntity> {
     @Autowired
     protected DatabaseService databaseService;
 
-    private ObjectRepository<T> repository;
+    private ObjectRepository<T> objectRepository;
 
     public void executeTransaction(Consumer<AbstractRepository<T>> transactionConsumer) {
         if (this instanceof TransactionalRepository) {
@@ -239,31 +239,31 @@ public abstract class AbstractRepository<T extends AbstractEntity> {
     }
 
     protected ObjectRepository<T> getObjectRepository() {
-        if (repository != null) {
-            return repository;
+        if (objectRepository != null) {
+            return objectRepository;
         }
 
         Nitrite db = databaseService.getNitriteDB();
-        repository = db.getRepository(getGenericSuperclass());
+        objectRepository = db.getRepository(getGenericSuperclass());
 
-        return repository;
+        return objectRepository;
     }
 
     // Inner class to handle transactional operations
     private static class TransactionalRepository<T extends AbstractEntity> extends AbstractRepository<T> {
-        private final ObjectRepository<T> repository;
+        private final ObjectRepository<T> objectRepository;
         private final Class<T> type;
 
-        TransactionalRepository(ObjectRepository<T> repository, Class<T> type, DatabaseService databaseService) {
+        TransactionalRepository(ObjectRepository<T> objectRepository, Class<T> type, DatabaseService databaseService) {
             super();
-            this.repository = repository;
+            this.objectRepository = objectRepository;
             this.databaseService = databaseService;
             this.type = type;
         }
 
         @Override
         protected ObjectRepository<T> getObjectRepository() {
-            return this.repository;
+            return this.objectRepository;
         }
 
         @Override

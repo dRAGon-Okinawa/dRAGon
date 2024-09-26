@@ -175,7 +175,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
                 .setLanguageModelSettings(List.of(apiKeySetting, omniModelNameSetting));
         farmWithSunspotsAndWebSSHSilosFallbackFail
                 .setSilos(List.of(sunspotsSilo.getUuid(), websshSilo.getUuid()));
-        farmWithSunspotsAndWebSSHSilosFallbackFail.setQueryRouter(QueryRouterType.LanguageModel);
+        farmWithSunspotsAndWebSSHSilosFallbackFail.setQueryRouter(QueryRouterType.LANGUAGE_MODEL);
         farmWithSunspotsAndWebSSHSilosFallbackFail
                 .setRetrievalAugmentorSettings(List.of("languageQueryRouterFallbackStrategy=FAIL"));
         farmRepository.save(farmWithSunspotsAndWebSSHSilosFallbackFail);
@@ -188,7 +188,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
                 .setLanguageModelSettings(List.of(apiKeySetting, omniModelNameSetting));
         farmWithSunspotsAndWebSSHSilosDoNotRoute
                 .setSilos(List.of(sunspotsSilo.getUuid(), websshSilo.getUuid()));
-        farmWithSunspotsAndWebSSHSilosDoNotRoute.setQueryRouter(QueryRouterType.LanguageModel);
+        farmWithSunspotsAndWebSSHSilosDoNotRoute.setQueryRouter(QueryRouterType.LANGUAGE_MODEL);
         farmWithSunspotsAndWebSSHSilosDoNotRoute.setRetrievalAugmentorSettings(
                 List.of("languageQueryRouterFallbackStrategy=DO_NOT_ROUTE"));
         farmRepository.save(farmWithSunspotsAndWebSSHSilosDoNotRoute);
@@ -201,7 +201,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
                 .setLanguageModelSettings(List.of(apiKeySetting, omniModelNameSetting));
         farmWithSunspotsAndWebSSHSilosRouteToAll
                 .setSilos(List.of(sunspotsSilo.getUuid(), websshSilo.getUuid()));
-        farmWithSunspotsAndWebSSHSilosRouteToAll.setQueryRouter(QueryRouterType.LanguageModel);
+        farmWithSunspotsAndWebSSHSilosRouteToAll.setQueryRouter(QueryRouterType.LANGUAGE_MODEL);
         farmWithSunspotsAndWebSSHSilosRouteToAll.setRetrievalAugmentorSettings(
                 List.of("languageQueryRouterFallbackStrategy=ROUTE_TO_ALL"));
         farmRepository.save(farmWithSunspotsAndWebSSHSilosRouteToAll);

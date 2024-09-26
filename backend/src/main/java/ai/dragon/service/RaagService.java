@@ -314,7 +314,7 @@ public class RaagService {
         DefaultRetrievalAugmentorBuilder retrievalAugmentorBuilder = DefaultRetrievalAugmentor.builder();
         Map<ContentRetriever, String> retrievers = this.buildRetrieverMap(farm, servletRequest);
         if (retrievers != null && !retrievers.isEmpty()) {
-            if (QueryRouterType.LanguageModel.equals(farm.getQueryRouter())) {
+            if (QueryRouterType.LANGUAGE_MODEL.equals(farm.getQueryRouter())) {
                 retrievalAugmentorBuilder.queryRouter(new LanguageModelQueryRouter(chatLanguageModel, retrievers,
                         retrievalSettings.getLanguageQueryRouterPromptTemplate(),
                         retrievalSettings.getLanguageQueryRouterFallbackStrategy()));

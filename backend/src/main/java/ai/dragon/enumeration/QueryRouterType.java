@@ -1,8 +1,8 @@
 package ai.dragon.enumeration;
 
 public enum QueryRouterType {
-    Default("Default"),
-    LanguageModel("LanguageModel");
+    DEFAULT("Default"),
+    LANGUAGE_MODEL("LanguageModel");
 
     private String value;
 

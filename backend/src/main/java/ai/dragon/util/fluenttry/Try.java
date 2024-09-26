@@ -115,7 +115,7 @@ public class Try<T> {
         }
         executorService.shutdown();
         if (ex != null && fallback != null) {
-            return (T) fallback.apply(ex);
+            return fallback.apply(ex);
         }
         return result;
     }
