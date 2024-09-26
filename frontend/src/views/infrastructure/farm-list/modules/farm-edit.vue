@@ -76,12 +76,16 @@ const rules: Record<RuleKey, App.Global.FormRule> = {
 const kvLanguageModelSettingsKey = ref(0);
 const kvRetrievalAugmentorSettingsKey = ref(0);
 
+const docBaseUrl = ref(import.meta.env.VITE_DOC_BASE_URL);
+
 const integrationExampleCode = computed(() => {
   return `
 from langchain_openai import OpenAI
 
 llm = OpenAI(
-    model_name="${model.raagIdentifier}",
+    # Model name is your Raag Identifier :
+    model_name="${model.raagIdentifier || 'your-raag-idenfifier-goes-here'}",
+    # Replace 'your.dragon.host:1985' with your server host details :
     openai_api_base="http://your.dragon.host:1985/api/raag/v1",
 )
 
@@ -89,8 +93,6 @@ prompt = "What's dRAGon?"
 llm.invoke(prompt)
 `;
 });
-
-const docBaseUrl = ref(import.meta.env.VITE_DOC_BASE_URL);
 
 function refreshKeyValueSettings() {
   kvLanguageModelSettingsKey.value += 1;
