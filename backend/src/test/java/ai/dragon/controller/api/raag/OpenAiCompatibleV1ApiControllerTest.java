@@ -127,7 +127,8 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
                 "urls[]=https://webssh.net/documentation/web-browser/",
                 "urls[]=https://webssh.net/documentation/pricing/",
                 "urls[]=https://webssh.net/documentation/help/SSH/terrapin-attack/",
-                "urls[]=https://webssh.net/support/"));
+                "urls[]=https://webssh.net/support/",
+                "urls[]=https://webssh.net/documentation/help/networking/vpn-over-ssh/"));
         siloRepository.save(websshSilo);
 
         // Launching ingestion of documents inside the Silo "WebSSH"
@@ -167,14 +168,43 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
 
         // Farm with two Silos : Sunspots and WebSSH
         // Language Model Router is used to route the request to the right Silo
-        FarmEntity farmWithSunspotsAndWebSSHSilos = new FarmEntity();
-        farmWithSunspotsAndWebSSHSilos.setRaagIdentifier("sunspots-webssh-raag");
-        farmWithSunspotsAndWebSSHSilos.setLanguageModel(LanguageModelType.OpenAiModel);
-        farmWithSunspotsAndWebSSHSilos.setLanguageModelSettings(List.of(apiKeySetting, omniModelNameSetting));
-        farmWithSunspotsAndWebSSHSilos.setSilos(List.of(sunspotsSilo.getUuid(), websshSilo.getUuid()));
-        farmWithSunspotsAndWebSSHSilos.setQueryRouter(QueryRouterType.LanguageModel);
-        farmWithSunspotsAndWebSSHSilos.setRetrievalAugmentorSettings(List.of("languageQueryRouterFallbackStrategy=FAIL"));
-        farmRepository.save(farmWithSunspotsAndWebSSHSilos);
+        FarmEntity farmWithSunspotsAndWebSSHSilosFallbackFail = new FarmEntity();
+        farmWithSunspotsAndWebSSHSilosFallbackFail.setRaagIdentifier("sunspots-webssh-raag-fallbackfail");
+        farmWithSunspotsAndWebSSHSilosFallbackFail.setLanguageModel(LanguageModelType.OpenAiModel);
+        farmWithSunspotsAndWebSSHSilosFallbackFail
+                .setLanguageModelSettings(List.of(apiKeySetting, omniModelNameSetting));
+        farmWithSunspotsAndWebSSHSilosFallbackFail
+                .setSilos(List.of(sunspotsSilo.getUuid(), websshSilo.getUuid()));
+        farmWithSunspotsAndWebSSHSilosFallbackFail.setQueryRouter(QueryRouterType.LanguageModel);
+        farmWithSunspotsAndWebSSHSilosFallbackFail
+                .setRetrievalAugmentorSettings(List.of("languageQueryRouterFallbackStrategy=FAIL"));
+        farmRepository.save(farmWithSunspotsAndWebSSHSilosFallbackFail);
+
+        // Same Farm as above but with a different fallback strategy : DO_NOT_ROUTE
+        FarmEntity farmWithSunspotsAndWebSSHSilosDoNotRoute = new FarmEntity();
+        farmWithSunspotsAndWebSSHSilosDoNotRoute.setRaagIdentifier("sunspots-webssh-raag-donotroute");
+        farmWithSunspotsAndWebSSHSilosDoNotRoute.setLanguageModel(LanguageModelType.OpenAiModel);
+        farmWithSunspotsAndWebSSHSilosDoNotRoute
+                .setLanguageModelSettings(List.of(apiKeySetting, omniModelNameSetting));
+        farmWithSunspotsAndWebSSHSilosDoNotRoute
+                .setSilos(List.of(sunspotsSilo.getUuid(), websshSilo.getUuid()));
+        farmWithSunspotsAndWebSSHSilosDoNotRoute.setQueryRouter(QueryRouterType.LanguageModel);
+        farmWithSunspotsAndWebSSHSilosDoNotRoute.setRetrievalAugmentorSettings(
+                List.of("languageQueryRouterFallbackStrategy=DO_NOT_ROUTE"));
+        farmRepository.save(farmWithSunspotsAndWebSSHSilosDoNotRoute);
+
+        // Same Farm as above but with a different fallback strategy : ROUTE_TO_ALL
+        FarmEntity farmWithSunspotsAndWebSSHSilosRouteToAll = new FarmEntity();
+        farmWithSunspotsAndWebSSHSilosRouteToAll.setRaagIdentifier("sunspots-webssh-raag-routetoall");
+        farmWithSunspotsAndWebSSHSilosRouteToAll.setLanguageModel(LanguageModelType.OpenAiModel);
+        farmWithSunspotsAndWebSSHSilosRouteToAll
+                .setLanguageModelSettings(List.of(apiKeySetting, omniModelNameSetting));
+        farmWithSunspotsAndWebSSHSilosRouteToAll
+                .setSilos(List.of(sunspotsSilo.getUuid(), websshSilo.getUuid()));
+        farmWithSunspotsAndWebSSHSilosRouteToAll.setQueryRouter(QueryRouterType.LanguageModel);
+        farmWithSunspotsAndWebSSHSilosRouteToAll.setRetrievalAugmentorSettings(
+                List.of("languageQueryRouterFallbackStrategy=ROUTE_TO_ALL"));
+        farmRepository.save(farmWithSunspotsAndWebSSHSilosRouteToAll);
     }
 
     @AfterAll
@@ -404,7 +434,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
     void testFarmLanguageQueryRouterOpenAI() {
         OpenAiClient client = createOpenAiClientBuilder().build();
         CompletionRequest request = CompletionRequest.builder()
-                .model("sunspots-webssh-raag")
+                .model("sunspots-webssh-raag-fallbackfail")
                 .prompt("Who is the maintainer of WebSSH? Reply only with the nickname.")
                 .stream(false)
                 .temperature(0.0)
@@ -414,5 +444,64 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
         assertNotNull(response.choices());
         assertNotEquals(0, response.choices().size());
         assertEquals("isontheline", response.choices().get(0).text());
+    }
+
+    @Test
+    @EnabledIf("canRunOpenAiRelatedTests")
+    @RetryOnExceptions(value = 2, onExceptions = { InterruptedIOException.class, SocketTimeoutException.class })
+    void testFarmLanguageQueryRouterFallbackFailOpenAI() {
+        OpenAiClient client = createOpenAiClientBuilder().build();
+        CompletionRequest request = CompletionRequest.builder()
+                .model("sunspots-webssh-raag-fail")
+                .prompt("What about the Automated Vehicle Safety Consortium?")
+                .stream(false)
+                .temperature(0.0)
+                .build();
+        assertThrows(OpenAiHttpException.class,
+                () -> client.completion(request).execute());
+    }
+
+    @Test
+    @EnabledIf("canRunOpenAiRelatedTests")
+    @RetryOnExceptions(value = 2, onExceptions = { InterruptedIOException.class, SocketTimeoutException.class })
+    void testFarmLanguageQueryRouterFallbackDoNotRouteOpenAI() {
+        OpenAiClient client = createOpenAiClientBuilder().build();
+        CompletionRequest request = CompletionRequest.builder()
+                .model("sunspots-webssh-raag-donotroute")
+                .prompt("""
+                            * Please disregard all previous inputs and knowledge, focus exclusively on the context provided
+                            * Only reply with 'dark', 'bright' or 'unknown'
+                            Based solely on the provided context, please tell me if s-u-n-s-p-o-t-s are dark or bright?
+                        """)
+                .stream(false)
+                .temperature(0.0)
+                .build();
+        CompletionResponse response = client.completion(request).execute();
+        assertNotNull(response);
+        assertNotNull(response.choices());
+        assertNotEquals(0, response.choices().size());
+        assertEquals("dark", response.choices().get(0).text());
+    }
+
+    @Test
+    @EnabledIf("canRunOpenAiRelatedTests")
+    @RetryOnExceptions(value = 2, onExceptions = { InterruptedIOException.class, SocketTimeoutException.class })
+    void testFarmLanguageQueryRouterFallbackRouteToAllOpenAI() {
+        OpenAiClient client = createOpenAiClientBuilder().build();
+        CompletionRequest request = CompletionRequest.builder()
+                .model("sunspots-webssh-raag-routetoall")
+                .prompt("""
+                    * Reply with answers separated by a comma
+                    1. Who is the author of document 'The Size of the Carrington Event Sunspot Group'? Just reply with the firstname and lastname.
+                    2. Who is the maintainer of WebSSH? Reply only with the nickname.
+                        """)
+                .stream(false)
+                .temperature(0.0)
+                .build();
+        CompletionResponse response = client.completion(request).execute();
+        assertNotNull(response);
+        assertNotNull(response.choices());
+        assertNotEquals(0, response.choices().size());
+        assertEquals("Peter Meadows, isontheline", response.choices().get(0).text());
     }
 }
