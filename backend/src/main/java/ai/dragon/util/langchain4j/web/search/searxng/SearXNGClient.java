@@ -51,7 +51,14 @@ public class SearXNGClient {
     public SearXNGResponse search(SearXNGSearchRequest searchRequest) {
         try {
             Response<SearXNGResponse> retrofitResponse = searXNGApi
-                    .search(searchRequest.getQ(), searchRequest.getFormat())
+                    .search(searchRequest.getQ(),
+                            searchRequest.getCategories(),
+                            searchRequest.getEngines(),
+                            searchRequest.getLanguage(),
+                            searchRequest.getPageno(),
+                            searchRequest.getTimeRange(),
+                            searchRequest.getFormat(),
+                            searchRequest.getSafeSearch())
                     .execute();
             if (retrofitResponse.isSuccessful()) {
                 return retrofitResponse.body();

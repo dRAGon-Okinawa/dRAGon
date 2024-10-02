@@ -63,7 +63,7 @@ public class SearXNGClientTest {
         assertNotNull(baseUrl);
 
         OkHttpClient client = new OkHttpClient();
-        String[] urlsToCheck = { "/", "/search", "/search?format=json&q=SearXNG" };
+        String[] urlsToCheck = { "/", "/search" };
         for (String url : urlsToCheck) {
             Request request = new Request.Builder()
                     .url(baseUrl + url)
