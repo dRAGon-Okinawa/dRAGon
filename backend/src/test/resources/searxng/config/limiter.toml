@@ -1,0 +1,3 @@
+[botdetection.ip_limit]
+filter_link_local = false
+link_token = false

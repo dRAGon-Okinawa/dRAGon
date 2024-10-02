@@ -1,5 +1,6 @@
 package ai.dragon.util.langchain4j.web.search.searxng;
 
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -35,6 +36,9 @@ public class SearXNGClientTest {
             .withCopyFileToContainer(
                     MountableFile.forClasspathResource("/searxng/config/settings.yml"),
                     "/etc/searxng/settings.yml")
+            .withCopyFileToContainer(
+                    MountableFile.forClasspathResource("/searxng/config/limiter.toml"),
+                    "/etc/searxng/limiter.toml")
             .withEnv("SEARXNG_SECRET", UUID.randomUUID().toString())
             .waitingFor(Wait.forHttp("/search").forStatusCode(200));
 
@@ -67,7 +71,8 @@ public class SearXNGClientTest {
                     .build();
 
             try (Response response = client.newCall(request).execute()) {
-                assertTrue(response.isSuccessful(), String.format("Failed to fetch (http %d) : %s", response.code(), url));
+                assertTrue(response.isSuccessful(),
+                        String.format("Failed to fetch (http %d) : %s", response.code(), url));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -75,14 +80,25 @@ public class SearXNGClientTest {
     }
 
     @Test
-    public void testSearXNGClient() {
+    public void testSearXNGClientResults() {
         SearXNGClient client = SearXNGClient
                 .builder()
                 .baseUrl(getBaseUrl())
                 .build();
-        SearXNGSearchRequest request = SearXNGSearchRequest.builder().query("test").build();
+        SearXNGSearchRequest request = SearXNGSearchRequest
+                .builder()
+                .q("United State of America")
+                .build();
         SearXNGResponse response = client.search(request);
-
         assertNotNull(response);
+        assertNotNull(response.getAnswers());
+        assertNotEquals(0, response.getAnswers().size());
+        assertNotNull(response.getInfoboxes());
+        assertNotEquals(0, response.getInfoboxes().size());
+        assertNotEquals(0, response.getInfoboxes().get(0).getAttributes().size());
+        assertNotNull(response.getResults());
+        assertNotEquals(0, response.getResults().size());
+        assertNotNull(response.getSuggestions());
+        assertNotEquals(0, response.getSuggestions().size());
     }
 }
