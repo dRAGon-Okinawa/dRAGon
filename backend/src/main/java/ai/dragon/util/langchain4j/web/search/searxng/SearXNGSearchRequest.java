@@ -23,4 +23,7 @@ class SearXNGSearchRequest {
     
     @Default
     private String format = "json";
+
+    @Default
+    private Integer maxResults = 10;
 }

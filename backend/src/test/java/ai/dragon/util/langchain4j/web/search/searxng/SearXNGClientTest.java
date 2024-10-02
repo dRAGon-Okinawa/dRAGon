@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -18,12 +19,15 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
 
+import ai.dragon.junit.extension.retry.RetryingTest;
+import ai.dragon.junit.extension.retry.RetryingTestExtension;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 @ActiveProfiles("test")
 @Testcontainers
+@ExtendWith(RetryingTestExtension.class)
 public class SearXNGClientTest {
     private static final Integer SEARXNG_PORT = 8080;
 
@@ -63,7 +67,7 @@ public class SearXNGClientTest {
         assertNotNull(baseUrl);
 
         OkHttpClient client = new OkHttpClient();
-        String[] urlsToCheck = { "/", "/search" };
+        String[] urlsToCheck = { "/", "/search", "/search?q=SearXNG&format=json" };
         for (String url : urlsToCheck) {
             Request request = new Request.Builder()
                     .url(baseUrl + url)
@@ -79,7 +83,7 @@ public class SearXNGClientTest {
         }
     }
 
-    @Test
+    @RetryingTest(3)
     public void testSearXNGClientResults() {
         SearXNGClient client = SearXNGClient
                 .builder()
