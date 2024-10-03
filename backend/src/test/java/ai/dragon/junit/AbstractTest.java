@@ -13,10 +13,19 @@ public abstract class AbstractTest {
     @Value("${DRAGON_CICD:}")
     private String dragonCicd;
 
+    @Value("${SKIP_SEARXNG_TESTS:}")
+    private String skipSearXNGTests;
+
     private boolean isRunningInCICD() {
         boolean isRunningInCICD = dragonCicd != null && "true".equalsIgnoreCase(dragonCicd);
         LOGGER.info("isRunningInCICD: {}", isRunningInCICD);
         return isRunningInCICD;
+    }
+
+    private boolean isSkipSearXNGTests() {
+        boolean isSkipSearXNGTests = skipSearXNGTests != null && "true".equalsIgnoreCase(skipSearXNGTests);
+        LOGGER.info("isSkipSearXNGTests: {}", isSkipSearXNGTests);
+        return isSkipSearXNGTests;
     }
 
     private boolean isOpenAiApiKeySet() {
@@ -32,7 +41,8 @@ public abstract class AbstractTest {
     }
 
     protected boolean canRunSearXNGRelatedTests() {
-        boolean canRunSearXNGRelatedTests = !isRunningInCICD();
+        boolean skipRunSearXNGRelatedTests = isRunningInCICD() || isSkipSearXNGTests();
+        boolean canRunSearXNGRelatedTests = !skipRunSearXNGRelatedTests;
         LOGGER.info("canRunSearXNGRelatedTests: {}", canRunSearXNGRelatedTests);
         return canRunSearXNGRelatedTests;
     }
