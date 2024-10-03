@@ -11,16 +11,28 @@ public abstract class AbstractTest {
     private String openaiApiKey;
 
     @Value("${DRAGON_CICD:}")
-    private Boolean dragonCicd;
+    private String dragonCicd;
+
+    private boolean isRunningInCICD() {
+        boolean isRunningInCICD = dragonCicd != null && "true".equalsIgnoreCase(dragonCicd);
+        LOGGER.info("isRunningInCICD: {}", isRunningInCICD);
+        return isRunningInCICD;
+    }
+
+    private boolean isOpenAiApiKeySet() {
+        boolean isOpenAiApiKeySet = openaiApiKey != null && !openaiApiKey.isEmpty();
+        LOGGER.info("isOpenAiApiKeySet: {}", isOpenAiApiKeySet);
+        return isOpenAiApiKeySet;
+    }
 
     protected boolean canRunOpenAiRelatedTests() {
-        boolean canRunOpenAiRelatedTests = Boolean.TRUE.equals(dragonCicd) || openaiApiKey != null && !openaiApiKey.isEmpty();
+        boolean canRunOpenAiRelatedTests = isRunningInCICD() || isOpenAiApiKeySet();
         LOGGER.info("canRunOpenAiRelatedTests: {}", canRunOpenAiRelatedTests);
         return canRunOpenAiRelatedTests;
     }
 
     protected boolean canRunSearXNGRelatedTests() {
-        boolean canRunSearXNGRelatedTests = dragonCicd == null || Boolean.FALSE.equals(dragonCicd);
+        boolean canRunSearXNGRelatedTests = !isRunningInCICD();
         LOGGER.info("canRunSearXNGRelatedTests: {}", canRunSearXNGRelatedTests);
         return canRunSearXNGRelatedTests;
     }
