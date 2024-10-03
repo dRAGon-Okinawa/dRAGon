@@ -14,8 +14,11 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -40,10 +43,11 @@ import okhttp3.Response;
 @ExtendWith(RetryingTestExtension.class)
 public class SearXNGClientTest extends AbstractTest {
     private static final Integer SEARXNG_PORT = 8080;
+    private static final Logger LOGGER = LoggerFactory.getLogger(SearXNGClientTest.class);
 
     @Container
     @ClassRule
-    @SuppressWarnings({ "rawtypes", "resource" })
+    @SuppressWarnings({ "rawtypes", "resource", "unchecked" })
     public static GenericContainer searxng = new GenericContainer(DockerImageName.parse("searxng/searxng"))
             .withStartupTimeout(Duration.ofSeconds(60))
             .withExposedPorts(SEARXNG_PORT)
@@ -54,6 +58,7 @@ public class SearXNGClientTest extends AbstractTest {
                     MountableFile.forClasspathResource("/searxng/config/limiter.toml"),
                     "/etc/searxng/limiter.toml")
             .withEnv("SEARXNG_SECRET", UUID.randomUUID().toString())
+            .withLogConsumer(new Slf4jLogConsumer(LOGGER))
             .waitingFor(Wait.forHttp("/search").forStatusCode(200));
 
     private String getBaseUrl() {
