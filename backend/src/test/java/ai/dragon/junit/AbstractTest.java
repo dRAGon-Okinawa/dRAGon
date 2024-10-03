@@ -14,6 +14,6 @@ public abstract class AbstractTest {
     }
 
     protected boolean canRunSearXNGRelatedTests() {
-        return dragonCicd == null || !dragonCicd;
+        return dragonCicd == null || Boolean.FALSE.equals(dragonCicd);
     }
 }
