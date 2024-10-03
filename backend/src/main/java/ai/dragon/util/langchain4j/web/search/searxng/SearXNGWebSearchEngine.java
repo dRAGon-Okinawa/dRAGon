@@ -20,14 +20,26 @@ public class SearXNGWebSearchEngine implements WebSearchEngine {
     private static final String DEFAULT_BASE_URL = "http://localhost:8080/";
 
     private final SearXNGClient searXNGClient;
+    private Boolean appendInfoboxes;
+    private Boolean appendAnswers;
+    private Boolean appendSuggestions;
+    private String engines;
 
     @Builder
     public SearXNGWebSearchEngine(String baseUrl,
-            Duration timeout) {
+            Duration timeout,
+            Boolean appendInfoboxes,
+            Boolean appendAnswers,
+            Boolean appendSuggestions,
+            String engines) {
         this.searXNGClient = SearXNGClient.builder()
                 .baseUrl(Utils.getOrDefault(baseUrl, DEFAULT_BASE_URL))
                 .timeout(Utils.getOrDefault(timeout, Duration.ofSeconds(10)))
                 .build();
+        this.appendInfoboxes = false;
+        this.appendAnswers = false;
+        this.appendSuggestions = false;
+        this.engines = engines;
     }
 
     @Override
@@ -39,6 +51,7 @@ public class SearXNGWebSearchEngine implements WebSearchEngine {
                 .pageno(webSearchRequest.startPage())
                 .maxResults(webSearchRequest.maxResults())
                 .safeSearch(webSearchRequest.safeSearch() ? 1 : 0)
+                .engines(engines)
                 .build();
 
         SearXNGResponse searXNGResponse = searXNGClient.search(request);
@@ -52,8 +65,7 @@ public class SearXNGWebSearchEngine implements WebSearchEngine {
             results = results.subList(0, webSearchRequest.maxResults());
         }
 
-        if (additionalParamsBoolean(webSearchRequest, "appendInfoboxes", false)
-                && searXNGResponse.getInfoboxes() != null) {
+        if (Boolean.TRUE.equals(appendInfoboxes) && searXNGResponse.getInfoboxes() != null) {
             for (SearXNGSearchResultInfobox infobox : searXNGResponse.getInfoboxes()) {
                 WebSearchOrganicResult infoboxResult = WebSearchOrganicResult.from(
                         infobox.getInfobox(),
@@ -65,7 +77,7 @@ public class SearXNGWebSearchEngine implements WebSearchEngine {
             }
         }
 
-        if (additionalParamsBoolean(webSearchRequest, "appendAnswers", false) && searXNGResponse.getAnswers() != null) {
+        if (Boolean.TRUE.equals(appendAnswers) && searXNGResponse.getAnswers() != null) {
             for (String answer : searXNGResponse.getAnswers()) {
                 WebSearchOrganicResult answerResult = WebSearchOrganicResult.from(
                         webSearchRequest.searchTerms(),
@@ -77,8 +89,7 @@ public class SearXNGWebSearchEngine implements WebSearchEngine {
             }
         }
 
-        if (additionalParamsBoolean(webSearchRequest, "appendSuggestions", false)
-                && searXNGResponse.getSuggestions() != null) {
+        if (Boolean.TRUE.equals(appendSuggestions) && searXNGResponse.getSuggestions() != null) {
             for (String suggestion : searXNGResponse.getSuggestions()) {
                 WebSearchOrganicResult suggestionResult = WebSearchOrganicResult.from(
                         webSearchRequest.searchTerms(),
@@ -103,13 +114,5 @@ public class SearXNGWebSearchEngine implements WebSearchEngine {
                 searXNGSearchResult.getContent(),
                 null,
                 Collections.singletonMap("score", String.valueOf(searXNGSearchResult.getScore())));
-    }
-
-    private boolean additionalParamsBoolean(WebSearchRequest webSearchRequest, String key, boolean defaultValue) {
-        if (!webSearchRequest.additionalParams().containsKey(key)) {
-            return defaultValue;
-        }
-        return webSearchRequest.additionalParams().get(key) instanceof Boolean
-                && Boolean.TRUE.equals(webSearchRequest.additionalParams().get(key));
     }
 }

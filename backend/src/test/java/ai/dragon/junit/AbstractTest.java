@@ -12,4 +12,8 @@ public abstract class AbstractTest {
     protected boolean canRunOpenAiRelatedTests() {
         return Boolean.TRUE.equals(dragonCicd) || openaiApiKey != null && !openaiApiKey.isEmpty();
     }
+
+    protected boolean canRunSearXNGRelatedTests() {
+        return dragonCicd == null || !dragonCicd;
+    }
 }
