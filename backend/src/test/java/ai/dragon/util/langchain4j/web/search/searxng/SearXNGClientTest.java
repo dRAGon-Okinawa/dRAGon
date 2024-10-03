@@ -1,11 +1,13 @@
 package ai.dragon.util.langchain4j.web.search.searxng;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Map;
 import java.util.UUID;
 
 import org.junit.ClassRule;
@@ -21,6 +23,8 @@ import org.testcontainers.utility.MountableFile;
 
 import ai.dragon.junit.extension.retry.RetryingTest;
 import ai.dragon.junit.extension.retry.RetryingTestExtension;
+import dev.langchain4j.web.search.WebSearchRequest;
+import dev.langchain4j.web.search.WebSearchResults;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -61,7 +65,7 @@ public class SearXNGClientTest {
         assertNotNull(address);
     }
 
-    @Test
+    @RetryingTest(3)
     public void testSearXNGUrls() {
         String baseUrl = getBaseUrl();
         assertNotNull(baseUrl);
@@ -104,5 +108,44 @@ public class SearXNGClientTest {
         assertNotEquals(0, response.getResults().size());
         assertNotNull(response.getSuggestions());
         assertNotEquals(0, response.getSuggestions().size());
+    }
+
+    @RetryingTest(3)
+    public void testSearXNGSearchEngine() {
+        SearXNGWebSearchEngine searchEngine = SearXNGWebSearchEngine
+                .builder()
+                .baseUrl(getBaseUrl())
+                .timeout(Duration.ofSeconds(10))
+                .build();
+        WebSearchRequest request = WebSearchRequest
+                .builder()
+                .searchTerms("United State of America")
+                .maxResults(10)
+                .additionalParams(Map.ofEntries(
+                        Map.entry("appendInfoboxes", true),
+                        Map.entry("appendSuggestions", true),
+                        Map.entry("appendAnswers", true)))
+                .build();
+        WebSearchResults results = searchEngine.search(request);
+        assertNotNull(results);
+        assertNotNull(results.toTextSegments());
+        assertNotEquals(0, results.toTextSegments().size());
+    }
+
+    @RetryingTest(3)
+    public void testSearXNGSearchEngineMaxResults() {
+        SearXNGWebSearchEngine searchEngine = SearXNGWebSearchEngine
+                .builder()
+                .baseUrl(getBaseUrl())
+                .timeout(Duration.ofSeconds(10))
+                .build();
+        WebSearchRequest request = WebSearchRequest
+                .builder()
+                .searchTerms("United State of America")
+                .maxResults(3)
+                .build();
+        WebSearchResults results = searchEngine.search(request);
+        assertNotNull(results);
+        assertEquals(3, results.results().size());
     }
 }

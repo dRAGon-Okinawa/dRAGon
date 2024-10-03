@@ -15,6 +15,8 @@ import dev.langchain4j.web.search.WebSearchResults;
 import lombok.Builder;
 
 public class SearXNGWebSearchEngine implements WebSearchEngine {
+    public static final URI NONE_URI = URI.create("http://none");
+
     private static final String DEFAULT_BASE_URL = "http://localhost:8080/";
 
     private final SearXNGClient searXNGClient;
@@ -41,35 +43,17 @@ public class SearXNGWebSearchEngine implements WebSearchEngine {
 
         SearXNGResponse searXNGResponse = searXNGClient.search(request);
 
-        final List<WebSearchOrganicResult> results = searXNGResponse.getResults().stream()
+        List<WebSearchOrganicResult> results = searXNGResponse.getResults().stream()
                 .map(SearXNGWebSearchEngine::toWebSearchOrganicResult)
                 .collect(Collectors.toList());
 
-        if (searXNGResponse.getSuggestions() != null) {
-            for (String suggestion : searXNGResponse.getSuggestions()) {
-                WebSearchOrganicResult suggestionResult = WebSearchOrganicResult.from(
-                        webSearchRequest.searchTerms(),
-                        null,
-                        suggestion,
-                        null,
-                        Collections.singletonMap("score", "0.5"));
-                results.add(0, suggestionResult);
-            }
+        if (webSearchRequest.maxResults() != null
+                && results.size() > webSearchRequest.maxResults()) {
+            results = results.subList(0, webSearchRequest.maxResults());
         }
 
-        if (searXNGResponse.getAnswers() != null) {
-            for (String answer : searXNGResponse.getAnswers()) {
-                WebSearchOrganicResult answerResult = WebSearchOrganicResult.from(
-                        webSearchRequest.searchTerms(),
-                        null,
-                        null,
-                        answer,
-                        Collections.singletonMap("score", "0.7"));
-                results.add(0, answerResult);
-            }
-        }
-
-        if(searXNGResponse.getInfoboxes() != null) {
+        if (additionalParamsBoolean(webSearchRequest, "appendInfoboxes", false)
+                && searXNGResponse.getInfoboxes() != null) {
             for (SearXNGSearchResultInfobox infobox : searXNGResponse.getInfoboxes()) {
                 WebSearchOrganicResult infoboxResult = WebSearchOrganicResult.from(
                         infobox.getInfobox(),
@@ -77,18 +61,36 @@ public class SearXNGWebSearchEngine implements WebSearchEngine {
                         null,
                         infobox.getContent(),
                         Collections.singletonMap("score", "0.9"));
-                results.add(0, infoboxResult);
+                results.add(infoboxResult);
             }
         }
 
-        if (webSearchRequest.maxResults() != null
-                && results.size() > webSearchRequest.maxResults()) {
-            WebSearchInformationResult webSearchInformationResult = WebSearchInformationResult
-                    .from((long) results.size());
-            return WebSearchResults.from(webSearchInformationResult, results.subList(0, webSearchRequest.maxResults()));
-        } else {
-            return WebSearchResults.from(WebSearchInformationResult.from((long) results.size()), results);
+        if (additionalParamsBoolean(webSearchRequest, "appendAnswers", false) && searXNGResponse.getAnswers() != null) {
+            for (String answer : searXNGResponse.getAnswers()) {
+                WebSearchOrganicResult answerResult = WebSearchOrganicResult.from(
+                        webSearchRequest.searchTerms(),
+                        NONE_URI,
+                        null,
+                        answer,
+                        Collections.singletonMap("score", "0.7"));
+                results.add(0, answerResult);
+            }
         }
+
+        if (additionalParamsBoolean(webSearchRequest, "appendSuggestions", false)
+                && searXNGResponse.getSuggestions() != null) {
+            for (String suggestion : searXNGResponse.getSuggestions()) {
+                WebSearchOrganicResult suggestionResult = WebSearchOrganicResult.from(
+                        webSearchRequest.searchTerms(),
+                        NONE_URI,
+                        suggestion,
+                        null,
+                        Collections.singletonMap("score", "0.5"));
+                results.add(suggestionResult);
+            }
+        }
+
+        return WebSearchResults.from(WebSearchInformationResult.from((long) results.size()), results);
     }
 
     public static SearXNGWebSearchEngine withBaseUrl(String baseUrl) {
@@ -101,5 +103,13 @@ public class SearXNGWebSearchEngine implements WebSearchEngine {
                 searXNGSearchResult.getContent(),
                 null,
                 Collections.singletonMap("score", String.valueOf(searXNGSearchResult.getScore())));
+    }
+
+    private boolean additionalParamsBoolean(WebSearchRequest webSearchRequest, String key, boolean defaultValue) {
+        if (!webSearchRequest.additionalParams().containsKey(key)) {
+            return defaultValue;
+        }
+        return webSearchRequest.additionalParams().get(key) instanceof Boolean
+                && Boolean.TRUE.equals(webSearchRequest.additionalParams().get(key));
     }
 }
