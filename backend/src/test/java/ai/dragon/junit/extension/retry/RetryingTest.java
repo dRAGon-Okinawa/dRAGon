@@ -11,5 +11,7 @@ import org.junit.jupiter.api.Test;
 @Target({ElementType.METHOD})
 @Test
 public @interface RetryingTest {
-    int value() default 1; // Default retry count is 1
+    int maxTries() default 1; // Default retry count is 1
+    int retryWaitMs() default 0; // Default retry wait time is 0ms
+    int beforeWaitMs() default 0; // Default wait time before executing test is 0ms
 }

@@ -5,10 +5,14 @@ import java.lang.reflect.Method;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestExecutionExceptionHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RetryingTestExtension implements TestExecutionExceptionHandler, BeforeTestExecutionCallback {
-    private static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create("dRAGon", "test", "retry");
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(RetryingTestExtension.class);
+    private static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create("dRAGon", "test",
+            "retry");
+
     @Override
     public void beforeTestExecution(ExtensionContext context) throws Exception {
         // Reset retry count before each test execution
@@ -21,16 +25,26 @@ public class RetryingTestExtension implements TestExecutionExceptionHandler, Bef
         RetryingTest retryingTest = testMethod.getAnnotation(RetryingTest.class);
 
         if (retryingTest != null) {
-            int maxRetries = retryingTest.value();
+            int maxTries = retryingTest.maxTries();
+            int retryWaitMs = retryingTest.retryWaitMs();
+            int beforeWaitMs = retryingTest.beforeWaitMs();
             ExtensionContext.Store store = context.getStore(NAMESPACE);
             int retryCount = store.get("retryCount", Integer.class);
 
-            if (retryCount < maxRetries) {
+            if (beforeWaitMs > 0 && retryCount == 0) {
+                LOGGER.info("Waiting {}ms before executing test {}", beforeWaitMs, testMethod.getName());
+                Thread.sleep(beforeWaitMs);
+            }
+
+            if (retryCount < maxTries) {
                 store.put("retryCount", ++retryCount);
                 try {
                     testMethod.invoke(context.getRequiredTestInstance());
                 } catch (Throwable t) {
-                    System.err.println("Retrying test " + testMethod.getName() + " after exception: " + t);
+                    LOGGER.error("Retrying test {} (after {}) on exception: {}", testMethod.getName(), retryWaitMs, t);
+                    if (retryWaitMs > 0) {
+                        Thread.sleep(retryWaitMs);
+                    }
                     handleTestExecutionException(context, t);
                 }
                 return; // Return without throwing to retry the test

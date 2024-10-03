@@ -12,6 +12,9 @@ import java.util.UUID;
 
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -41,6 +44,7 @@ import okhttp3.Response;
 @ActiveProfiles("test")
 @Testcontainers
 @ExtendWith(RetryingTestExtension.class)
+@TestMethodOrder(OrderAnnotation.class)
 public class SearXNGClientTest extends AbstractTest {
     private static final Integer SEARXNG_PORT = 8080;
     private static final Logger LOGGER = LoggerFactory.getLogger(SearXNGClientTest.class);
@@ -68,6 +72,7 @@ public class SearXNGClientTest extends AbstractTest {
     }
 
     @Test
+    @Order(1)
     public void checkSearXNGAvailability() {
         String address = searxng.getHost();
         Integer port = searxng.getFirstMappedPort();
@@ -76,7 +81,8 @@ public class SearXNGClientTest extends AbstractTest {
         assertNotNull(address);
     }
 
-    @RetryingTest(3)
+    @RetryingTest(maxTries = 3, retryWaitMs = 3000)
+    @Order(2)
     public void testSearXNGUrls() {
         String baseUrl = getBaseUrl();
         assertNotNull(baseUrl);
@@ -98,7 +104,8 @@ public class SearXNGClientTest extends AbstractTest {
         }
     }
 
-    @RetryingTest(3)
+    @RetryingTest(maxTries = 3, retryWaitMs = 3000)
+    @Order(3)
     @EnabledIf("canRunSearXNGRelatedTests")
     public void testSearXNGClientResults() {
         SearXNGClient client = SearXNGClient
@@ -122,7 +129,8 @@ public class SearXNGClientTest extends AbstractTest {
         assertNotEquals(0, response.getSuggestions().size(), "Suggestions is empty");
     }
 
-    @RetryingTest(3)
+    @RetryingTest(maxTries = 3, retryWaitMs = 3000)
+    @Order(4)
     @EnabledIf("canRunSearXNGRelatedTests")
     public void testSearXNGSearchEngine() {
         SearXNGWebSearchEngine searchEngine = SearXNGWebSearchEngine
@@ -144,7 +152,8 @@ public class SearXNGClientTest extends AbstractTest {
         assertNotEquals(0, results.toTextSegments().size());
     }
 
-    @RetryingTest(3)
+    @RetryingTest(maxTries = 3, retryWaitMs = 3000)
+    @Order(5)
     @EnabledIf("canRunSearXNGRelatedTests")
     public void testSearXNGSearchEngineMaxResults() {
         SearXNGWebSearchEngine searchEngine = SearXNGWebSearchEngine
@@ -162,7 +171,8 @@ public class SearXNGClientTest extends AbstractTest {
         assertEquals(3, results.results().size());
     }
 
-    @RetryingTest(3)
+    @RetryingTest(maxTries = 3, retryWaitMs = 3000)
+    @Order(6)
     @EnabledIf("canRunSearXNGRelatedTests")
     public void testSearXNGWebSearchContentRetriever() {
         SearXNGWebSearchEngine searchEngine = SearXNGWebSearchEngine
