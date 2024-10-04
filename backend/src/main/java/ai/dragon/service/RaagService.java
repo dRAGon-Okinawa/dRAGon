@@ -21,11 +21,13 @@ import ai.dragon.dto.openai.completion.OpenAiCompletionResponse;
 import ai.dragon.dto.openai.completion.OpenAiRequest;
 import ai.dragon.dto.openai.model.OpenAiModel;
 import ai.dragon.entity.FarmEntity;
+import ai.dragon.entity.GranaryEntity;
 import ai.dragon.entity.SiloEntity;
 import ai.dragon.enumeration.QueryRouterType;
 import ai.dragon.properties.embedding.LanguageModelSettings;
 import ai.dragon.properties.raag.RetrievalAugmentorSettings;
 import ai.dragon.repository.FarmRepository;
+import ai.dragon.repository.GranaryRepository;
 import ai.dragon.repository.SiloRepository;
 import ai.dragon.util.ChatMessageUtil;
 import ai.dragon.util.KVSettingUtil;
@@ -69,6 +71,9 @@ public class RaagService {
 
     @Autowired
     private SiloRepository siloRepository;
+
+    @Autowired
+    private GranaryRepository granaryRepository;
 
     @Autowired
     private OpenAiCompletionService openAiCompletionService;
@@ -123,8 +128,32 @@ public class RaagService {
                 logger.error("Error building Content Retriever for Silo '{}'", siloUuid, ex);
             }
         });
-        // TODO Put also Granaries in the retrievers
+        farm.getGranaries().forEach(granaryUuid -> {
+            try {
+                GranaryEntity granary = granaryRepository.getByUuid(granaryUuid).orElseThrow();
+                String granaryDescription = granary.getDescription();
+                this.buildGranaryRetriever(granary, servletRequest).ifPresent(retriever -> {
+                    retrievers.put(retriever, granaryDescription);
+                });
+            } catch (Exception ex) {
+                logger.error("Error building Content Retriever for Granary '{}'", granaryUuid, ex);
+            }
+        });
         return retrievers;
+    }
+
+    public Optional<ContentRetriever> buildGranaryRetriever(GranaryEntity granary, HttpServletRequest servletRequest)
+            throws Exception {
+        // TODO Implement GranaryEntity EngineType
+        /*WebSearchEngine webSearchEngine = TavilyWebSearchEngine.builder()
+                .apiKey(System.getenv("TAVILY_API_KEY")) // get a free key: https://app.tavily.com/sign-in
+                .build();
+
+        ContentRetriever webSearchContentRetriever = WebSearchContentRetriever.builder()
+                .webSearchEngine(webSearchEngine)
+                .maxResults(3)
+                .build();*/
+        return Optional.empty();
     }
 
     public Optional<ContentRetriever> buildSiloRetriever(SiloEntity silo, HttpServletRequest servletRequest)
