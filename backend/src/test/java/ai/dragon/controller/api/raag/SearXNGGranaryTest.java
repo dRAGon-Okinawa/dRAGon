@@ -22,6 +22,7 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
 
@@ -37,6 +38,7 @@ import dev.ai4j.openai4j.OpenAiClient;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
+@Testcontainers
 public class SearXNGGranaryTest extends AbstractTest {
     private static final Integer SEARXNG_PORT = 8080;
     private static final Logger LOGGER = LoggerFactory.getLogger(SearXNGGranaryTest.class);
