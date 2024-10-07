@@ -106,7 +106,7 @@ public class SearXNGClientTest extends AbstractTest {
         }
     }
 
-    @RetryingTest(maxTries = 3, retryWaitMs = 3000)
+    @RetryingTest(maxTries = 3, retryWaitMs = 3000, beforeWaitMs = 3000)
     @Order(3)
     @EnabledIf("canRunSearXNGRelatedTests")
     public void testSearXNGClientResults() {

@@ -76,6 +76,9 @@ public class RaagService {
     private GranaryRepository granaryRepository;
 
     @Autowired
+    private GranaryService granaryService;
+
+    @Autowired
     private OpenAiCompletionService openAiCompletionService;
 
     public List<OpenAiModel> listAvailableModels() {
@@ -112,11 +115,6 @@ public class RaagService {
 
     public Map<ContentRetriever, String> buildRetrieverMap(FarmEntity farm, HttpServletRequest servletRequest) {
         Map<ContentRetriever, String> retrievers = new HashMap<>();
-        if (farm.getSilos() == null || farm.getSilos().isEmpty()) {
-            logger.info("No Silos found for Farm '{}' (RaaG Identifier '{}'), no content retriever will be made",
-                    farm.getUuid(), farm.getRaagIdentifier());
-            return retrievers;
-        }
         farm.getSilos().forEach(siloUuid -> {
             try {
                 SiloEntity silo = siloRepository.getByUuid(siloUuid).orElseThrow();
@@ -139,21 +137,17 @@ public class RaagService {
                 logger.error("Error building Content Retriever for Granary '{}'", granaryUuid, ex);
             }
         });
+        if (retrievers.isEmpty()) {
+            logger.info("No retrievers found for Farm '{}' (RaaG Identifier '{}'), no content retriever will be made",
+                    farm.getUuid(), farm.getRaagIdentifier());
+            return retrievers;
+        }
         return retrievers;
     }
 
     public Optional<ContentRetriever> buildGranaryRetriever(GranaryEntity granary, HttpServletRequest servletRequest)
             throws Exception {
-        // TODO Implement GranaryEntity EngineType
-        /*WebSearchEngine webSearchEngine = TavilyWebSearchEngine.builder()
-                .apiKey(System.getenv("TAVILY_API_KEY")) // get a free key: https://app.tavily.com/sign-in
-                .build();
-
-        ContentRetriever webSearchContentRetriever = WebSearchContentRetriever.builder()
-                .webSearchEngine(webSearchEngine)
-                .maxResults(3)
-                .build();*/
-        return Optional.empty();
+        return Optional.ofNullable(granaryService.buildContentRetriever(granary, servletRequest));
     }
 
     public Optional<ContentRetriever> buildSiloRetriever(SiloEntity silo, HttpServletRequest servletRequest)

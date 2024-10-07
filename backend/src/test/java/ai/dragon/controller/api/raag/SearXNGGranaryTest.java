@@ -1,6 +1,8 @@
 package ai.dragon.controller.api.raag;
 
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 import java.util.List;
@@ -35,6 +37,8 @@ import ai.dragon.junit.AbstractTest;
 import ai.dragon.repository.FarmRepository;
 import ai.dragon.repository.GranaryRepository;
 import dev.ai4j.openai4j.OpenAiClient;
+import dev.ai4j.openai4j.completion.CompletionRequest;
+import dev.ai4j.openai4j.completion.CompletionResponse;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -126,6 +130,13 @@ public class SearXNGGranaryTest extends AbstractTest {
                 "appendAnswers=true"));
         granaryRepository.save(xngGranary);
 
+        // Empty Farm
+        FarmEntity emptyFarm = new FarmEntity();
+        emptyFarm.setRaagIdentifier("empty-farm");
+        emptyFarm.setLanguageModel(LanguageModelType.OpenAiModel);
+        emptyFarm.setLanguageModelSettings(List.of(apiKeySetting, omniModelNameSetting));
+        farmRepository.save(emptyFarm);
+
         // Farm with the SearXNG Granary
         // Language Model Router is used to route the request to the right Granary
         FarmEntity xngFarm = new FarmEntity();
@@ -134,7 +145,28 @@ public class SearXNGGranaryTest extends AbstractTest {
         xngFarm.setLanguageModelSettings(List.of(apiKeySetting, omniModelNameSetting));
         xngFarm.setGranaries(List.of(xngGranary.getUuid()));
         xngFarm.setQueryRouter(QueryRouterType.LANGUAGE_MODEL);
-        xngFarm.setRetrievalAugmentorSettings(List.of("languageQueryRouterFallbackStrategy=DO_NOT_ROUTE"));
+        xngFarm.setRetrievalAugmentorSettings(List.of(
+                "languageQueryRouterFallbackStrategy=DO_NOT_ROUTE"));
         farmRepository.save(xngFarm);
+
+        String[] farmsToCheck = { "empty-farm", "searxng-raag-fallbackdonotroute" };
+        for (String farmId : farmsToCheck) {
+            CompletionRequest request = CompletionRequest.builder()
+                    .model(farmId)
+                    .prompt("site:www.petermeadows.com version Helio Viewer")
+                    .stream(false)
+                    .temperature(0.0)
+                    .build();
+            CompletionResponse response = createOpenAiClientBuilder().build().completion(request).execute();
+            assertNotNull(response);
+            assertNotNull(response.choices());
+            assertNotEquals(0, response.choices().size());
+            boolean contains = response.choices().get(0).text().contains("Peter Meadows");
+            if ("empty-farm".equals(farmId)) {
+                assertTrue(!contains);
+            } else {
+                assertTrue(contains);
+            }
+        }
     }
 }
