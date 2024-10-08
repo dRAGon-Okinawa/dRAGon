@@ -220,7 +220,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
     @SuppressWarnings("rawtypes")
     private OpenAiClient.Builder createOpenAiClientBuilder() {
         return OpenAiClient.builder()
-                .openAiApiKey("TODO_PUT_KEY_HERE")
+                .openAiApiKey("TODO_PUT_DRAGON_KEY_HERE")
                 .baseUrl(String.format("http://localhost:%d/api/raag/v1/", serverPort))
                 .callTimeout(Duration.ofSeconds(15))
                 .readTimeout(Duration.ofSeconds(15))
@@ -231,7 +231,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
     @SuppressWarnings("rawtypes")
     private MistralAiClient.Builder createMistralAiClientBuilder() {
         return MistralAiClient.builder()
-                .apiKey("TODO_PUT_KEY_HERE")
+                .apiKey("TODO_PUT_DRAGON_KEY_HERE")
                 .baseUrl(String.format("http://localhost:%d/api/raag/v1/", serverPort))
                 .timeout(Duration.ofSeconds(15))
                 .logRequests(false)

@@ -58,8 +58,8 @@ public class SearXNGGranaryTest extends AbstractTest {
 
     @Container
     @ClassRule
-    @SuppressWarnings({ "rawtypes", "resource", "unchecked" })
-    public static GenericContainer searxng = new GenericContainer(DockerImageName.parse("searxng/searxng"))
+    @SuppressWarnings({ "resource" })
+    public static GenericContainer<?> searxng = new GenericContainer<>(DockerImageName.parse("searxng/searxng"))
             .withStartupTimeout(Duration.ofSeconds(60))
             .withExposedPorts(SEARXNG_PORT)
             .withCopyFileToContainer(
@@ -101,7 +101,7 @@ public class SearXNGGranaryTest extends AbstractTest {
     @SuppressWarnings("rawtypes")
     private OpenAiClient.Builder createOpenAiClientBuilder() {
         return OpenAiClient.builder()
-                .openAiApiKey("TODO_PUT_KEY_HERE")
+                .openAiApiKey("TODO_PUT_DRAGON_KEY_HERE")
                 .baseUrl(String.format("http://localhost:%d/api/raag/v1/", serverPort))
                 .callTimeout(Duration.ofSeconds(15))
                 .readTimeout(Duration.ofSeconds(15))

@@ -1,8 +1,7 @@
 package ai.dragon.util.langchain4j.web.search.searxng;
 
+import java.util.Date;
 import java.util.List;
-
-import org.apache.poi.hpsf.Date;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 

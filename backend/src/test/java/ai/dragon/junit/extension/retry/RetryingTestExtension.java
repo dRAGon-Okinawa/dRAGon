@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 public class RetryingTestExtension implements TestExecutionExceptionHandler, BeforeTestExecutionCallback {
     private static final Logger LOGGER = LoggerFactory.getLogger(RetryingTestExtension.class);
-    private static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create("dRAGon", "test",
+    private static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create("dragon", "test",
             "retry");
 
     @Override
@@ -29,7 +29,10 @@ public class RetryingTestExtension implements TestExecutionExceptionHandler, Bef
             int retryWaitMs = retryingTest.retryWaitMs();
             int beforeWaitMs = retryingTest.beforeWaitMs();
             ExtensionContext.Store store = context.getStore(NAMESPACE);
-            int retryCount = store.get("retryCount", Integer.class);
+            Integer retryCount = store.get("retryCount", Integer.class);
+            if (retryCount == null) {
+                retryCount = 0;
+            }
 
             if (beforeWaitMs > 0 && retryCount == 0) {
                 LOGGER.info("Waiting {}ms before executing test {}", beforeWaitMs, testMethod.getName());
@@ -43,7 +46,12 @@ public class RetryingTestExtension implements TestExecutionExceptionHandler, Bef
                 } catch (Throwable t) {
                     LOGGER.error("Retrying test {} (after {}) on exception: {}", testMethod.getName(), retryWaitMs, t);
                     if (retryWaitMs > 0) {
-                        Thread.sleep(retryWaitMs);
+                        try {
+                            Thread.sleep(retryWaitMs);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            throw e;
+                        }
                     }
                     handleTestExecutionException(context, t);
                 }

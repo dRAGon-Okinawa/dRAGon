@@ -53,8 +53,8 @@ public class SearXNGClientTest extends AbstractTest {
 
     @Container
     @ClassRule
-    @SuppressWarnings({ "rawtypes", "resource", "unchecked" })
-    public static GenericContainer searxng = new GenericContainer(DockerImageName.parse("searxng/searxng"))
+    @SuppressWarnings({ "resource" })
+    public static GenericContainer<?> searxng = new GenericContainer<>(DockerImageName.parse("searxng/searxng"))
             .withStartupTimeout(Duration.ofSeconds(60))
             .withExposedPorts(SEARXNG_PORT)
             .withCopyFileToContainer(
@@ -116,7 +116,7 @@ public class SearXNGClientTest extends AbstractTest {
                 .build();
         SearXNGSearchRequest request = SearXNGSearchRequest
                 .builder()
-                .q("United State of America")
+                .q("United States of America")
                 .build();
         SearXNGResponse response = client.search(request);
         assertNotNull(response, "Response is null");
@@ -145,7 +145,7 @@ public class SearXNGClientTest extends AbstractTest {
                 .build();
         WebSearchRequest request = WebSearchRequest
                 .builder()
-                .searchTerms("United State of America")
+                .searchTerms("United States of America")
                 .maxResults(10)
                 .build();
         WebSearchResults results = searchEngine.search(request);
@@ -165,7 +165,7 @@ public class SearXNGClientTest extends AbstractTest {
                 .build();
         WebSearchRequest request = WebSearchRequest
                 .builder()
-                .searchTerms("United State of America")
+                .searchTerms("United States of America")
                 .maxResults(3)
                 .build();
         WebSearchResults results = searchEngine.search(request);
@@ -189,7 +189,7 @@ public class SearXNGClientTest extends AbstractTest {
                 .webSearchEngine(searchEngine)
                 .maxResults(3)
                 .build();
-        List<Content> results = webSearchContentRetriever.retrieve(Query.from("United State of America"));
+        List<Content> results = webSearchContentRetriever.retrieve(Query.from("United States of America"));
         assertNotNull(results);
         assertEquals(3, results.size());
     }

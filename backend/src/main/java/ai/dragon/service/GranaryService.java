@@ -12,13 +12,12 @@ import ai.dragon.util.langchain4j.web.search.searxng.SearXNGWebSearchEngine;
 import dev.langchain4j.rag.content.retriever.ContentRetriever;
 import dev.langchain4j.rag.content.retriever.WebSearchContentRetriever;
 import dev.langchain4j.web.search.WebSearchEngine;
-import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class GranaryService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public ContentRetriever buildContentRetriever(GranaryEntity granary, HttpServletRequest servletRequest) {
+    public ContentRetriever buildContentRetriever(GranaryEntity granary) {
         switch (granary.getEngineType()) {
             case WebSearchEngine:
                 return buildWebSearchContentRetriever(granary);

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 class SearXNGResponse {
-    private List<Object> corrections;
+    private List<String> corrections;
     private String query;
     private List<String> answers;
     private List<String> suggestions;

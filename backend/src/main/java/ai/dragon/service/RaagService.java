@@ -130,7 +130,7 @@ public class RaagService {
             try {
                 GranaryEntity granary = granaryRepository.getByUuid(granaryUuid).orElseThrow();
                 String granaryDescription = granary.getDescription();
-                this.buildGranaryRetriever(granary, servletRequest).ifPresent(retriever -> {
+                this.buildGranaryRetriever(granary).ifPresent(retriever -> {
                     retrievers.put(retriever, granaryDescription);
                 });
             } catch (Exception ex) {
@@ -145,9 +145,9 @@ public class RaagService {
         return retrievers;
     }
 
-    public Optional<ContentRetriever> buildGranaryRetriever(GranaryEntity granary, HttpServletRequest servletRequest)
+    public Optional<ContentRetriever> buildGranaryRetriever(GranaryEntity granary)
             throws Exception {
-        return Optional.ofNullable(granaryService.buildContentRetriever(granary, servletRequest));
+        return Optional.ofNullable(granaryService.buildContentRetriever(granary));
     }
 
     public Optional<ContentRetriever> buildSiloRetriever(SiloEntity silo, HttpServletRequest servletRequest)
