@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, useAttrs } from 'vue';
+import { computed, defineProps, useAttrs } from 'vue';
+import { NTooltip } from 'naive-ui'; // Assuming NaiveUI is used and installed
 
 defineOptions({ name: 'SvgIcon', inheritAttrs: false });
 
@@ -9,6 +10,8 @@ interface Props {
   localIcon?: string;
   /** Click event handler */
   onClick?: (event: MouseEvent) => void;
+  /** Optional tooltip text */
+  tooltip?: string;
 }
 
 const props = defineProps<Props>();
@@ -22,11 +25,8 @@ const bindAttrs = computed<{ class: string; style: string }>(() => ({
 
 const symbolId = computed(() => {
   const { VITE_ICON_LOCAL_PREFIX: prefix } = import.meta.env;
-
   const defaultLocalIcon = 'material-symbols--hide-image-outline-rounded';
-
   const icon = props.localIcon || defaultLocalIcon;
-
   return `#${prefix}-${icon}`;
 });
 
@@ -38,9 +38,15 @@ const handleClick = (event: MouseEvent) => {
 </script>
 
 <template>
-  <svg aria-hidden="true" width="1em" height="1em" v-bind="bindAttrs" @click="handleClick">
+  <NTooltip v-if="props.tooltip">
+    <template #trigger>
+      <svg aria-hidden="true" width="1em" height="1em" v-bind="bindAttrs" @click="handleClick">
+        <use :xlink:href="symbolId" fill="currentColor" />
+      </svg>
+    </template>
+    <span>{{ props.tooltip }}</span>
+  </NTooltip>
+  <svg v-else aria-hidden="true" width="1em" height="1em" v-bind="bindAttrs" @click="handleClick">
     <use :xlink:href="symbolId" fill="currentColor" />
   </svg>
 </template>
-
-<style scoped></style>

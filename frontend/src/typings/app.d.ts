@@ -250,8 +250,10 @@ declare namespace App {
         document: string;
         documents: string;
         embeddingModel: string;
+        engineType: string;
         farm: string;
         farms: string;
+        granary: string;
         languageModel: string;
         infrastructure: string;
         infrastructureDescription: string;

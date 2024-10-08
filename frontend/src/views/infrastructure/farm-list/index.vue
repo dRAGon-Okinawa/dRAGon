@@ -1,9 +1,11 @@
 <script setup lang="tsx">
+import { h } from 'vue';
 import { fetchDeleteFarm, fetchDeleteMultipleFarms, fetchFarmsSearch } from '@/service/api';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
 import { chatMemoryStrategyRecord, languageModelRecord } from '@/constants/business';
 import { useTable, useTableOperate } from '@/hooks/common/table';
+import SvgIcon from '@/components/custom/svg-icon.vue';
 import SplitDropdown from '@/components/custom/split-dropdown.vue';
 import TagRenderer from '@/components/custom/tag-renderer.vue';
 import FarmEdit from './modules/farm-edit.vue';
@@ -85,6 +87,24 @@ const {
       )
     },
     {
+      key: 'silos',
+      title() {
+        return renderHeaderIcon('mdi--silo-outline', $t('dRAGon.silos'));
+      },
+      align: 'center',
+      render: (row: Api.FarmManage.Farm) => row.silos.length,
+      width: 30
+    },
+    {
+      key: 'granaries',
+      title() {
+        return renderHeaderIcon('mdi--warehouse', $t('dRAGon.granaries'));
+      },
+      align: 'center',
+      render: (row: Api.FarmManage.Farm) => row.granaries.length,
+      width: 30
+    },
+    {
       key: 'operate',
       title: $t('common.action'),
       align: 'center',
@@ -156,6 +176,13 @@ function handleReset() {
 
 function edit(id: string) {
   handleEdit(id);
+}
+
+function renderHeaderIcon(icon: string, tooltip?: string) {
+  return h(SvgIcon, {
+    localIcon: icon,
+    tooltip
+  });
 }
 </script>
 
