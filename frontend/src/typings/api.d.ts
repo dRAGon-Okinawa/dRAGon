@@ -124,6 +124,38 @@ declare namespace Api {
   }
 
   /**
+   * namespace GranaryManage
+   *
+   * backend api module: "granaryManage"
+   */
+  namespace GranaryManage {
+    type CommonSearchParams = Pick<Common.PaginatingCommonParams, 'current' | 'size'>;
+
+    /** Granary Engine Type */
+    type GranaryEngineType = 'WebSearchEngine';
+
+    /** Ingestor Loader */
+    type IngestorLoaderType = 'None' | 'FileSystem' | 'URL';
+
+    /** Granary Search Params */
+    type GranarySearchParams = CommonType.RecordNullable<
+      Pick<Api.GranaryManage.Granary, 'name' | 'uuid' | 'engineType'> & Common.CommonSearchParams
+    >;
+
+    /** Granary */
+    type Granary = Common.CommonRecord<{
+      /** Granary Name */
+      name: string;
+      /** Granary Description */
+      description: string;
+      /** Granary Engine Type */
+      engineType: GranaryEngineType | null;
+      /* Engine Settings */
+      engineSettings: string[] | null;
+    }>;
+  }
+
+  /**
    * namespace SiloManage
    *
    * backend api module: "siloManage"
@@ -200,6 +232,8 @@ declare namespace Api {
       raagIdentifier: string;
       /** Linked Silos */
       silos: string[];
+      /** Linked Granaries */
+      granaries: string[];
       /** Language Model */
       languageModel: LanguageModelType | null;
       /** Language Model Settings */

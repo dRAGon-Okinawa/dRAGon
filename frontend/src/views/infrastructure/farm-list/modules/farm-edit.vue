@@ -5,7 +5,7 @@ import type { SelectOption } from 'naive-ui';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
 import { $t } from '@/locales';
 import { chatMemoryStrategyOptions, languageModelOptions, queryRouterOptions } from '@/constants/business';
-import { fetchSilosSearch, fetchUpsertFarm } from '@/service/api';
+import { fetchGranariesSearch, fetchSilosSearch, fetchUpsertFarm } from '@/service/api';
 import KVSettings from '../../../../components/custom/kv-settings.vue';
 
 defineOptions({
@@ -34,6 +34,9 @@ const visible = defineModel<boolean>('visible', {
 const silosLoadingRef = ref(false);
 const silosOptionsRef = ref<SelectOption[]>([]);
 
+const granariesLoadingRef = ref(false);
+const granariesOptionsRef = ref<SelectOption[]>([]);
+
 const { formRef, validate, restoreValidation } = useNaiveForm();
 const { defaultRequiredRule, formRules } = useFormRules();
 
@@ -55,6 +58,7 @@ function createDefaultModel(): Api.FarmManage.Farm {
     name: '',
     raagIdentifier: '',
     silos: [],
+    granaries: [],
     languageModel: null,
     languageModelSettings: [],
     chatMemoryStrategy: null,
@@ -106,6 +110,7 @@ function handleInitModel() {
   }
   refreshKeyValueSettings();
   initSilosOptions();
+  initGranariesOptions();
 }
 
 function closeDrawer() {
@@ -123,12 +128,25 @@ function initSilosOptions() {
   });
 }
 
+function initGranariesOptions() {
+  fetchGranariesSearch({ current: 1, size: 100 }).then(response => {
+    if (response.error === null) {
+      granariesOptionsRef.value = response.data.records.map(item => ({
+        label: item.name,
+        value: item.uuid
+      }));
+    }
+  });
+}
+
 function handleSearch(query: string) {
   if (!query.length) {
     silosOptionsRef.value = [];
+    granariesOptionsRef.value = [];
     return;
   }
   silosLoadingRef.value = true;
+  granariesLoadingRef.value = true;
   fetchSilosSearch({ name: query, current: 1, size: 10 }).then(response => {
     if (response.error === null) {
       silosOptionsRef.value = response.data.records.map(item => ({
@@ -137,6 +155,15 @@ function handleSearch(query: string) {
       }));
     }
     silosLoadingRef.value = false;
+  });
+  fetchGranariesSearch({ name: query, current: 1, size: 10 }).then(response => {
+    if (response.error === null) {
+      granariesOptionsRef.value = response.data.records.map(item => ({
+        label: item.name,
+        value: item.uuid
+      }));
+    }
+    granariesLoadingRef.value = false;
   });
 }
 
@@ -196,6 +223,20 @@ watch(visible, () => {
             @search="handleSearch"
           />
         </FormItemWithHelp>
+        <NFormItem :label="$t('dRAGon.granaries')" path="granaries">
+          <NSelect
+            v-model:value="model.granaries"
+            multiple
+            filterable
+            :placeholder="$t('dRAGon.granaries')"
+            :options="granariesOptionsRef"
+            :loading="granariesLoadingRef"
+            clearable
+            remote
+            :clear-filter-after-select="true"
+            @search="handleSearch"
+          />
+        </NFormItem>
         <NDivider title-placement="left">
           {{ $t('dRAGon.languageModel') }}
         </NDivider>

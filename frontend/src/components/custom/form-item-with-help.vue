@@ -19,14 +19,7 @@ const handleClick = () => {
   <NFormItem :path="props.path">
     <template #label>
       {{ props.label }}
-      <NTooltip>
-        <template #trigger>
-          <span>
-            <SvgIcon local-icon="mdi--question-mark-circle-outline" class="inline-block" />
-          </span>
-        </template>
-        <span>{{ props.helpText }}</span>
-      </NTooltip>
+      <SvgIcon local-icon="mdi--question-mark-circle-outline" class="inline-block" :tooltip="props.helpText" />
       <SvgIcon
         v-if="props.helpLink"
         local-icon="mdi--link-variant"

@@ -45,3 +45,8 @@ export const queryRouterRecord: Record<Api.FarmManage.QueryRouterType, string> =
   LanguageModel: 'LANGUAGE MODEL'
 };
 export const queryRouterOptions = transformRecordToOption(queryRouterRecord);
+
+export const granaryEngineTypeRecord: Record<Api.GranaryManage.GranaryEngineType, string> = {
+  WebSearchEngine: 'WEB SEARCH ENGINE'
+};
+export const granaryEngineTypeOptions = transformRecordToOption(granaryEngineTypeRecord);

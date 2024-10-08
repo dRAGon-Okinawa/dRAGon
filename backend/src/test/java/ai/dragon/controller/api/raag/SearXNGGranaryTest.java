@@ -144,7 +144,7 @@ public class SearXNGGranaryTest extends AbstractTest {
         xngFarm.setLanguageModel(LanguageModelType.OpenAiModel);
         xngFarm.setLanguageModelSettings(List.of(apiKeySetting, omniModelNameSetting));
         xngFarm.setGranaries(List.of(xngGranary.getUuid()));
-        xngFarm.setQueryRouter(QueryRouterType.LANGUAGE_MODEL);
+        xngFarm.setQueryRouter(QueryRouterType.LanguageModel);
         xngFarm.setRetrievalAugmentorSettings(List.of(
                 "languageQueryRouterFallbackStrategy=DO_NOT_ROUTE"));
         farmRepository.save(xngFarm);

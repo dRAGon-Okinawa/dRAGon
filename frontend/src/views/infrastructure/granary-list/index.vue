@@ -1,15 +1,13 @@
 <script setup lang="tsx">
-import { h } from 'vue';
-import { fetchDeleteFarm, fetchDeleteMultipleFarms, fetchFarmsSearch } from '@/service/api';
+import { fetchDeleteGranary, fetchDeleteMultipleGranaries, fetchGranariesSearch } from '@/service/api';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
-import { chatMemoryStrategyRecord, languageModelRecord } from '@/constants/business';
+import { granaryEngineTypeRecord } from '@/constants/business';
 import { useTable, useTableOperate } from '@/hooks/common/table';
-import SvgIcon from '@/components/custom/svg-icon.vue';
 import SplitDropdown from '@/components/custom/split-dropdown.vue';
 import TagRenderer from '@/components/custom/tag-renderer.vue';
-import FarmEdit from './modules/farm-edit.vue';
-import FarmSearch from './modules/farm-search.vue';
+import GranaryEdit from './modules/granary-edit.vue';
+import GranarySearch from './modules/granary-search.vue';
 
 const appStore = useAppStore();
 
@@ -24,14 +22,14 @@ const {
   searchParams,
   resetSearchParams
 } = useTable({
-  apiFn: fetchFarmsSearch,
+  apiFn: fetchGranariesSearch,
   showTotal: true,
   apiParams: {
     current: 1,
     size: 10,
     uuid: '',
     name: '',
-    raagIdentifier: ''
+    engineType: null
   },
   columns: () => [
     {
@@ -53,63 +51,26 @@ const {
       minWidth: 100
     },
     {
-      key: 'raagIdentifier',
-      title: $t('dRAGon.raagIdentifier'),
-      align: 'center'
-    },
-    {
-      key: 'chatMemoryStrategy',
-      title: $t('dRAGon.chatMemoryStrategy'),
+      key: 'engineType',
+      title: $t('dRAGon.engineType'),
       align: 'center',
-      render: (row: Api.FarmManage.Farm) => (
+      width: 200,
+      render: (row: Api.GranaryManage.Granary) => (
         <TagRenderer
-          value={row.chatMemoryStrategy}
+          value={row.engineType}
           tagMap={{
-            MaxMessages: 'default',
-            MaxTokens: 'default'
+            WebSearchEngine: 'default'
           }}
-          labelMap={chatMemoryStrategyRecord}
+          labelMap={granaryEngineTypeRecord}
         />
       )
-    },
-    {
-      key: 'languageModel',
-      title: $t('dRAGon.languageModel'),
-      align: 'center',
-      render: (row: Api.FarmManage.Farm) => (
-        <TagRenderer
-          value={row.languageModel}
-          tagMap={{
-            OpenAiModel: 'default'
-          }}
-          labelMap={languageModelRecord}
-        />
-      )
-    },
-    {
-      key: 'silos',
-      title() {
-        return renderHeaderIcon('mdi--silo-outline', $t('dRAGon.silos'));
-      },
-      align: 'center',
-      render: (row: Api.FarmManage.Farm) => row.silos.length,
-      width: 30
-    },
-    {
-      key: 'granaries',
-      title() {
-        return renderHeaderIcon('mdi--warehouse', $t('dRAGon.granaries'));
-      },
-      align: 'center',
-      render: (row: Api.FarmManage.Farm) => row.granaries.length,
-      width: 30
     },
     {
       key: 'operate',
       title: $t('common.action'),
       align: 'center',
       width: 130,
-      render: (row: Api.FarmManage.Farm) => (
+      render: (row: Api.GranaryManage.Granary) => (
         <div class="flex-center gap-8px">
           <SplitDropdown
             main-button-icon="mdi--lead-pencil"
@@ -154,7 +115,7 @@ const {
 } = useTableOperate(data, getData);
 
 async function handleBatchDelete() {
-  fetchDeleteMultipleFarms(checkedRowKeys.value).then(response => {
+  fetchDeleteMultipleGranaries(checkedRowKeys.value).then(response => {
     if (response.error === null) {
       onBatchDeleted();
     }
@@ -162,7 +123,7 @@ async function handleBatchDelete() {
 }
 
 function handleDelete(_id: string) {
-  fetchDeleteFarm(_id).then(response => {
+  fetchDeleteGranary(_id).then(response => {
     if (response.error === null) {
       onDeleted();
     }
@@ -177,19 +138,12 @@ function handleReset() {
 function edit(id: string) {
   handleEdit(id);
 }
-
-function renderHeaderIcon(icon: string, tooltip?: string) {
-  return h(SvgIcon, {
-    localIcon: icon,
-    tooltip
-  });
-}
 </script>
 
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
-    <FarmSearch v-model:model="searchParams" @reset="handleReset" @search="getDataByPage" />
-    <NCard :title="$t('dRAGon.farms')" :bordered="false" size="small" class="sm:flex-1-hidden card-wrapper">
+    <GranarySearch v-model:model="searchParams" @reset="handleReset" @search="getDataByPage" />
+    <NCard :title="$t('dRAGon.granaries')" :bordered="false" size="small" class="sm:flex-1-hidden card-wrapper">
       <template #header-extra>
         <TableHeaderOperation
           v-model:columns="columnChecks"
@@ -213,7 +167,7 @@ function renderHeaderIcon(icon: string, tooltip?: string) {
         :pagination="mobilePagination"
         class="sm:h-full"
       />
-      <FarmEdit
+      <GranaryEdit
         v-model:visible="drawerVisible"
         :operate-type="operateType"
         :row-data="editingData"
