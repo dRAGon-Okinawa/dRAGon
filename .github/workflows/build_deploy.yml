@@ -15,7 +15,7 @@ jobs:
       attestations: write
       id-token: write
     env:
-      DRAGON_CICD: true
+      DRAGON_CICD: "true"
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
     steps:
       # Prepare Job
@@ -97,6 +97,14 @@ jobs:
       # Test dRAGon
       - name: Test dRAGon
         run: gradle test
+
+      # Create Reports Artifact
+      - name: Upload artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Build Reports
+          path: ./backend/build/reports/
 
       # Package dRAGon
       - name: Package dRAGon

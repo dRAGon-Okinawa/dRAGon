@@ -32,7 +32,7 @@ public class SiloEntity implements AbstractEntity {
     @Schema(description = "Name of the Silo. Must be unique.")
     private String name;
 
-    @Schema(description = "Description of the Silo. Used by the Language Query Router to choose the best Silo among Farm chain.")
+    @Schema(description = "Description of the Silo. Used by the Language Query Router to choose the best Silo / Granary among Farm chain.")
     private String description;
 
     @NotNull

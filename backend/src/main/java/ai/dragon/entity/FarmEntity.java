@@ -43,8 +43,13 @@ public class FarmEntity implements AbstractEntity {
 
     @Schema(description = """
             List of Silo UUIDs to be linked to the Farm.
-            A Farm is a collection of Silos, which each Silo is a collection of Documents.""")
+            A Farm has a collection of Silos, which each Silo is a collection of Documents.""")
     private List<UUID> silos;
+
+    @Schema(description = """
+            List of Graary UUIDs to be linked to the Farm.
+            A Farm has a collection of Granaries, which each Granary is a content retriever.""")
+    private List<UUID> granaries;
 
     @Schema(description = "Language Model to be used for the RaaG API")
     private LanguageModelType languageModel;
@@ -65,6 +70,7 @@ public class FarmEntity implements AbstractEntity {
         this.uuid = UUID.randomUUID();
         this.name = String.format("Farm %s", this.uuid.toString());
         this.silos = new ArrayList<UUID>();
+        this.granaries = new ArrayList<UUID>();
         this.raagIdentifier = UUID.randomUUID().toString();
         this.languageModel = LanguageModelType.OpenAiModel;
         this.chatMemoryStrategy = ChatMemoryStrategy.MaxMessages;

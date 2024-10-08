@@ -220,7 +220,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
     @SuppressWarnings("rawtypes")
     private OpenAiClient.Builder createOpenAiClientBuilder() {
         return OpenAiClient.builder()
-                .openAiApiKey("TODO_PUT_KEY_HERE")
+                .openAiApiKey("TODO_PUT_DRAGON_KEY_HERE")
                 .baseUrl(String.format("http://localhost:%d/api/raag/v1/", serverPort))
                 .callTimeout(Duration.ofSeconds(15))
                 .readTimeout(Duration.ofSeconds(15))
@@ -231,7 +231,7 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
     @SuppressWarnings("rawtypes")
     private MistralAiClient.Builder createMistralAiClientBuilder() {
         return MistralAiClient.builder()
-                .apiKey("TODO_PUT_KEY_HERE")
+                .apiKey("TODO_PUT_DRAGON_KEY_HERE")
                 .baseUrl(String.format("http://localhost:%d/api/raag/v1/", serverPort))
                 .timeout(Duration.ofSeconds(15))
                 .logRequests(false)
@@ -360,10 +360,10 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
                 "non_existing_document.pdf", false,
                 "BAAJournalCarringtonEventPaper_compressed.pdf", true)
                 .forEach((documentName, expected) -> {
-                    Map<String, String> customHeaders = Map.of(
-                            "X-RAG-FILTER-METADATA",
-                            String.format("{{#metadataKey('document_name').isIn('%s')}}",
-                                    documentName));
+                    Map<String, String> customHeaders = Map.ofEntries(
+                            Map.entry("X-RAG-FILTER-METADATA",
+                                    String.format("{{#metadataKey('document_name').isIn('%s')}}",
+                                            documentName)));
                     OpenAiClient client = createOpenAiClientBuilder()
                             .customHeaders(customHeaders)
                             .build();
@@ -491,10 +491,10 @@ public class OpenAiCompatibleV1ApiControllerTest extends AbstractTest {
         CompletionRequest request = CompletionRequest.builder()
                 .model("sunspots-webssh-raag-routetoall")
                 .prompt("""
-                    * Reply with answers separated by a comma
-                    1. Who is the author of document 'The Size of the Carrington Event Sunspot Group'? Just reply with the firstname and lastname.
-                    2. Who is the maintainer of WebSSH? Reply only with the nickname.
-                        """)
+                        * Reply with answers separated by a comma
+                        1. Who is the author of document 'The Size of the Carrington Event Sunspot Group'? Just reply with the firstname and lastname.
+                        2. Who is the maintainer of WebSSH? Reply only with the nickname.
+                            """)
                 .stream(false)
                 .temperature(0.0)
                 .build();

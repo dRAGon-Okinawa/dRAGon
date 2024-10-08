@@ -21,11 +21,13 @@ import ai.dragon.dto.openai.completion.OpenAiCompletionResponse;
 import ai.dragon.dto.openai.completion.OpenAiRequest;
 import ai.dragon.dto.openai.model.OpenAiModel;
 import ai.dragon.entity.FarmEntity;
+import ai.dragon.entity.GranaryEntity;
 import ai.dragon.entity.SiloEntity;
 import ai.dragon.enumeration.QueryRouterType;
 import ai.dragon.properties.embedding.LanguageModelSettings;
 import ai.dragon.properties.raag.RetrievalAugmentorSettings;
 import ai.dragon.repository.FarmRepository;
+import ai.dragon.repository.GranaryRepository;
 import ai.dragon.repository.SiloRepository;
 import ai.dragon.util.ChatMessageUtil;
 import ai.dragon.util.KVSettingUtil;
@@ -71,6 +73,12 @@ public class RaagService {
     private SiloRepository siloRepository;
 
     @Autowired
+    private GranaryRepository granaryRepository;
+
+    @Autowired
+    private GranaryService granaryService;
+
+    @Autowired
     private OpenAiCompletionService openAiCompletionService;
 
     public List<OpenAiModel> listAvailableModels() {
@@ -107,11 +115,6 @@ public class RaagService {
 
     public Map<ContentRetriever, String> buildRetrieverMap(FarmEntity farm, HttpServletRequest servletRequest) {
         Map<ContentRetriever, String> retrievers = new HashMap<>();
-        if (farm.getSilos() == null || farm.getSilos().isEmpty()) {
-            logger.info("No Silos found for Farm '{}' (RaaG Identifier '{}'), no content retriever will be made",
-                    farm.getUuid(), farm.getRaagIdentifier());
-            return retrievers;
-        }
         farm.getSilos().forEach(siloUuid -> {
             try {
                 SiloEntity silo = siloRepository.getByUuid(siloUuid).orElseThrow();
@@ -123,8 +126,28 @@ public class RaagService {
                 logger.error("Error building Content Retriever for Silo '{}'", siloUuid, ex);
             }
         });
-        // TODO Put also Granaries in the retrievers
+        farm.getGranaries().forEach(granaryUuid -> {
+            try {
+                GranaryEntity granary = granaryRepository.getByUuid(granaryUuid).orElseThrow();
+                String granaryDescription = granary.getDescription();
+                this.buildGranaryRetriever(granary).ifPresent(retriever -> {
+                    retrievers.put(retriever, granaryDescription);
+                });
+            } catch (Exception ex) {
+                logger.error("Error building Content Retriever for Granary '{}'", granaryUuid, ex);
+            }
+        });
+        if (retrievers.isEmpty()) {
+            logger.info("No retrievers found for Farm '{}' (RaaG Identifier '{}'), no content retriever will be made",
+                    farm.getUuid(), farm.getRaagIdentifier());
+            return retrievers;
+        }
         return retrievers;
+    }
+
+    public Optional<ContentRetriever> buildGranaryRetriever(GranaryEntity granary)
+            throws Exception {
+        return Optional.ofNullable(granaryService.buildContentRetriever(granary));
     }
 
     public Optional<ContentRetriever> buildSiloRetriever(SiloEntity silo, HttpServletRequest servletRequest)
