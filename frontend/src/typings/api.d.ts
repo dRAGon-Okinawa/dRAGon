@@ -134,9 +134,6 @@ declare namespace Api {
     /** Granary Engine Type */
     type GranaryEngineType = 'WebSearchEngine';
 
-    /** Ingestor Loader */
-    type IngestorLoaderType = 'None' | 'FileSystem' | 'URL';
-
     /** Granary Search Params */
     type GranarySearchParams = CommonType.RecordNullable<
       Pick<Api.GranaryManage.Granary, 'name' | 'uuid' | 'engineType'> & Common.CommonSearchParams
