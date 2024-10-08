@@ -12,6 +12,7 @@ import org.junit.ClassRule;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ import ai.dragon.enumeration.GranaryEngineType;
 import ai.dragon.enumeration.LanguageModelType;
 import ai.dragon.enumeration.QueryRouterType;
 import ai.dragon.junit.AbstractTest;
+import ai.dragon.junit.extension.retry.RetryingTest;
 import ai.dragon.repository.FarmRepository;
 import ai.dragon.repository.GranaryRepository;
 import dev.ai4j.openai4j.OpenAiClient;
@@ -110,6 +112,8 @@ public class SearXNGGranaryTest extends AbstractTest {
     }
 
     @Test
+    @EnabledIf("canRunSearXNGRelatedTests")
+    @RetryingTest(maxTries = 3, retryWaitMs = 3000)
     void testSearRaaG() {
         // OpenAI settings for RaaG
         String apiKeySetting = String.format("apiKey=%s", openaiApiKey);
@@ -144,7 +148,7 @@ public class SearXNGGranaryTest extends AbstractTest {
         xngFarm.setLanguageModel(LanguageModelType.OpenAiModel);
         xngFarm.setLanguageModelSettings(List.of(apiKeySetting, omniModelNameSetting));
         xngFarm.setGranaries(List.of(xngGranary.getUuid()));
-        xngFarm.setQueryRouter(QueryRouterType.LANGUAGE_MODEL);
+        xngFarm.setQueryRouter(QueryRouterType.LanguageModel);
         xngFarm.setRetrievalAugmentorSettings(List.of(
                 "languageQueryRouterFallbackStrategy=DO_NOT_ROUTE"));
         farmRepository.save(xngFarm);

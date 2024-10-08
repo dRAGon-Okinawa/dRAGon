@@ -95,6 +95,19 @@ export const generatedRoutes: GeneratedRoute[] = [
           title: 'infrastructure_farm-list',
           i18nKey: 'route.infrastructure_farm-list',
           localIcon: 'mdi--farm-home-outline',
+          order: 3,
+          roles: ['R_ADMIN'],
+          keepAlive: true
+        }
+      },
+      {
+        name: 'infrastructure_granary-list',
+        path: '/infrastructure/granary-list',
+        component: 'view.infrastructure_granary-list',
+        meta: {
+          title: 'infrastructure_granary-list',
+          i18nKey: 'route.infrastructure_granary-list',
+          localIcon: 'mdi--warehouse',
           order: 2,
           roles: ['R_ADMIN'],
           keepAlive: true

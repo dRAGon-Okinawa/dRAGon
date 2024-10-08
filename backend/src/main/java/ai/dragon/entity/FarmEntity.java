@@ -74,6 +74,6 @@ public class FarmEntity implements AbstractEntity {
         this.raagIdentifier = UUID.randomUUID().toString();
         this.languageModel = LanguageModelType.OpenAiModel;
         this.chatMemoryStrategy = ChatMemoryStrategy.MaxMessages;
-        this.queryRouter = QueryRouterType.DEFAULT;
+        this.queryRouter = QueryRouterType.Default;
     }
 }
