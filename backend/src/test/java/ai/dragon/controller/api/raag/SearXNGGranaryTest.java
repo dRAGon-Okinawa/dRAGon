@@ -35,6 +35,7 @@ import ai.dragon.enumeration.GranaryEngineType;
 import ai.dragon.enumeration.LanguageModelType;
 import ai.dragon.enumeration.QueryRouterType;
 import ai.dragon.junit.AbstractTest;
+import ai.dragon.junit.extension.retry.RetryingTest;
 import ai.dragon.repository.FarmRepository;
 import ai.dragon.repository.GranaryRepository;
 import dev.ai4j.openai4j.OpenAiClient;
@@ -112,6 +113,7 @@ public class SearXNGGranaryTest extends AbstractTest {
 
     @Test
     @EnabledIf("canRunSearXNGRelatedTests")
+    @RetryingTest(maxTries = 3, retryWaitMs = 3000)
     void testSearRaaG() {
         // OpenAI settings for RaaG
         String apiKeySetting = String.format("apiKey=%s", openaiApiKey);
