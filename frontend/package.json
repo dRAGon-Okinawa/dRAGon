@@ -67,7 +67,7 @@
   "devDependencies": {
     "@dragon/scripts": "workspace:*",
     "@elegant-router/vue": "0.3.8",
-    "@iconify/json": "2.2.257",
+    "@iconify/json": "2.2.261",
     "@sa/uno-preset": "workspace:*",
     "@soybeanjs/eslint-config": "1.4.1",
     "@types/lodash-es": "4.17.12",
