@@ -86,7 +86,7 @@ openApi {
 }
 
 checkstyle {
-	toolVersion '10.18.1'
+	toolVersion '10.20.1'
     config = rootProject.resources.text.fromFile('backend/checkstyle.xml')
     ignoreFailures = false
     maxWarnings = 0
