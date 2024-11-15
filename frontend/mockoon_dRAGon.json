@@ -1,6 +1,6 @@
 {
   "uuid": "e4a84b25-cf32-4184-9259-bee079384320",
-  "lastMigration": 32,
+  "lastMigration": 33,
   "name": "dRAGon",
   "endpointPrefix": "",
   "latency": 0,
@@ -108,7 +108,9 @@
           "callbacks": []
         }
       ],
-      "responseMode": null
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
     },
     {
       "uuid": "cd0e8e0b-c130-4d4a-87f7-673246e250d2",
@@ -137,7 +139,9 @@
           "callbacks": []
         }
       ],
-      "responseMode": null
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
     },
     {
       "uuid": "65043f0b-02cd-48d3-924b-b9da53428caf",
@@ -166,7 +170,9 @@
           "callbacks": []
         }
       ],
-      "responseMode": null
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
     },
     {
       "uuid": "499cdef4-138c-41f4-801e-a110aaa3d48e",
@@ -195,7 +201,9 @@
           "callbacks": []
         }
       ],
-      "responseMode": null
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
     }
   ],
   "rootChildren": [
