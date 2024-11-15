@@ -6,6 +6,7 @@ import ai.dragon.dto.llm.ChatMemoryStrategyDefinition;
 import ai.dragon.properties.raag.RetrievalAugmentorSettings;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.memory.chat.TokenWindowChatMemory;
+import dev.langchain4j.model.openai.OpenAiChatModelName;
 import dev.langchain4j.model.openai.OpenAiTokenizer;
 
 public enum ChatMemoryStrategy {
@@ -54,7 +55,7 @@ public enum ChatMemoryStrategy {
                                     .maxTokens(
                                             Optional.ofNullable(parameters.getHistoryMaxTokens())
                                                     .orElse(RetrievalAugmentorSettings.DEFAULT_MAX_TOKENS),
-                                            new OpenAiTokenizer())
+                                            new OpenAiTokenizer(OpenAiChatModelName.GPT_3_5_TURBO))
                                     .build();
                         })
                         .build();
